@@ -1,0 +1,53 @@
+[
+  {
+    "id": "intro",
+    "title": "Introduction",
+    "type": "intro",
+    "content": "Welcome to my portfolio. I am Ahmad Al-Qattu, a Full-Stack Developer specializing in React and Python.",
+    "data": {}
+  },
+  {
+    "id": "skills",
+    "title": "Skills",
+    "type": "skills",
+    "content": "I have expertise in a wide range of technologies including React, Python, JavaScript, Node.js, and more.",
+    "data": {
+      "skillsList": ["React", "Python", "JavaScript", "Node.js", "Express", "Django", "MongoDB", "SQL"]
+    }
+  },
+  {
+    "id": "projects",
+    "title": "Projects",
+    "type": "projects",
+    "content": "Here are some of the projects I have worked on. They include web apps, mobile apps, and various open-source contributions.",
+    "data": {
+      "projects": [
+        {
+          "id": 1,
+          "name": "Project Alpha",
+          "description": "A web application built with React and Node.js.",
+          "link": "https://github.com/your-username/project-alpha"
+        },
+        {
+          "id": 2,
+          "name": "Project Beta",
+          "description": "A mobile app developed using React Native.",
+          "link": "https://github.com/your-username/project-beta"
+        },
+        {
+          "id": 3,
+          "name": "Project Gamma",
+          "description": "An open-source library for data visualization.",
+          "link": "https://github.com/your-username/project-gamma"
+        }
+      ]
+    }
+  },
+  {
+    "id": "contact",
+    "title": "Contact",
+    "type": "contact",
+    "content": "Feel free to reach out to me via email or LinkedIn for collaborations or inquiries.",
+    "data": {}
+  }
+]
