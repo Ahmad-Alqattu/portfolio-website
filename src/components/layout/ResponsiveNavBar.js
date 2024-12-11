@@ -76,7 +76,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
               sx={{ fontWeight: 'bold', cursor: 'pointer' }}
               onClick={() => navigate('/')}
             >
-              My Portfolio
+              Ahmad Luay 
             </Typography>
 
             {/* Center: Desktop Nav Links */}

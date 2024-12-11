@@ -1,12 +1,11 @@
 // src/components/sections/MainComponent.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme, useMediaQuery } from '@mui/material';
+import { useTheme, useMediaQuery, Box } from '@mui/material';
 import IntroSection from './IntroSection';
 import SkillsSection from './SkillsSection';
 import ProjectsSection from './ProjectsSection';
 import ContactSection from './ContactSection';
 import MobileNav from '../layout/MobileNav';
-import { Box } from '@mui/material';
 import sectionsData from '../../data/sectionsData.json'; // Static import
 
 function MainComponent() {
@@ -62,14 +61,11 @@ function MainComponent() {
             md:w-1/5 md:h-screen
             w-full top-0 bg-transparent
           "
-          // If you prefer semi-transparent, use inline styles or Tailwind's opacity classes
-          // style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
         >
           <div className="h-full flex md:flex-col items-center justify-center">
             <div className="flex md:flex-col gap-4 py-4">
               {sections.map((section) => {
                 const isActive = activeSection === section.id;
-
                 return (
                   <div
                     key={section.id}
@@ -127,7 +123,7 @@ function MainComponent() {
       )}
 
       {/* Main Content */}
-      <main className="w-full md:w-4/5 md:ml-[20%] mt-20 md:mt-0">
+      <main className="w-full md:w-4/5 md:ml-[19%] mt-20 md:mt-0">
         <Box className="px-4">
           {sections.map((section) => {
             switch (section.type) {
@@ -136,8 +132,10 @@ function MainComponent() {
                   <IntroSection
                     key={section.id}
                     id={section.id}
+                    name={section.name}
                     title={section.title}
                     content={section.content}
+                    data={section.data}
                   />
                 );
               case 'skills':
@@ -145,6 +143,7 @@ function MainComponent() {
                   <SkillsSection
                     key={section.id}
                     id={section.id}
+                    name={section.name}
                     title={section.title}
                     content={section.content}
                     skillsList={section.data.skillsList}

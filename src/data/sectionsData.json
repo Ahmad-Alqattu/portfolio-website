@@ -1,20 +1,35 @@
 [
   {
     "id": "intro",
+    "name": "Ahmad Al-Qattu",
     "title": "Introduction",
     "type": "intro",
-    "content": "Welcome to my portfolio. I am Ahmad Al-Qattu, a Full-Stack Developer specializing in React and Python.",
-    "data": {}
-  },
-  {
-    "id": "skills",
-    "title": "Skills",
-    "type": "skills",
-    "content": "I have expertise in a wide range of technologies including React, Python, JavaScript, Node.js, and more.",
+    "content": "I’m a software developer who transforms ideas into practical, dependable applications. Working across the full stack, I create stable and efficient solutions—whether building web platforms, mobile products, or integrated backend services. My aim is always to deliver software that people find useful, accessible, and easy to trust.",
     "data": {
-      "skillsList": ["React", "Python", "JavaScript", "Node.js", "Express", "Django", "MongoDB", "SQL"]
+      "subtitle": "Full-Stack Developer | React & Python Enthusiast",
+      "highlight": "Transforming Ideas into Modern, Scalable Solutions",
+      "image": "https://media.licdn.com/dms/image/v2/D4E03AQHcJbTixdLlaQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1690593961859?e=1739404800&v=beta&t=5i_xWywoKxZLjQ0tcaBiPd-2HDjn3ZajkL5URR9qS-k"
     }
-  },
+  }
+  
+
+,  
+{
+  "id": "skills",
+  "title": "Skills",
+  "type": "skills",
+  "content": "Over the years, I've gained experience across multiple domains, from front-end UI development to back-end services and databases.",
+  "data": {
+    "skillsList": {
+      "Front-End": ["React.js", "HTML5", "CSS3", "Tailwind CSS"],
+      "Back-End": ["Java", "Python", "Spring Boot", "Django"],
+      "Databases": ["MySQL", "PostgreSQL", "MongoDB"],
+      "Mobile": ["Flutter", "React Native"],
+      "Tools & Other": ["Git", "Docker", "Linux", "Firebase"]
+    }
+  }
+}
+,
   {
     "id": "projects",
     "title": "Projects",
