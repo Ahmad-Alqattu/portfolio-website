@@ -14,8 +14,11 @@ const lightPalette = {
   },
   text: {
     primary: '#000000',
-    secondary: '#55555',
+    secondary: '#121212',
   },
+  footer: {
+    main: '#F5F5F5',
+  }
 };
 
 const darkPalette = {
@@ -33,6 +36,9 @@ const darkPalette = {
     primary: '#ffffff',
     secondary: '#aaaaaa',
   },
+  footer: {
+    main: '#1f1f1f',
+  }
 };
 
 const baseThemeOptions = {

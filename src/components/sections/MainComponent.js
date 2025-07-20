@@ -1,12 +1,93 @@
-// src/components/sections/MainComponent.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme, useMediaQuery, Box } from '@mui/material';
+import { useTheme, useMediaQuery, Box, Button, styled } from '@mui/material';
 import IntroSection from './IntroSection';
 import SkillsSection from './SkillsSection';
+import EducationSection from './EducationSection';
 import ProjectsSection from './ProjectsSection';
-import ContactSection from './ContactSection';
+import CapabilitiesSection from './CapabilitiesSection';
+import ExperienceSection from './ExperienceSection';
 import MobileNav from '../layout/MobileNav';
-import sectionsData from '../../data/sectionsData.json'; // Static import
+
+// Styled components
+const MainContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  [theme.breakpoints.up('md')]: {
+    flexDirection: 'row',
+  }
+}));
+
+const DesktopNav = styled(Box)(({ theme }) => ({
+  position: 'fixed',
+  zIndex: 50,
+  transition: 'all 300ms',
+  width: '100%',
+  top: '10vh',
+  backgroundColor: 'transparent',
+  [theme.breakpoints.up('md')]: {
+    width: '20%',
+    height: '70vh',
+  }
+}));
+
+const NavContainer = styled(Box)({
+  height: '100%',
+  display: 'flex',
+  
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+const NavItemsContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1.5),
+  padding: theme.spacing(2, 1)
+}));
+
+const NavItem = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  marginBottom: theme.spacing(1.5),
+  cursor: 'pointer'
+}));
+
+const MainContent = styled(Box)(({ theme }) => ({
+  width: '100%',
+  padding: theme.spacing(1, 4),
+  [theme.breakpoints.up('md')]: {
+    width: '80%',
+    marginLeft: '12%',
+    marginTop: 0
+  }
+}));
+
+const NavButton = styled(Button)(({ theme, isActive }) => ({
+  position: 'relative',
+  padding: theme.spacing(1, 2.2),
+  borderRadius: theme.shape.borderRadius,
+  transition: 'all 300ms',
+  whiteSpace: 'nowrap',
+  fontWeight: isActive ? 500 : 400,
+  color: isActive ? theme.palette.primary.main : theme.palette.text.secondary,
+  '&:hover': {
+    opacity: 0.8
+  }
+}));
+
+const IndicatorLine = styled(Box)(({ theme, isActive }) => ({
+  display: 'none',
+  [theme.breakpoints.up('md')]: {
+    display: 'block',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    transform: 'translateX(-18px)',
+    height: '90%',
+    width: '2.5px',
+    backgroundColor: isActive ? theme.palette.primary.main : theme.palette.grey[300]
+  }
+}));
 
 function MainComponent() {
   const [sections, setSections] = useState([]);
@@ -14,10 +95,15 @@ function MainComponent() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  // useEffect(() => {
+  //   setSections(sectionsData);
+  //   console.log('Sections loaded:', sectionsData);
+  // }, []);
   useEffect(() => {
-    // Set sections with static data
-    setSections(sectionsData);
-    console.log('Sections loaded:', sectionsData);
+    fetch('/data/sectionsData.json')
+      .then(response => response.json())
+      .then(data => setSections(data))
+      .catch(error => console.error('Error loading data:', error));
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -49,132 +135,116 @@ function MainComponent() {
     }
   };
 
-  console.log('Current sections:', sections);
-
   return (
-    <div className="flex flex-col md:flex-row">
-      {/* Desktop Navigation */}
+    <MainContainer>
       {!isMobile && (
-        <nav
-          className="
-            fixed z-50 transition-all duration-300
-            md:w-1/5 md:h-screen
-            w-full top-0 bg-transparent
-          "
-        >
-          <div className="h-full flex md:flex-col items-center justify-center">
-            <div className="flex md:flex-col gap-4 py-4">
+        <DesktopNav>
+          <NavContainer>
+            <NavItemsContainer>
               {sections.map((section) => {
                 const isActive = activeSection === section.id;
                 return (
-                  <div
+                  <NavItem
                     key={section.id}
-                    className="relative md:mb-4"
                     onClick={() => scrollToSection(section.id)}
-                    style={{ cursor: 'pointer' }}
                   >
-                    {/* Desktop indicator line */}
-                    <div
-                      className="hidden md:block absolute left-0 top-0 -translate-x-4 h-full"
-                      style={{
-                        width: '2px',
-                        backgroundColor: isActive
-                          ? theme.palette.primary.main
-                          : theme.palette.grey[300],
-                      }}
-                    />
-                    {/* Navigation item */}
-                    <button
-                      className="
-                        relative px-4 py-2 rounded-lg transition-all duration-300
-                        hover:opacity-80 whitespace-nowrap
-                      "
-                      style={{
-                        color: isActive
-                          ? theme.palette.primary.main
-                          : theme.palette.text.secondary,
-                        fontWeight: isActive ? 500 : 400,
-                        position: 'relative',
-                      }}
+                    <IndicatorLine isActive={isActive} />
+                    <NavButton
+                      isActive={isActive}
+                      disableRipple
                     >
-                      <span className="relative z-10">{section.title}</span>
+                      <Box component="span" sx={{ zIndex: 10, position: 'relative' }}>
+                        {section.title}
+                      </Box>
                       {isActive && (
-                        <div
-                          className="absolute inset-0 rounded-lg"
-                          style={{ backgroundColor: theme.palette.action.hover }}
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            bottom: 5,
+                            inset: 0,
+                            borderRadius: 3 ,
+                            bgcolor: 'action.hover'
+                          }}
                         />
                       )}
-                    </button>
-                  </div>
+                    </NavButton>
+                  </NavItem>
                 );
               })}
-            </div>
-          </div>
-        </nav>
+            </NavItemsContainer>
+          </NavContainer>
+        </DesktopNav>
       )}
 
-      {/* Mobile Navigation */}
-      {isMobile && (
-        <MobileNav
-          sections={sections}
-          activeSection={activeSection}
-          scrollToSection={scrollToSection}
-        />
-      )}
-
-      {/* Main Content */}
-      <main className="w-full md:w-4/5 md:ml-[19%] mt-20 md:mt-0">
-        <Box className="px-4">
-          {sections.map((section) => {
-            switch (section.type) {
-              case 'intro':
-                return (
-                  <IntroSection
-                    key={section.id}
-                    id={section.id}
-                    name={section.name}
-                    title={section.title}
-                    content={section.content}
-                    data={section.data}
-                  />
-                );
-              case 'skills':
-                return (
-                  <SkillsSection
-                    key={section.id}
-                    id={section.id}
-                    name={section.name}
-                    title={section.title}
-                    content={section.content}
-                    skillsList={section.data.skillsList}
-                  />
-                );
-              case 'projects':
-                return (
-                  <ProjectsSection
-                    key={section.id}
-                    id={section.id}
-                    title={section.title}
-                    content={section.content}
-                    projects={section.data.projects}
-                  />
-                );
-              case 'contact':
-                return (
-                  <ContactSection
-                    key={section.id}
-                    id={section.id}
-                    title={section.title}
-                    content={section.content}
-                  />
-                );
-              default:
-                return null;
-            }
-          })}
-        </Box>
-      </main>
-    </div>
+     
+      <MainContent>
+        {sections.map((section) => {
+          switch (section.type) {
+            case 'intro':
+              return (
+                <IntroSection
+                  key={section.id}
+                  id={section.id}
+                  title={section.title}
+                  content={section.content}
+                  data={section.data}
+                  name={section.name}
+                />
+              );
+            case 'capabilities':
+              return (
+                <CapabilitiesSection
+                  key={section.id}
+                  id={section.id}
+                  title={section.title}
+                  content={section.content}
+                />
+              );
+            case 'skills':
+              return (
+                <SkillsSection
+                  key={section.id}
+                  id={section.id}
+                  title={section.title}
+                  content={section.content}
+                  scrollIntoView={scrollToSection}
+                />
+              );
+            case 'education':
+              return (
+                <EducationSection
+                  key={section.id}
+                  id={section.id}
+                  title={section.title}
+                  content={section.content}
+                  educationList={section.data.educationList}
+                />
+              );
+            case 'projects':
+              return (
+                <ProjectsSection
+                  key={section.id}
+                  id={section.id}
+                  title={section.title}
+                  content={section.content}
+                  projects={section.data.projects}
+                />
+              );
+            case 'experience':
+              return (
+                <ExperienceSection
+                  key={section.id}
+                  id={section.id}
+                  title={section.title}
+                  educationList={section.experience}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
+      </MainContent>
+    </MainContainer>
   );
 }
 

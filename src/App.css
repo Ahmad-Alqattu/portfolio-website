@@ -32,6 +32,50 @@ html {
   scroll-behavior: smooth;
 }
 
+/* src/App.css or similar */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.mt-20 {
+  margin-top: 5rem; /* Adjust as needed */
+}
+
+.md\:ml-\[12\%\] {
+  margin-left: 12%;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.md\:w-4\/5 {
+  width: 80%;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -20,10 +20,6 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 
 const pages = [
   { title: 'Home', path: '/' },
-  { title: 'About Us', path: '/about' },
-  { title: 'Projects', path: '/projects' },
-  { title: 'Blog', path: '/blog' },
-  { title: 'Contact', path: '/contact' },
 ];
 
 function ResponsiveNavBar({ darkMode, setDarkMode }) {
@@ -49,7 +45,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   };
 
   const handleGitHubClick = () => {
-    window.open('https://github.com/your-username', '_blank');
+    window.open('https://github.com/Ahmad-Alqattu', '_blank');
   };
 
   return (
@@ -113,21 +109,25 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                 <GitHubIcon />
               </IconButton>
 
-              {/* Dark Mode Switch */}
               <FormControlLabel
-                control={
-                  <Switch
-                    checked={darkMode}
-                    onChange={toggleDarkMode}
-                    color="default"
-                    inputProps={{ 'aria-label': 'Toggle dark mode' }}
-                  />
-                }
-                label="Dark Mode"
-              />
-
-              {/* Mobile Menu Icon - only shows on small screens */}
-              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+  control={
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <Typography 
+        onClick={toggleDarkMode} 
+        style={{
+          cursor: 'pointer',
+          transition: 'transform 0.7s ease-out',
+          transform: darkMode ? 'rotate(360deg)' : 'rotate(0deg)'
+        }}
+        aria-label="Toggle dark mode"
+      >
+        {darkMode ? '🌙' : '☀️'}
+      </Typography>
+    </Stack>
+  }
+/>
+                      {/* Mobile Menu Icon - only shows on small screens */}
+              {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                   size="large"
                   onClick={handleOpenNavMenu}
@@ -136,11 +136,11 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                 >
                   <MenuIcon />
                 </IconButton>
-              </Box>
+              </Box> */}
             </Stack>
           </Stack>
 
-          {/* Mobile Dropdown Menu */}
+          {/* Mobile Dropdown Menu
           <Menu
             id="menu-appbar"
             anchorEl={anchorElNav}
@@ -166,7 +166,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                 </Typography>
               </MenuItem>
             ))}
-          </Menu>
+          </Menu> */}
         </Container>
       </AppBar>
     </>
