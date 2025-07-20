@@ -9,6 +9,8 @@ import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
 import Login from './components/admin/Login';
 import AdminDashboard from './components/admin/AdminDashboard';
+import SectionEditor from './components/admin/SectionEditor';
+import MediaUpload from './components/admin/MediaUpload';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
@@ -24,17 +26,34 @@ function App() {
       <AuthProvider>
         <DataProvider>
           <Router>
-            <ResponsiveNavBar darkMode={darkMode} setDarkMode={setDarkMode} />
             <Routes>
-              <Route path="/" element={<MainComponent />} />
+              {/* Public routes */}
+              <Route path="/" element={
+                <>
+                  <ResponsiveNavBar darkMode={darkMode} setDarkMode={setDarkMode} />
+                  <MainComponent />
+                  <Footer />
+                </>
+              } />
               <Route path="/login" element={<Login />} />
+              
+              {/* Protected admin routes */}
               <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminDashboard />
                 </ProtectedRoute>
               } />
+              <Route path="/admin/edit/:sectionType" element={
+                <ProtectedRoute>
+                  <SectionEditor />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/media" element={
+                <ProtectedRoute>
+                  <MediaUpload />
+                </ProtectedRoute>
+              } />
             </Routes>
-            <Footer />
           </Router>
         </DataProvider>
       </AuthProvider>
