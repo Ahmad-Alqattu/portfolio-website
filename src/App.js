@@ -11,6 +11,7 @@ import Login from './components/admin/Login';
 import AdminDashboard from './components/admin/AdminDashboard';
 import SectionEditor from './components/admin/SectionEditor';
 import MediaUpload from './components/admin/MediaUpload';
+import ProjectEditor from './components/admin/ProjectEditor';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
@@ -51,6 +52,11 @@ function App() {
               <Route path="/admin/media" element={
                 <ProtectedRoute>
                   <MediaUpload />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/projects/:projectId" element={
+                <ProtectedRoute>
+                  <ProjectEditor />
                 </ProtectedRoute>
               } />
             </Routes>
