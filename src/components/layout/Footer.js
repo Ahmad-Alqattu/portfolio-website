@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, IconButton, Link, Tooltip, Grid, useTheme } from '@mui/material';
+import { Box, Typography, IconButton, Link, Tooltip, Grid } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -7,7 +7,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const Footer = () => {
-  const theme = useTheme();
 
   const handleBackToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

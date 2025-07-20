@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme, useMediaQuery, Box, Button, styled } from '@mui/material';
+import { useData } from '../../contexts/DataContext';
 import IntroSection from './IntroSection';
 import SkillsSection from './SkillsSection';
 import EducationSection from './EducationSection';
 import ProjectsSection from './ProjectsSection';
 import CapabilitiesSection from './CapabilitiesSection';
 import ExperienceSection from './ExperienceSection';
-import MobileNav from '../layout/MobileNav';
 
 // Styled components
 const MainContainer = styled(Box)(({ theme }) => ({
@@ -90,21 +90,18 @@ const IndicatorLine = styled(Box)(({ theme, isActive }) => ({
 }));
 
 function MainComponent() {
-  const [sections, setSections] = useState([]);
+  const { sections, loading, error } = useData();
   const [activeSection, setActiveSection] = useState('intro');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  // Remove the old fetch logic and use data from context
   // useEffect(() => {
-  //   setSections(sectionsData);
-  //   console.log('Sections loaded:', sectionsData);
+  //   fetch('/data/sectionsData.json')
+  //     .then(response => response.json())
+  //     .then(data => setSections(data))
+  //     .catch(error => console.error('Error loading data:', error));
   // }, []);
-  useEffect(() => {
-    fetch('/data/sectionsData.json')
-      .then(response => response.json())
-      .then(data => setSections(data))
-      .catch(error => console.error('Error loading data:', error));
-  }, []);
 
   const handleScroll = useCallback(() => {
     let newActiveSection = activeSection;
@@ -127,6 +124,24 @@ function MainComponent() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        Loading portfolio data...
+      </Box>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        Error loading portfolio data: {error}
+      </Box>
+    );
+  }
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
