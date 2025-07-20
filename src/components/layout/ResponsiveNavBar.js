@@ -6,16 +6,12 @@ import {
   Container,
   Button,
   IconButton,
-  Menu,
-  MenuItem,
   Stack,
-  Switch,
   CssBaseline,
   FormControlLabel,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const pages = [
@@ -23,20 +19,10 @@ const pages = [
 ];
 
 function ResponsiveNavBar({ darkMode, setDarkMode }) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
   const onPageClick = (path) => {
-    handleCloseNavMenu();
     navigate(path);
   };
 

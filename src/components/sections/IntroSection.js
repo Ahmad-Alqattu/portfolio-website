@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Box, Avatar, Divider, Button, Link, useMediaQuery, useTheme } from '@mui/material';
+import { Typography, Box, Avatar, Divider, Link, useMediaQuery, useTheme } from '@mui/material';
 import Description from '@mui/icons-material/Description';
 
 function IntroSection({ id, name, title, content, data }) {

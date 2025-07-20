@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { createMyTheme } from './theme';
+import { AuthProvider } from './contexts/AuthContext';
+import { DataProvider } from './contexts/DataContext';
 import ResponsiveNavBar from './components/layout/ResponsiveNavBar';
 import MainComponent from './components/sections/MainComponent';
-import About from './components/sections/IntroSection';
-import Projects from './components/sections/ProjectsSection';
 import Footer from './components/layout/Footer';
+import Login from './components/admin/Login';
+import AdminDashboard from './components/admin/AdminDashboard';
+import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -18,13 +21,23 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <ResponsiveNavBar darkMode={darkMode} setDarkMode={setDarkMode} />
-        <Routes>
-          <Route path="/" element={<MainComponent />} />
-        </Routes>
-        <Footer />
-      </Router>
+      <AuthProvider>
+        <DataProvider>
+          <Router>
+            <ResponsiveNavBar darkMode={darkMode} setDarkMode={setDarkMode} />
+            <Routes>
+              <Route path="/" element={<MainComponent />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+            </Routes>
+            <Footer />
+          </Router>
+        </DataProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

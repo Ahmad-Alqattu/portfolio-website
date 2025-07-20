@@ -12,9 +12,7 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-  Link,
-  useMediaQuery,
-  useTheme
+  Link
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -56,7 +54,7 @@ function ImageCarousel({ images }) {
     >
       <img
         src={images[currentIndex]}
-        alt={`Project image ${currentIndex + 1}`}
+        alt={`Project ${currentIndex + 1}`}
         style={{ maxHeight:'65vh', maxWidth: '100%', height: 'auto', borderRadius: '8px', margin: '0 auto' }}
       />
       {images.length > 1 && (
