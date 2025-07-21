@@ -1,34 +1,58 @@
-# Ahmad Al-Qattu Portfolio Website
+# 🚀 Dynamic Multi-User Portfolio System
 
-A dynamic React-based portfolio website powered by Firebase services, featuring an admin panel for content management and real-time updates.
+A modern, scalable portfolio platform built with React, Firebase, and Material-UI that allows multiple users to create and manage their own professional portfolios.
 
-## 🚀 Features
+## ✨ Features
 
-### Public Portfolio
-- **Responsive Design**: Optimized for all device sizes
-- **Modern UI**: Built with Material-UI and custom theming
-- **Smooth Navigation**: Section-based navigation with scroll detection
-- **Rich Content**: Sections for intro, skills, projects, education, and experience
-- **Media Support**: Images and videos for projects
-- **Real-time Updates**: Content updates automatically when changed via admin panel
+### 🔐 Multi-User System
+- **User Registration & Authentication** - Email/password and Google sign-in
+- **User Profile Management** - Profile pictures, CV uploads, bio, and contact info
+- **Data Isolation** - Complete separation of user data in Firestore and Storage
 
-### Admin Panel (`/admin`)
-- **Secure Authentication**: Firebase Auth with email/password and Google login
-- **Content Management**: Edit all portfolio sections through intuitive forms
-- **Media Upload**: Upload and manage images/videos with Firebase Storage
-- **Real-time Sync**: Changes reflect instantly on the live site
-- **Data Migration**: Automatic migration from static JSON to Firestore
+### 📂 Media Management
+- **User-based Storage Structure** - Organized as `/users/{uid}/media/`
+- **File Upload with Previews** - Images, videos, and PDFs with real-time previews
+- **Media Categories** - Profile pictures, CVs, and project media
+- **Drag & Drop Interface** - Modern file upload experience
 
-## 🛠️ Tech Stack
+### 🎨 Admin Dashboard
+- **Profile Admin Dashboard** - Comprehensive user profile management
+- **Content Management** - Edit portfolio sections, projects, and skills
+- **Media Upload Zones** - Specialized upload areas for different content types
+- **Real-time Updates** - Live synchronization with Firestore
 
-- **Frontend**: React.js, Material-UI, Framer Motion
+### 🌐 Public Portfolio Views
+- **Username-based URLs** - `/u/{username}` for easy sharing
+- **UID-based URLs** - `/p/{uid}` as alternative access
+- **SEO-Friendly** - Clean, indexable portfolio pages
+- **Responsive Design** - Mobile-optimized viewing experience
+
+### 🛠 Technical Stack
+- **Frontend**: React 18, Material-UI, Tailwind CSS, Vite
 - **Backend**: Firebase (Auth, Firestore, Storage)
+- **Forms**: React Hook Form, Yup validation
+- **File Uploads**: React Dropzone
+- **State Management**: React Context
 - **Routing**: React Router DOM
-- **Forms**: React Hook Form, Formik
-- **State Management**: React Context API
-- **Styling**: Material-UI, Tailwind CSS
 
-## 📦 Installation
+## 📸 Screenshots
+
+### Homepage
+![Portfolio Homepage](https://github.com/user-attachments/assets/955ba2fb-fde2-4df3-8c07-a108fa70e68a)
+
+### User Registration
+![Registration Page](https://github.com/user-attachments/assets/e8d5fcf9-13b2-4661-981c-2e28acb6ded7)
+
+### Admin Login
+![Login Page](https://github.com/user-attachments/assets/06e1e331-b206-44b5-9ee7-4c1a38f481d8)
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 16+ and npm
+- Firebase project with Auth, Firestore, and Storage enabled
+
+### Installation
 
 1. **Clone the repository**
    ```bash
@@ -41,175 +65,191 @@ A dynamic React-based portfolio website powered by Firebase services, featuring 
    npm install
    ```
 
-3. **Set up Firebase**
-   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Enable Authentication (Email/Password and Google)
-   - Create a Firestore database
-   - Set up Firebase Storage
-   - Copy your Firebase config
-
-4. **Environment Variables**
+3. **Configure Firebase**
    ```bash
    cp .env.example .env
-   ```
-   
-   Fill in your Firebase configuration in `.env`:
-   ```
-   REACT_APP_FIREBASE_API_KEY=your_api_key
-   REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   REACT_APP_FIREBASE_PROJECT_ID=your_project_id
-   REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   REACT_APP_FIREBASE_APP_ID=your_app_id
-   REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
+   # Edit .env with your Firebase project credentials
    ```
 
-5. **Start the development server**
+4. **Deploy Firestore and Storage rules**
    ```bash
-   npm start
+   # Install Firebase CLI if not already installed
+   npm install -g firebase-tools
+   
+   # Login and initialize
+   firebase login
+   firebase init
+   
+   # Deploy security rules
+   firebase deploy --only firestore:rules
+   firebase deploy --only storage:rules
    ```
 
-## 🔧 Firebase Setup
+5. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-### Firestore Security Rules
+### Environment Variables
+
+Create a `.env` file with your Firebase configuration:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+## 🏗 Architecture
+
+### Data Structure
+
+#### User Profile (`/users/{uid}`)
 ```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Allow read access to portfolio data for everyone
-    match /{collection}/{document} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
+{
+  displayName: "John Doe",
+  username: "johndoe",
+  email: "john@example.com",
+  bio: "Software developer...",
+  title: "Senior Developer",
+  website: "https://johndoe.com",
+  location: "New York, NY",
+  profilePicture: "download_url",
+  cvUrl: "download_url",
+  createdAt: "2024-01-01T00:00:00Z",
+  lastUpdated: "2024-01-01T00:00:00Z"
 }
 ```
 
-### Storage Security Rules
+#### Portfolio Sections (`/users/{uid}/sections/{sectionId}`)
 ```javascript
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
+{
+  id: "intro",
+  type: "intro",
+  title: "Introduction",
+  content: "Portfolio description...",
+  data: {
+    subtitle: "Software Engineer",
+    highlight: "Key achievements...",
+    // Section-specific data
+  },
+  order: 1,
+  lastUpdated: "2024-01-01T00:00:00Z"
 }
 ```
 
-## 📁 Project Structure
-
+### Storage Structure
 ```
-src/
-├── components/
-│   ├── admin/           # Admin panel components
-│   ├── layout/          # Layout components (navbar, footer)
-│   ├── sections/        # Portfolio sections
-│   └── common/          # Reusable components
-├── contexts/            # React context providers
-├── firebase/            # Firebase configuration and utilities
-├── pages/              # Page components
-└── theme.js            # Material-UI theme configuration
+/users/{uid}/
+├── profile/          # Profile pictures
+├── cv/              # CV/Resume files
+├── media/           # General media files
+└── projects/        # Project images/videos
 ```
 
-## 🎨 Customization
+## 🔒 Security
+
+### Firestore Rules
+- Users can only access their own data
+- Public read access for portfolio viewing
+- Write access requires authentication and ownership
+
+### Storage Rules
+- User-based folder isolation
+- Public read for portfolio media
+- Write access requires authentication and ownership
+
+## 🌟 Key Components
+
+### Authentication
+- `Register.js` - User registration with validation
+- `Login.js` - User authentication
+- `AuthContext.js` - Global authentication state
+
+### Admin Dashboard
+- `ProfileAdminDashboard.js` - Main admin interface
+- `MediaUploadZone.js` - File upload component
+- `EnhancedProjectEditor.js` - Project management
+
+### Public Portfolio
+- `PublicPortfolio.js` - Public portfolio viewer
+- Dynamic user data loading
+- SEO-optimized structure
+
+## 📋 Available Routes
+
+### Public Routes
+- `/` - Homepage
+- `/u/{username}` - Public portfolio by username
+- `/p/{uid}` - Public portfolio by user ID
+- `/login` - User login
+- `/register` - User registration
+
+### Protected Admin Routes
+- `/admin` - Profile admin dashboard
+- `/admin/content` - Content management
+- `/admin/media` - Media upload
+- `/admin/projects/{id}` - Project editor
+
+## 🧪 Testing
+
+### Multi-User Testing
+1. Create multiple user accounts
+2. Upload different media for each user
+3. Verify data isolation between users
+4. Test public portfolio access
+5. Confirm media files are properly segregated
+
+### Build & Deploy
+```bash
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## 🔧 Development
 
 ### Adding New Sections
-1. Update the data structure in `src/firebase/firestore.js`
-2. Add the section component in `src/components/sections/`
-3. Update `MainComponent.js` to render the new section
-4. Add editing support in the admin panel
+1. Define section schema in Firestore
+2. Create section component in `/components/sections/`
+3. Add to section editor routing
+4. Update data validation schemas
 
-### Styling
-- Modify `src/theme.js` for global theme changes
-- Use Material-UI's `sx` prop for component-specific styling
-- Tailwind classes are available for utility styling
+### Customizing Upload Types
+1. Extend `MediaUploadZone` component
+2. Add new storage paths in Firebase rules
+3. Update file validation logic
+4. Add preview components for new types
 
-## 🚦 Usage
+## 📚 Technologies Used
 
-### First-time Setup
-1. Visit `/admin` and log in with your Firebase auth
-2. The system will offer to migrate data from the JSON file
-3. Edit sections through the admin panel
-4. Upload media files and copy URLs for use in content
-
-### Content Management
-- **Intro Section**: Update name, title, subtitle, profile image
-- **Skills**: Add/remove skills by category
-- **Projects**: Manage project details, images, and videos
-- **Education**: Update education history
-- **Experience**: Manage work experience
-- **Media**: Upload and manage all media files
-
-## 🔐 Security
-
-- Admin access requires Firebase authentication
-- Firestore rules ensure only authenticated users can write
-- Media files are publicly readable but require auth to upload
-- Environment variables keep Firebase config secure
-
-## 🚀 Deployment
-
-### Build for Production
-```bash
-npm run build
-```
-
-### Deploy to Firebase Hosting
-```bash
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-firebase deploy
-```
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+- **React 18** - Modern React with hooks
+- **Material-UI v5** - Component library
+- **Firebase v10** - Backend services
+- **React Hook Form** - Form management
+- **Yup** - Schema validation
+- **React Dropzone** - File uploads
+- **Vite** - Build tool
+- **Tailwind CSS** - Utility-first CSS
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Ahmad-Alqattu/portfolio-website/issues).
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-## 📞 Contact
+## 📄 License
 
-Ahmad Al-Qattu - [ahmadl.qatu@gmail.com](mailto:ahmadl.qatu@gmail.com)
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Project Link: [https://github.com/Ahmad-Alqattu/portfolio-website](https://github.com/Ahmad-Alqattu/portfolio-website)
+## 🙋‍♂️ Support
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For support, email support@example.com or create an issue in the repository.

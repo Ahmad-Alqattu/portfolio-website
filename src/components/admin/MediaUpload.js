@@ -25,15 +25,17 @@ import {
   VideoFile as VideoIcon
 } from '@mui/icons-material';
 import { 
-  uploadMultipleFiles, 
-  deleteFile, 
+  uploadMultipleUserFiles, 
+  deleteUserFile, 
   isValidImageFile, 
   isValidVideoFile, 
   formatFileSize 
 } from '../../firebase/storage';
+import { useAuth } from '../../contexts/AuthContext';
 
 const MediaUpload = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
@@ -63,7 +65,7 @@ const MediaUpload = () => {
       }
 
       // Upload files
-      const results = await uploadMultipleFiles(fileArray, 'portfolio-media', (index, progress) => {
+      const results = await uploadMultipleUserFiles(fileArray, currentUser.uid, 'media', (index, progress) => {
         setUploadProgress(prev => ({
           ...prev,
           [index]: progress
@@ -110,7 +112,7 @@ const MediaUpload = () => {
 
   const handleDeleteFile = async (file) => {
     try {
-      const result = await deleteFile(file.url);
+      const result = await deleteUserFile(file.filePath || file.url);
       if (result.success) {
         setUploadedFiles(prev => prev.filter(f => f.id !== file.id));
         setMessage({ type: 'success', text: 'File deleted successfully' });

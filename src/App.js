@@ -8,6 +8,8 @@ import ResponsiveNavBar from './components/layout/ResponsiveNavBar';
 import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
 import Login from './components/admin/Login';
+import Register from './components/auth/Register';
+import ProfileAdminDashboard from './components/admin/ProfileAdminDashboard';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ModernAdminDashboard from './components/admin/ModernAdminDashboard';
 import SectionEditor from './components/admin/SectionEditor';
@@ -15,8 +17,10 @@ import ModernSectionEditor from './components/admin/ModernSectionEditor';
 import UniversalSectionEditor from './components/admin/UniversalSectionEditor';
 import MediaUpload from './components/admin/MediaUpload';
 import ProjectEditor from './components/admin/ProjectEditor';
+import EnhancedProjectEditor from './components/admin/EnhancedProjectEditor';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import FirebaseSetupGuide from './components/admin/FirebaseSetupGuide';
+import PublicPortfolio from './components/portfolio/PublicPortfolio';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -45,10 +49,22 @@ function App() {
                   <Footer />
                 </>
               } />
+              
+              {/* Public portfolio routes */}
+              <Route path="/u/:username" element={<PublicPortfolio />} />
+              <Route path="/p/:uid" element={<PublicPortfolio />} />
+              
+              {/* Authentication routes */}
               <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               
               {/* Protected admin routes */}
               <Route path="/admin" element={
+                <ProtectedRoute>
+                  <ProfileAdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/content" element={
                 <ProtectedRoute>
                   <AdminDashboard />
                 </ProtectedRoute>
@@ -85,7 +101,7 @@ function App() {
               } />
               <Route path="/admin/projects/:projectId" element={
                 <ProtectedRoute>
-                  <ProjectEditor />
+                  <EnhancedProjectEditor />
                 </ProtectedRoute>
               } />
             </Routes>

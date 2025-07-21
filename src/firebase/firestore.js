@@ -15,6 +15,70 @@ import { db } from './config';
 
 // User-specific collection structure
 const getUserSectionsCollection = (userId = 'default-user') => `users/${userId}/sections`;
+const USERS_COLLECTION = 'users';
+
+// User Profile Management
+export const createUserProfile = async (userId, profileData) => {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, userId);
+    await setDoc(userRef, profileData);
+    return { success: true };
+  } catch (error) {
+    console.error('Error creating user profile:', error);
+    throw error;
+  }
+};
+
+export const getUserProfile = async (userId) => {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      return { success: true, data: userDoc.data() };
+    } else {
+      return { success: false, error: 'User profile not found' };
+    }
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateUserProfile = async (userId, profileData) => {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, userId);
+    await updateDoc(userRef, {
+      ...profileData,
+      lastUpdated: new Date().toISOString()
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getUserByUsername = async (username) => {
+  try {
+    const usersRef = collection(db, USERS_COLLECTION);
+    const q = query(usersRef, where('username', '==', username));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const userDoc = snapshot.docs[0];
+      return { 
+        success: true, 
+        data: { id: userDoc.id, ...userDoc.data() } 
+      };
+    } else {
+      return { success: false, error: 'User not found' };
+    }
+  } catch (error) {
+    console.error('Error fetching user by username:', error);
+    return { success: false, error: error.message };
+  }
+};
 
 // Get all sections from Firestore for specific user
 export const getAllSections = async (userId = 'default-user') => {

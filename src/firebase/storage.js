@@ -1,4 +1,4 @@
-// Firebase Storage utilities
+// Firebase Storage utilities with user-based folder structure
 import { 
   ref, 
   uploadBytes, 
@@ -9,12 +9,12 @@ import {
 import { storage } from './config';
 import { v4 as uuidv4 } from 'uuid';
 
-// Upload file to Firebase Storage
-export const uploadFile = async (file, folder = 'uploads', onProgress = null) => {
+// Upload file to user-specific folder in Firebase Storage
+export const uploadUserFile = async (file, userId, folder = 'media', onProgress = null) => {
   try {
     // Create a unique filename
     const fileName = `${uuidv4()}-${file.name}`;
-    const storageRef = ref(storage, `${folder}/${fileName}`);
+    const storageRef = ref(storage, `users/${userId}/${folder}/${fileName}`);
 
     if (onProgress) {
       // Use resumable upload with progress tracking
@@ -33,7 +33,7 @@ export const uploadFile = async (file, folder = 'uploads', onProgress = null) =>
           async () => {
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve({ success: true, downloadURL, fileName });
+              resolve({ success: true, downloadURL, fileName, filePath: storageRef.fullPath });
             } catch (error) {
               reject(error);
             }
@@ -44,7 +44,7 @@ export const uploadFile = async (file, folder = 'uploads', onProgress = null) =>
       // Simple upload without progress tracking
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
-      return { success: true, downloadURL, fileName };
+      return { success: true, downloadURL, fileName, filePath: storageRef.fullPath };
     }
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -52,11 +52,35 @@ export const uploadFile = async (file, folder = 'uploads', onProgress = null) =>
   }
 };
 
-// Delete file from Firebase Storage
-export const deleteFile = async (fileURL) => {
+// Upload profile picture
+export const uploadProfilePicture = async (file, userId, onProgress = null) => {
+  return uploadUserFile(file, userId, 'profile', onProgress);
+};
+
+// Upload CV (PDF)
+export const uploadCV = async (file, userId, onProgress = null) => {
+  if (file.type !== 'application/pdf') {
+    return { success: false, error: 'CV must be a PDF file' };
+  }
+  return uploadUserFile(file, userId, 'cv', onProgress);
+};
+
+// Upload project media (images/videos)
+export const uploadProjectMedia = async (file, userId, onProgress = null) => {
+  const isImage = isValidImageFile(file);
+  const isVideo = isValidVideoFile(file);
+  
+  if (!isImage && !isVideo) {
+    return { success: false, error: 'File must be an image or video' };
+  }
+  
+  return uploadUserFile(file, userId, 'projects', onProgress);
+};
+
+// Delete file from Firebase Storage using file path
+export const deleteUserFile = async (filePath) => {
   try {
-    // Extract the file path from the download URL
-    const fileRef = ref(storage, fileURL);
+    const fileRef = ref(storage, filePath);
     await deleteObject(fileRef);
     return { success: true };
   } catch (error) {
@@ -65,11 +89,11 @@ export const deleteFile = async (fileURL) => {
   }
 };
 
-// Upload multiple files
-export const uploadMultipleFiles = async (files, folder = 'uploads', onProgress = null) => {
+// Upload multiple files to user folder
+export const uploadMultipleUserFiles = async (files, userId, folder = 'media', onProgress = null) => {
   try {
     const uploadPromises = files.map((file, index) => {
-      return uploadFile(file, folder, onProgress ? (progress) => {
+      return uploadUserFile(file, userId, folder, onProgress ? (progress) => {
         onProgress(index, progress);
       } : null);
     });
@@ -80,6 +104,11 @@ export const uploadMultipleFiles = async (files, folder = 'uploads', onProgress 
     console.error('Error uploading multiple files:', error);
     return { success: false, error: error.message };
   }
+};
+
+// Legacy upload function for backward compatibility
+export const uploadFile = async (file, folder = 'uploads', onProgress = null) => {
+  return uploadUserFile(file, 'default-user', folder, onProgress);
 };
 
 // Helper function to get file extension
