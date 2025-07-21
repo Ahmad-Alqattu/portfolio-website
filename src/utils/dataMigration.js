@@ -49,14 +49,52 @@ export const migrateLocalDataToFirebase = async () => {
             ];
           }
           break;
+        case 'projects':
+          if (!processedSection.data.projects) {
+            processedSection.data.projects = [];
+          } else {
+            // Ensure all projects have active state
+            processedSection.data.projects = processedSection.data.projects.map(project => ({
+              ...project,
+              active: project.active !== undefined ? project.active : true
+            }));
+          }
+          break;
         case 'experience':
-          if (!processedSection.data.experiences) {
+          // Handle legacy data structure
+          if (processedSection.experience) {
+            processedSection.data = processedSection.data || {};
+            processedSection.data.experiences = processedSection.experience.map(exp => ({
+              ...exp,
+              active: exp.active !== undefined ? exp.active : true
+            }));
+            delete processedSection.experience; // Remove legacy field
+          } else if (!processedSection.data.experiences) {
             processedSection.data.experiences = [];
+          } else {
+            // Ensure all experiences have active state  
+            processedSection.data.experiences = processedSection.data.experiences.map(exp => ({
+              ...exp,
+              active: exp.active !== undefined ? exp.active : true
+            }));
           }
           break;
         case 'education':
-          if (!processedSection.data.educations) {
+          // Handle legacy data structure
+          if (processedSection.data?.educationList) {
+            processedSection.data.educations = processedSection.data.educationList.map(edu => ({
+              ...edu,
+              active: edu.active !== undefined ? edu.active : true
+            }));
+            delete processedSection.data.educationList; // Remove legacy field
+          } else if (!processedSection.data.educations) {
             processedSection.data.educations = [];
+          } else {
+            // Ensure all education entries have active state
+            processedSection.data.educations = processedSection.data.educations.map(edu => ({
+              ...edu,
+              active: edu.active !== undefined ? edu.active : true
+            }));
           }
           break;
         case 'contact':

@@ -17,7 +17,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 
 
-const ExperienceSection = ({ id, title,educationList}) => {
+const ExperienceSection = ({ id, title, experiences = [] }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -30,7 +30,7 @@ fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
       </Typography>
       
       <Grid container spacing={3}>
-        {educationList.map((exp, index) => (
+        {experiences.map((exp, index) => (
           <Grid item xs={12} key={index}>
             <Paper 
               elevation={3}

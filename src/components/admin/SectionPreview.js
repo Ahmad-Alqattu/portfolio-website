@@ -21,9 +21,9 @@ const SectionPreview = ({ sectionType, sectionData }) => {
       case 'skills':
         return <SkillsSection {...sectionData} />;
       case 'education':
-        return <EducationSection {...sectionData} educationList={sectionData.data?.educations} />;
+        return <EducationSection {...sectionData} educationList={sectionData.data?.educations || sectionData.data?.educationList} />;
       case 'experience':
-        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences} />;
+        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences || sectionData.experience} />;
       case 'projects':
         return <ProjectsSection {...sectionData} projects={sectionData.data?.projects} />;
       case 'capabilities':
