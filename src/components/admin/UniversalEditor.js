@@ -28,7 +28,8 @@ const UniversalEditor = () => {
     { id: 'capabilities', name: 'Capabilities', icon: '💡' },
     { id: 'experience', name: 'Experience', icon: '💼' },
     { id: 'education', name: 'Education', icon: '🎓' },
-    { id: 'contact', name: 'Contact', icon: '📧' }
+    { id: 'contact', name: 'Contact', icon: '📧' },
+    { id: 'footerAndLinks', name: 'Footer & Links', icon: '🔗' }
   ];
 
   useEffect(() => {
@@ -157,6 +158,31 @@ const UniversalEditor = () => {
             location: '',
             linkedin: '',
             github: ''
+          }
+        };
+      case 'footerAndLinks':
+        return {
+          ...base,
+          title: 'Footer & Links',
+          content: 'Footer section containing contact information, social links, and welcome message.',
+          data: {
+            contactInfo: {
+              phone: '+970 0598-682-679',
+              email: 'ahmadl.qatu@gmail.com',
+              location: 'Ramallah, Palestine'
+            },
+            socialLinks: {
+              github: 'https://github.com/Ahmad-Alqattu',
+              linkedin: 'https://www.linkedin.com/in/ahmad-al-qattu-987587201/',
+              facebook: 'https://www.facebook.com/ahmadluay.alqatu.5',
+              email: 'mailto:ahmadl.qatu@gmail.com'
+            },
+            welcomeMessage: {
+              title: 'Welcome to My Portfolio',
+              description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
+            },
+            cvLink: '/assets/AhmadQattu_resume.pdf',
+            copyrightText: 'Ahmad AL-Qatu'
           }
         };
       default:

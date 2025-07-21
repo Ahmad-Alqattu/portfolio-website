@@ -44,9 +44,11 @@ export const onAuthStateChangedListener = (callback) => {
   return onAuthStateChanged(auth, callback);
 };
 
-// Check if user is admin (simplified - you can implement role-based auth later)
+// Check if user is admin - only allow specific email
 export const isUserAdmin = (user) => {
-  // For now, any authenticated user is considered admin
-  // In production, you would check against a whitelist or role in Firestore
-  return user !== null;
+  if (!user || !user.email) {
+    return false;
+  }
+  // Only allow ahmadl.qatu@gmail.com
+  return user.email === 'ahmadl.qatu@gmail.com';
 };

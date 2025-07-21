@@ -72,6 +72,30 @@ export const migrateLocalDataToFirebase = async () => {
             };
           }
           break;
+        case 'footerAndLinks':
+          if (!processedSection.data.contactInfo) {
+            processedSection.data = {
+              contactInfo: {
+                phone: '+970 0598-682-679',
+                email: 'ahmadl.qatu@gmail.com',
+                location: 'Ramallah, Palestine'
+              },
+              socialLinks: {
+                github: 'https://github.com/Ahmad-Alqattu',
+                linkedin: 'https://www.linkedin.com/in/ahmad-al-qattu-987587201/',
+                facebook: 'https://www.facebook.com/ahmadluay.alqatu.5',
+                email: 'mailto:ahmadl.qatu@gmail.com'
+              },
+              welcomeMessage: {
+                title: 'Welcome to My Portfolio',
+                description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
+              },
+              cvLink: '/assets/AhmadQattu_resume.pdf',
+              copyrightText: 'Ahmad AL-Qatu',
+              ...processedSection.data
+            };
+          }
+          break;
       }
       
       const result = await updateSection(processedSection.id || processedSection.type, processedSection);

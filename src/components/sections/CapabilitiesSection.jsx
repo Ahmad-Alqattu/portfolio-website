@@ -43,9 +43,27 @@ const capabilities = [
   },
 ];
 
-function CapabilitiesSection({ id, title}) {
+function CapabilitiesSection({ id, title, data, content }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Use data from props or fall back to hardcoded capabilities
+  const capabilitiesData = data?.capabilities || capabilities.map(cap => cap.title);
+  const sectionTitle = title || 'What Can I Do?';
+  const sectionContent = content || '';
+
+  // Create capability objects from data
+  const capabilityItems = capabilitiesData.map((capability, index) => {
+    if (typeof capability === 'string') {
+      // If it's just a string, use the original hardcoded descriptions
+      const originalCap = capabilities.find(cap => cap.title === capability) || capabilities[index];
+      return {
+        title: capability,
+        description: originalCap?.description || 'Professional capability in this area.'
+      };
+    }
+    return capability; // If it's already an object with title and description
+  });
 
   return (
     <Box  id={id} sx={{ py: 4 }}>
@@ -53,8 +71,14 @@ function CapabilitiesSection({ id, title}) {
 
               <Typography variant="h2" component="h2" sx={{           textAlign: 'center', 
 fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
-        What Can I Do?
+        {sectionTitle}
       </Typography>
+
+      {sectionContent && (
+        <Typography variant="body1" sx={{ textAlign: 'center', mb: 4, maxWidth: '800px', mx: 'auto' }}>
+          {sectionContent}
+        </Typography>
+      )}
 
       {/* Grid of Cards */}
       <Box sx={{          maxWidth: isMobile? '100%' : '80%', margin: 'auto' }}>
@@ -63,7 +87,7 @@ fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
           spacing={{ xs: 2, md: 4 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {capabilities.map((cap, index) => (
+          {capabilityItems.map((cap, index) => (
             <Grid item xs={4} sm={4} md={4} key={index}>
               <Card
                 sx={{

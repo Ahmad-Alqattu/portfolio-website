@@ -6,6 +6,7 @@ import ExperienceSection from '../sections/ExperienceSection';
 import ProjectsSection from '../sections/ProjectsSection';
 import CapabilitiesSection from '../sections/CapabilitiesSection';
 import ContactSection from '../sections/ContactSection';
+import Footer from '../layout/Footer';
 
 const SectionPreview = ({ sectionType, sectionData }) => {
   // Create a mock sections object with just this section for preview
@@ -16,19 +17,21 @@ const SectionPreview = ({ sectionType, sectionData }) => {
   const renderPreviewSection = () => {
     switch (sectionType) {
       case 'intro':
-        return <IntroSection data={sectionData} />;
+        return <IntroSection {...sectionData} />;
       case 'skills':
-        return <SkillsSection data={sectionData} />;
+        return <SkillsSection {...sectionData} />;
       case 'education':
-        return <EducationSection data={sectionData} />;
+        return <EducationSection {...sectionData} educationList={sectionData.data?.educations} />;
       case 'experience':
-        return <ExperienceSection data={sectionData} />;
+        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences} />;
       case 'projects':
-        return <ProjectsSection data={sectionData} />;
+        return <ProjectsSection {...sectionData} projects={sectionData.data?.projects} />;
       case 'capabilities':
-        return <CapabilitiesSection data={sectionData} />;
+        return <CapabilitiesSection {...sectionData} />;
       case 'contact':
-        return <ContactSection data={sectionData} />;
+        return <ContactSection {...sectionData} />;
+      case 'footerAndLinks':
+        return <Footer data={sectionData.data} />;
       default:
         return (
           <div className="p-8 text-center text-gray-500">

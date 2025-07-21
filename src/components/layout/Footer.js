@@ -5,8 +5,39 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import EmailIcon from '@mui/icons-material/Email';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useData } from '../../contexts/DataContext';
 
-const Footer = () => {
+const Footer = ({ data = null }) => {
+  const { sections } = useData();
+
+  // Get footer data from props or from Firebase sections
+  const getFooterData = () => {
+    if (data) return data;
+    
+    const footerSection = sections.find(s => s.type === 'footerAndLinks');
+    return footerSection?.data || {
+      contactInfo: {
+        phone: '+970 0598-682-679',
+        email: 'ahmadl.qatu@gmail.com',
+        location: 'Ramallah, Palestine'
+      },
+      socialLinks: {
+        github: 'https://github.com/Ahmad-Alqattu',
+        linkedin: 'https://www.linkedin.com/in/ahmad-al-qattu-987587201/',
+        facebook: 'https://www.facebook.com/ahmadluay.alqatu.5',
+        email: 'mailto:ahmadl.qatu@gmail.com'
+      },
+      welcomeMessage: {
+        title: 'Welcome to My Portfolio',
+        description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
+      },
+      cvLink: '/assets/AhmadQattu_resume.pdf',
+      copyrightText: 'Ahmad AL-Qatu'
+    };
+  };
+
+  const footerData = getFooterData();
+  const { contactInfo, socialLinks, welcomeMessage, cvLink, copyrightText } = footerData;
 
   const handleBackToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -50,21 +81,20 @@ const Footer = () => {
               Contact Info
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              +970 0598-682-679<br />
-              <Link href="mailto:ahmadl.qatu@gmail.com" color="primary.main" underline="hover">
-                ahmadl.qatu@gmail.com
+              {contactInfo.phone}<br />
+              <Link href={`mailto:${contactInfo.email}`} color="primary.main" underline="hover">
+                {contactInfo.email}
               </Link><br />
-              Ramallah, Palestine
+              {contactInfo.location}
             </Typography>
           </Grid>
 
           <Grid item md={4} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-              Welcome to My Portfolio
+              {welcomeMessage.title}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Thank you for visiting my personal portfolio website.<br />
-              Connect with me on email or drop me a message!
+              {welcomeMessage.description}
             </Typography>
           </Grid>
 
@@ -73,20 +103,20 @@ const Footer = () => {
               Social Links
             </Typography>
             <Box sx={{ mb: 0 }}>
-              <IconButton href="https://github.com/Ahmad-Alqattu" target="_blank" sx={{ color: 'text.primary' }}>
+              <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'text.primary' }}>
                 <GitHubIcon />
               </IconButton>
-              <IconButton href="https://www.linkedin.com/in/ahmad-al-qattu-987587201/" target="_blank" sx={{ color: 'text.primary' }}>
+              <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'text.primary' }}>
                 <LinkedInIcon />
               </IconButton>
-              <IconButton href="https://www.facebook.com/ahmadluay.alqatu.5" target="_blank" sx={{ color: 'text.primary' }}>
+              <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'text.primary' }}>
                 <FacebookIcon />
               </IconButton>
-              <IconButton href="mailto:ahmadl.qatu@gmail.com" sx={{ color: 'text.primary' }}>
+              <IconButton href={socialLinks.email} sx={{ color: 'text.primary' }}>
                 <EmailIcon />
               </IconButton>
             </Box>
-            <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 5.5 }} href="/assets/AhmadQattu_resume.pdf" color="primary.main" >
+            <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 5.5 }} href={cvLink} color="primary.main" >
               Download CV
             </Link>
           </Grid>
@@ -97,11 +127,10 @@ const Footer = () => {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 4, alignItems: 'center' }}>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-            Welcome to My Portfolio
+            {welcomeMessage.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Thank you for visiting my personal portfolio website.<br />
-            Connect with me on email or drop me a message!
+            {welcomeMessage.description}
           </Typography>
         </Box>
 
@@ -110,11 +139,11 @@ const Footer = () => {
             Contact Info
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            +970 0598-682-679<br />
-            <Link href="mailto:ahmadl.qatu@gmail.com" color="primary.main" underline="hover">
-              ahmadl.qatu@gmail.com
+            {contactInfo.phone}<br />
+            <Link href={`mailto:${contactInfo.email}`} color="primary.main" underline="hover">
+              {contactInfo.email}
             </Link><br />
-            Ramallah, Palestine
+            {contactInfo.location}
           </Typography>
         </Box>
 
@@ -123,27 +152,27 @@ const Footer = () => {
             Social Links
           </Typography>
           <Box sx={{ mb: 1 }}>
-            <IconButton href="https://github.com/Ahmad-Alqattu" target="_blank" sx={{ color: 'primary.main' }}>
+            <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'primary.main' }}>
               <GitHubIcon />
             </IconButton>
-            <IconButton href="https://www.linkedin.com/in/ahmad-al-qattu-987587201/" target="_blank" sx={{ color: 'primary.main' }}>
+            <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'primary.main' }}>
               <LinkedInIcon />
             </IconButton>
-            <IconButton href="https://www.facebook.com/ahmadluay.alqatu.5" target="_blank" sx={{ color: 'primary.main' }}>
+            <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'primary.main' }}>
               <FacebookIcon />
             </IconButton>
-            <IconButton href="mailto:ahmadl.qatu@gmail.com" sx={{ color: 'primary.main' }}>
+            <IconButton href={socialLinks.email} sx={{ color: 'primary.main' }}>
               <EmailIcon />
             </IconButton>
           </Box>
-          <Link href="/assets/AhmadQattu_resume.pdf" color="primary.main" underline="hover">
+          <Link href={cvLink} color="primary.main" underline="hover">
             Download CV
           </Link>
         </Box>
       </Box>
 
       <Typography variant="body2" color="text.secondary" align="center" sx={{ pt: 2 }}>
-        Ahmad AL-Qatu • {new Date().getFullYear()}
+        {copyrightText} • {new Date().getFullYear()}
       </Typography>
     </Box>
   );

@@ -27,43 +27,21 @@ export const DataProvider = ({ children }) => {
     setError(null);
 
     try {
-      // First, try to load from Firestore
-      console.log('Attempting to load from Firestore...');
+      // Always load from Firestore - no JSON fallback in production
+      console.log('Loading from Firestore...');
       const firestoreData = await getAllSections();
 
-      if (firestoreData.length > 0) {
-        console.log('Firestore data loaded successfully');
-        setSections(firestoreData);
-        setUseFirestore(true);
-        
-        // Set up real-time listeners
-        setupRealtimeListeners();
-      } else {
-        // Fallback to JSON file
-        console.log('No Firestore data found, falling back to JSON...');
-        const response = await fetch('/data/sectionsData.json');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch JSON data: ${response.status}`);
-        }
-        const jsonData = await response.json();
-        setSections(jsonData);
-        setUseFirestore(false);
-      }
-    } catch (err) {
-      console.error('Error loading portfolio data:', err);
-      setError(err.message);
+      console.log('Firestore data loaded:', firestoreData.length, 'sections');
+      setSections(firestoreData);
+      setUseFirestore(true);
       
-      // Fallback to JSON file on error
-      try {
-        console.log('Falling back to JSON file due to error...');
-        const response = await fetch('/data/sectionsData.json');
-        const jsonData = await response.json();
-        setSections(jsonData);
-        setUseFirestore(false);
-      } catch (jsonErr) {
-        console.error('Error loading JSON fallback:', jsonErr);
-        setError('Failed to load portfolio data');
-      }
+      // Set up real-time listeners
+      setupRealtimeListeners();
+    } catch (err) {
+      console.error('Error loading portfolio data from Firestore:', err);
+      setError(`Failed to load data from Firebase: ${err.message}. Please check your connection and Firebase configuration.`);
+      setSections([]);
+      setUseFirestore(true); // Still mark as using Firestore for admin functionality
     }
 
     setLoading(false);
