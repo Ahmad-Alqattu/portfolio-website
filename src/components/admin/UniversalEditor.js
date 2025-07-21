@@ -10,7 +10,7 @@ import '../../utils/authDebug'; // Import auth debug functions
 import '../../utils/dataInvestigation'; // Import data investigation tools
 import '../../utils/firebaseStructureDebug'; // Import Firebase structure debug
 import '../../utils/uploadTest'; // Import upload testing tools
-import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff } from 'lucide-react';
+import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff, ToggleLeft, ToggleRight } from 'lucide-react';
 import SectionPreview from './SectionPreview';
 import FileUpload from './FileUpload';
 import SectionOrderManager from './SectionOrderManager';
@@ -767,39 +767,70 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
       </div>
       
       <div className="space-y-4">
-        {projects.map((project, idx) => (
-          <div key={project.id} className={`border rounded-lg overflow-hidden ${projectColors[idx % projectColors.length]}`}>
-            {/* Project Header - Always Visible */}
-            <div 
-              className="flex justify-between items-center p-4 cursor-pointer hover:bg-opacity-80 transition-colors"
-              onClick={() => setExpandedProject(expandedProject === idx ? -1 : idx)}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`transform transition-transform ${expandedProject === idx ? 'rotate-90' : ''}`}>
-                  ▶
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${idx % 6 === 0 ? 'bg-blue-500' : idx % 6 === 1 ? 'bg-green-500' : idx % 6 === 2 ? 'bg-purple-500' : idx % 6 === 3 ? 'bg-orange-500' : idx % 6 === 4 ? 'bg-pink-500' : 'bg-indigo-500'}`}></div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      {project.name || `Project #${idx + 1}`}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {project.description || 'No description'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeProject(idx);
-                }}
-                className="text-red-600 hover:text-red-800 p-1 transition-colors"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="projects">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+                {projects.map((project, idx) => (
+                  <Draggable key={project.id} draggableId={String(project.id)} index={idx}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`border rounded-lg overflow-hidden ${projectColors[idx % projectColors.length]} ${
+                          snapshot.isDragging ? 'shadow-lg' : ''
+                        }`}
+                      >
+                        {/* Project Header - Always Visible */}
+                        <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-opacity-80 transition-colors">
+                          <div className="flex items-center gap-3">
+                            {/* Drag Handle */}
+                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                              <GripVertical size={20} className="text-gray-400" />
+                            </div>
+                            
+                            <div 
+                              className={`transform transition-transform ${expandedProject === idx ? 'rotate-90' : ''}`}
+                              onClick={() => setExpandedProject(expandedProject === idx ? -1 : idx)}
+                            >
+                              ▶
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-3 h-3 rounded-full ${idx % 6 === 0 ? 'bg-blue-500' : idx % 6 === 1 ? 'bg-green-500' : idx % 6 === 2 ? 'bg-purple-500' : idx % 6 === 3 ? 'bg-orange-500' : idx % 6 === 4 ? 'bg-pink-500' : 'bg-indigo-500'}`}></div>
+                              <div>
+                                <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                  {project.name || `Project #${idx + 1}`}
+                                  {/* Active/Inactive Toggle */}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleProjectActive(idx);
+                                    }}
+                                    className={`text-sm px-2 py-1 rounded-full ${
+                                      project.active !== false 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}
+                                  >
+                                    {project.active !== false ? '✓ Active' : '✗ Inactive'}
+                                  </button>
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  {project.description || 'No description'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeProject(idx);
+                            }}
+                            className="text-red-600 hover:text-red-800 p-1 transition-colors"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
             
             {/* Project Details - Collapsible */}
             {expandedProject === idx && (
@@ -933,8 +964,15 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 </div>
               </div>
             )}
-          </div>
-        ))}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );
@@ -1061,9 +1099,34 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
       duration: '2023 - Present',
       description: 'Job description and responsibilities...',
       location: 'City, Country',
-      logo: '' // Changed from image to logo
+      logo: '', // Changed from image to logo
+      active: true,
+      order: experiences.length + 1
     };
     onChange('data.experiences', [...experiences, newExperience]);
+  };
+
+  const toggleExperienceActive = (idx) => {
+    const updatedExperiences = experiences.map((experience, i) => 
+      i === idx ? { ...experience, active: !experience.active } : experience
+    );
+    onChange('data.experiences', updatedExperiences);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(experiences);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Update order properties
+    const reorderedItems = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+
+    onChange('data.experiences', reorderedItems);
   };
 
   const handleImageUpload = async (file, expIdx) => {
@@ -1102,20 +1165,51 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
       </div>
       
       <div className="space-y-6">
-        {experiences.map((exp, idx) => (
-          <div key={exp.id || `exp-${idx}`} className="border rounded-lg p-4 bg-gray-50">{/* Fixed: Added fallback key */}
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="font-medium text-gray-900">Experience #{idx + 1}</h4>
-              <button
-                onClick={() => {
-                  const newExperiences = experiences.filter((_, i) => i !== idx);
-                  onChange('data.experiences', newExperiences);
-                }}
-                className="text-red-600 hover:text-red-800"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="experiences">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-6">
+                {experiences.map((exp, idx) => (
+                  <Draggable key={exp.id || `exp-${idx}`} draggableId={String(exp.id || `exp-${idx}`)} index={idx}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`border rounded-lg p-4 bg-gray-50 ${
+                          snapshot.isDragging ? 'shadow-lg' : ''
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-4">
+                          <div className="flex items-center gap-3">
+                            {/* Drag Handle */}
+                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                              <GripVertical size={20} className="text-gray-400" />
+                            </div>
+                            <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                              Experience #{idx + 1}
+                              {/* Active/Inactive Toggle */}
+                              <button
+                                onClick={() => toggleExperienceActive(idx)}
+                                className={`text-sm px-2 py-1 rounded-full ${
+                                  exp.active !== false 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {exp.active !== false ? '✓ Active' : '✗ Inactive'}
+                              </button>
+                            </h4>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const newExperiences = experiences.filter((_, i) => i !== idx);
+                              onChange('data.experiences', newExperiences);
+                            }}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
             
             {/* Company Image */}
             <div className="mb-4">
@@ -1205,8 +1299,15 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 placeholder="Job responsibilities and achievements..."
               />
             </div>
-          </div>
-        ))}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );
@@ -1224,9 +1325,34 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
       duration: '2019 - 2023',
       description: 'Relevant coursework and achievements...',
       location: 'City, Country',
-      logo: '' // Changed from image to logo
+      logo: '', // Changed from image to logo
+      active: true,
+      order: educations.length + 1
     };
     onChange('data.educations', [...educations, newEducation]);
+  };
+
+  const toggleEducationActive = (idx) => {
+    const updatedEducations = educations.map((education, i) => 
+      i === idx ? { ...education, active: !education.active } : education
+    );
+    onChange('data.educations', updatedEducations);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(educations);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Update order properties
+    const reorderedItems = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+
+    onChange('data.educations', reorderedItems);
   };
 
   const handleImageUpload = async (file, eduIdx) => {
@@ -1265,20 +1391,51 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
       </div>
       
       <div className="space-y-6">
-        {educations.map((edu, idx) => (
-          <div key={edu.id || `edu-${idx}`} className="border rounded-lg p-4 bg-gray-50">{/* Fixed: Added key prop */}
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="font-medium text-gray-900">Education #{idx + 1}</h4>
-              <button
-                onClick={() => {
-                  const newEducations = educations.filter((_, i) => i !== idx);
-                  onChange('data.educations', newEducations);
-                }}
-                className="text-red-600 hover:text-red-800"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="educations">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-6">
+                {educations.map((edu, idx) => (
+                  <Draggable key={edu.id || `edu-${idx}`} draggableId={String(edu.id || `edu-${idx}`)} index={idx}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`border rounded-lg p-4 bg-gray-50 ${
+                          snapshot.isDragging ? 'shadow-lg' : ''
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-4">
+                          <div className="flex items-center gap-3">
+                            {/* Drag Handle */}
+                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                              <GripVertical size={20} className="text-gray-400" />
+                            </div>
+                            <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                              Education #{idx + 1}
+                              {/* Active/Inactive Toggle */}
+                              <button
+                                onClick={() => toggleEducationActive(idx)}
+                                className={`text-sm px-2 py-1 rounded-full ${
+                                  edu.active !== false 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {edu.active !== false ? '✓ Active' : '✗ Inactive'}
+                              </button>
+                            </h4>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const newEducations = educations.filter((_, i) => i !== idx);
+                              onChange('data.educations', newEducations);
+                            }}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
             
             {/* Institution Logo */}
             <div className="mb-4">
@@ -1370,8 +1527,15 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 placeholder="Relevant coursework, achievements, GPA..."
               />
             </div>
-          </div>
-        ))}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );

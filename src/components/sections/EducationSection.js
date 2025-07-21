@@ -45,7 +45,10 @@ function EducationSection({ id, title, content, educationList = [] }) {
 
       {/* Education List */}
       <Grid container sx={{ maxWidth: isMobile ? '90%' : '65%', margin: 'auto' }}>
-        {validEducationList.map((education, index) => (
+        {validEducationList
+          .filter(education => education.active !== false) // Show only active education items
+          .sort((a, b) => (a.order || 999) - (b.order || 999)) // Sort by order
+          .map((education, index) => (
           <Grid item xs={12} key={education.id || index}>
             {/* Display education item */}
             <Box
@@ -119,7 +122,7 @@ function EducationSection({ id, title, content, educationList = [] }) {
             </Box>
 
             {/* Divider between entries */}
-            {index < validEducationList.length - 1 && <Divider sx={{ my: 4 }} />}
+            {index < validEducationList.filter(education => education.active !== false).length - 1 && <Divider sx={{ my: 4 }} />}
           </Grid>
         ))}
       </Grid>
