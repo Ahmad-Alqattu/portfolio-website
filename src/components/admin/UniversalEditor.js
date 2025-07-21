@@ -5,6 +5,11 @@ import { useData } from '../../contexts/DataContext';
 import { mediaManager } from '../../firebase/mediaManager';
 import { updateSection } from '../../firebase/firestore';
 import { migrateLocalDataToFirebase } from '../../utils/dataMigration';
+import '../../utils/debugFirestore'; // Import debug functions for console access
+import '../../utils/authDebug'; // Import auth debug functions
+import '../../utils/dataInvestigation'; // Import data investigation tools
+import '../../utils/firebaseStructureDebug'; // Import Firebase structure debug
+import '../../utils/uploadTest'; // Import upload testing tools
 import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff } from 'lucide-react';
 import SectionPreview from './SectionPreview';
 import FileUpload from './FileUpload';
@@ -29,7 +34,6 @@ const UniversalEditor = () => {
     { id: 'capabilities', name: 'Capabilities', icon: '💡' },
     { id: 'experience', name: 'Experience', icon: '💼' },
     { id: 'education', name: 'Education', icon: '🎓' },
-    { id: 'contact', name: 'Contact', icon: '📧' },
     { id: 'footerAndLinks', name: 'Footer & Links', icon: '🔗' }
   ];
 
@@ -211,35 +215,48 @@ const UniversalEditor = () => {
   };
 
   const handleImageUpload = async (file, targetField = 'data.image') => {
+    console.log('🖼️ Starting image upload for field:', targetField, 'File:', file.name);
     setUploading(true);
     try {
       const result = await mediaManager.uploadFile(file, 'images');
+      console.log('📤 Upload result:', result);
+      
       if (result.success) {
+        console.log('✅ Upload successful, setting field:', targetField, 'to:', result.file.url);
         handleChange(targetField, result.file.url);
         setMessage('✅ Image uploaded successfully!');
         setTimeout(() => setMessage(''), 3000);
+        return result; // Return result for caller
       } else {
+        console.error('❌ Upload failed:', result.error);
         setMessage('❌ Upload failed: ' + result.error);
+        return result;
       }
     } catch (error) {
+      console.error('❌ Upload error:', error);
       setMessage('❌ Upload error: ' + error.message);
+      return { success: false, error: error.message };
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Always try to save to Firebase, don't fallback to local
-      const result = await updateSection(editingData.id || editingData.type, editingData);
+      // Always save to default-user collection
+      const result = await updateSection(editingData.id || editingData.type, editingData, 'default-user');
       if (result.success) {
         setMessage('✅ Section saved to Firebase successfully!');
+        console.log('💾 Section saved:', editingData.type || editingData.id);
       } else {
         setMessage('❌ Firebase save failed: ' + result.error);
+        console.error('❌ Save failed:', result.error);
       }
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       setMessage('❌ Save error: ' + error.message);
+      console.error('❌ Save error:', error);
     }
     setSaving(false);
   };
@@ -315,8 +332,6 @@ const UniversalEditor = () => {
         return <ExperienceEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
       case 'education':
         return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
-      case 'contact':
-        return <ContactEditor data={editingData} onChange={handleChange} />;
       case 'footerAndLinks':
         return <FooterAndLinksEditor data={editingData} onChange={handleChange} />;
       default:
@@ -930,10 +945,32 @@ const CapabilitiesEditor = ({ data, onChange }) => {
   const capabilities = data.data?.capabilities || [];
   
   const addCapability = () => {
-    const capability = prompt('Add new capability:');
-    if (capability) {
-      onChange('data.capabilities', [...capabilities, capability]);
+    const newCapability = {
+      title: 'New Capability',
+      description: 'Describe this capability...'
+    };
+    onChange('data.capabilities', [...capabilities, newCapability]);
+  };
+
+  const updateCapability = (index, field, value) => {
+    const updatedCapabilities = [...capabilities];
+    
+    // Handle both string and object formats
+    if (typeof updatedCapabilities[index] === 'string') {
+      // Convert string to object
+      updatedCapabilities[index] = {
+        title: updatedCapabilities[index],
+        description: 'Professional capability in this area.'
+      };
     }
+    
+    updatedCapabilities[index][field] = value;
+    onChange('data.capabilities', updatedCapabilities);
+  };
+
+  const removeCapability = (index) => {
+    const updatedCapabilities = capabilities.filter((_, i) => i !== index);
+    onChange('data.capabilities', updatedCapabilities);
   };
 
   return (
@@ -950,7 +987,7 @@ const CapabilitiesEditor = ({ data, onChange }) => {
       </div>
       
       <div className="space-y-4 mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
         <textarea
           value={data.content || ''}
           onChange={(e) => onChange('content', e.target.value)}
@@ -960,21 +997,53 @@ const CapabilitiesEditor = ({ data, onChange }) => {
         />
       </div>
       
-      <div className="space-y-3">
-        {capabilities.map((capability, idx) => (
-          <div key={idx} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <span className="text-blue-800 font-medium">💡 {capability}</span>
-            <button
-              onClick={() => {
-                const newCapabilities = capabilities.filter((_, i) => i !== idx);
-                onChange('data.capabilities', newCapabilities);
-              }}
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
-        ))}
+      <div className="space-y-4">
+        {capabilities.map((capability, idx) => {
+          // Handle both string and object formats
+          const capabilityObj = typeof capability === 'string' 
+            ? { title: capability, description: '' }
+            : capability;
+            
+          return (
+            <div key={idx} className="border rounded-lg p-4 bg-gray-50">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-medium text-gray-900">Capability #{idx + 1}</h4>
+                <button
+                  onClick={() => removeCapability(idx)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+              
+              <div className="space-y-3">
+                {/* Capability Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <input
+                    type="text"
+                    value={capabilityObj.title || ''}
+                    onChange={(e) => updateCapability(idx, 'title', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Capability title..."
+                  />
+                </div>
+                
+                {/* Capability Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <textarea
+                    value={capabilityObj.description || ''}
+                    onChange={(e) => updateCapability(idx, 'description', e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Describe this capability in detail..."
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -992,7 +1061,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
       duration: '2023 - Present',
       description: 'Job description and responsibilities...',
       location: 'City, Country',
-      image: ''
+      logo: '' // Changed from image to logo
     };
     onChange('data.experiences', [...experiences, newExperience]);
   };
@@ -1001,7 +1070,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
     try {
       const result = await onImageUpload(file, 'experience');
       if (result?.success) {
-        onChange(`data.experiences.${expIdx}.image`, result.file.url);
+        onChange(`data.experiences.${expIdx}.logo`, result.file.url); // Changed from .image to .logo
       }
     } catch (error) {
       console.error('Image upload failed:', error);
@@ -1034,7 +1103,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
       
       <div className="space-y-6">
         {experiences.map((exp, idx) => (
-          <div key={exp.id} className="border rounded-lg p-4 bg-gray-50">
+          <div key={exp.id || `exp-${idx}`} className="border rounded-lg p-4 bg-gray-50">{/* Fixed: Added fallback key */}
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-gray-900">Experience #{idx + 1}</h4>
               <button
@@ -1052,9 +1121,10 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo (Optional)</label>
               <div className="flex items-center gap-4">
-                {exp.image && (
+                {/* Company Logo Display - Changed from .image to .logo */}
+                {exp.logo && (
                   <img
-                    src={exp.image.startsWith('http') ? exp.image : `/${exp.image}`}
+                    src={exp.logo.startsWith('http') ? exp.logo : `/${exp.logo}`}
                     alt="Company logo"
                     className="w-16 h-16 object-contain rounded border"
                   />
@@ -1154,7 +1224,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
       duration: '2019 - 2023',
       description: 'Relevant coursework and achievements...',
       location: 'City, Country',
-      image: ''
+      logo: '' // Changed from image to logo
     };
     onChange('data.educations', [...educations, newEducation]);
   };
@@ -1163,7 +1233,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
     try {
       const result = await onImageUpload(file, 'education');
       if (result?.success) {
-        onChange(`data.educations.${eduIdx}.image`, result.file.url);
+        onChange(`data.educations.${eduIdx}.logo`, result.file.url); // Changed from .image to .logo
       }
     } catch (error) {
       console.error('Image upload failed:', error);
@@ -1196,7 +1266,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
       
       <div className="space-y-6">
         {educations.map((edu, idx) => (
-          <div key={edu.id} className="border rounded-lg p-4 bg-gray-50">
+          <div key={edu.id || `edu-${idx}`} className="border rounded-lg p-4 bg-gray-50">{/* Fixed: Added key prop */}
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-gray-900">Education #{idx + 1}</h4>
               <button
@@ -1214,9 +1284,10 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Institution Logo (Optional)</label>
               <div className="flex items-center gap-4">
-                {edu.image && (
+                {/* Institution Logo Display - Changed from .image to .logo */}
+                {edu.logo && (
                   <img
-                    src={edu.image.startsWith('http') ? edu.image : `/${edu.image}`}
+                    src={edu.logo.startsWith('http') ? edu.logo : `/${edu.logo}`}
                     alt="Institution logo"
                     className="w-16 h-16 object-contain rounded border"
                   />
@@ -1305,92 +1376,6 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
     </div>
   );
 };
-
-// Contact Section Editor
-const ContactEditor = ({ data, onChange }) => (
-  <div className="bg-white rounded-lg shadow-sm border p-6">
-    <h3 className="text-lg font-medium text-gray-900 mb-6">Contact Information</h3>
-    
-    <div className="space-y-4 mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
-      <textarea
-        value={data.content || ''}
-        onChange={(e) => onChange('content', e.target.value)}
-        rows={3}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        placeholder="How people can contact you..."
-      />
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">📧 Email</label>
-        <input
-          type="email"
-          value={data.data?.email || ''}
-          onChange={(e) => onChange('data.email', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="your@email.com"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">📱 Phone</label>
-        <input
-          type="tel"
-          value={data.data?.phone || ''}
-          onChange={(e) => onChange('data.phone', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="+1 (555) 123-4567"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">📍 Location</label>
-        <input
-          type="text"
-          value={data.data?.location || ''}
-          onChange={(e) => onChange('data.location', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="City, Country"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">💼 LinkedIn</label>
-        <input
-          type="url"
-          value={data.data?.linkedin || ''}
-          onChange={(e) => onChange('data.linkedin', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="https://linkedin.com/in/username"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">🐙 GitHub</label>
-        <input
-          type="url"
-          value={data.data?.github || ''}
-          onChange={(e) => onChange('data.github', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="https://github.com/username"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">🌐 Website</label>
-        <input
-          type="url"
-          value={data.data?.website || ''}
-          onChange={(e) => onChange('data.website', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="https://yourwebsite.com"
-        />
-      </div>
-    </div>
-  </div>
-);
 
 // Basic Editor for other sections
 const BasicEditor = ({ data, onChange }) => (

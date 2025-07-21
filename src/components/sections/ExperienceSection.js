@@ -56,20 +56,39 @@ fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
                       bgcolor: 'background.default'
                     }}
                   >
-                    <Box>
-                      <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold' }}>
-                        {exp.title}
-                      </Typography>
-                      <Typography 
-                        variant="h6" 
-                        color="text.secondary"
-                        sx={{ 
-                          mt: 0.5,
-                          borderRadius: 1 // Subtle border radius for company name
-                        }}
-                      >
-                        {exp.company}
-                      </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      {/* Company Logo */}
+                      {exp.logo && (
+                        <Box
+                          component="img"
+                          src={exp.logo.startsWith('http') ? exp.logo : `/${exp.logo}`}
+                          alt={`${exp.company} logo`}
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            objectFit: 'contain',
+                            borderRadius: 1,
+                            border: '1px solid',
+                            borderColor: 'grey.300',
+                            p: 0.5
+                          }}
+                        />
+                      )}
+                      <Box>
+                        <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold' }}>
+                          {exp.title}
+                        </Typography>
+                        <Typography 
+                          variant="h6" 
+                          color="text.secondary"
+                          sx={{ 
+                            mt: 0.5,
+                            borderRadius: 1 // Subtle border radius for company name
+                          }}
+                        >
+                          {exp.company}
+                        </Typography>
+                      </Box>
                     </Box>
                     <Typography 
                       variant="subtitle1" 

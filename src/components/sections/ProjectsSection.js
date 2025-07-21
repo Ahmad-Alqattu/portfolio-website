@@ -116,6 +116,20 @@ ImageCarousel.propTypes = {
 function ProjectsSection({ id, title, content, projects }) {
   const { visibleCount, setVisibleCount, selectedProject, setSelectedProject } = useProjectsState();
 
+  // Helper function to get primary link from project
+  const getPrimaryLink = (project) => {
+    if (!project.link) return null;
+    if (Array.isArray(project.link)) {
+      return project.link[0] || project.link[1] || null; // Return first non-empty link
+    }
+    return project.link;
+  };
+
+  // Helper function to get link type for icon
+  const getLinkType = (link) => {
+    if (!link) return 'view';
+    return link.includes('github.com') ? 'github' : 'view';
+  };
 
   if (!Array.isArray(projects)) {
     return (
@@ -241,8 +255,8 @@ function ProjectsSection({ id, title, content, projects }) {
                 >
                   More Info
                 </Button>
-                {project.link && (
-                  <Link href={project.link} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center' }}>
+                {getPrimaryLink(project) && (
+                  <Link href={getPrimaryLink(project)} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center' }}>
                     <Button
                       size="medium"
                       variant="outlined"
@@ -253,7 +267,7 @@ function ProjectsSection({ id, title, content, projects }) {
                       onClick={(e) => e.stopPropagation()}
                     >
                       View
-                      {project.link[0].includes('github.com') ? <GitHubIcon sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}
+                      {getLinkType(getPrimaryLink(project)) === 'github' ? <GitHubIcon sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}
                     </Button>
                   </Link>
                 )}
@@ -306,7 +320,7 @@ function ProjectsSection({ id, title, content, projects }) {
               <Typography variant="h5" sx={{ fontWeight: '600', color: 'primary.main' }}>
                 {selectedProject.name}
               </Typography>
-              {selectedProject.link && (<Link href={selectedProject.link} target="_blank" rel="noopener noreferrer" sx={{ mr: 2 }}>
+              {getPrimaryLink(selectedProject) && (<Link href={getPrimaryLink(selectedProject)} target="_blank" rel="noopener noreferrer" sx={{ mr: 2 }}>
                 <Button 
                   size="medium"
                   variant="outlined"
@@ -316,7 +330,8 @@ function ProjectsSection({ id, title, content, projects }) {
                   }}
                 >
                   View
-                  {String(selectedProject.link).includes('github') ? <GitHubIcon  sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}                </Button>
+                  {getLinkType(getPrimaryLink(selectedProject)) === 'github' ? <GitHubIcon sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}
+                </Button>
               </Link>)}
               <IconButton onClick={handleCloseModal}>
                 <CloseIcon />
@@ -380,7 +395,10 @@ ProjectsSection.propTypes = {
       description: PropTypes.string.isRequired,
       fullDescription: PropTypes.string,
       images: PropTypes.arrayOf(PropTypes.string),
-      link: PropTypes.string,
+      link: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ]),
     })
   ).isRequired,
 };

@@ -3,37 +3,31 @@ import { ref, uploadBytes, getDownloadURL, deleteObject, listAll } from 'firebas
 import { storage, auth } from './config';
 
 class MediaManager {
-  constructor(userId = null) {
-    this.userId = userId || this.getCurrentUserId();
-    this.basePath = `users/${this.userId}/media`;
+  constructor(userId = 'default-user') {
+    this.userId = 'default-user'; // Always use default-user for consistency
+    this.basePath = 'public/media'; // Use public path for easy access
   }
 
   getCurrentUserId() {
-    try {
-      const currentUser = auth.currentUser;
-      return currentUser ? currentUser.uid : 'default-user';
-    } catch (error) {
-      return 'default-user';
-    }
+    return 'default-user'; // Always return default-user for consistency
   }
 
   setUserId(userId) {
-    this.userId = userId;
-    this.basePath = `users/${userId}/media`;
+    // Keep using default-user regardless of input
+    this.userId = 'default-user';
+    this.basePath = 'public/media';
   }
 
   async uploadFile(file, category = 'general') {
     try {
-      // Allow uploads even without authentication - use public folder
-      let uploadPath;
-      if (this.userId === 'default-user') {
-        uploadPath = `public/media/${category}`;
-      } else {
-        uploadPath = `${this.basePath}/${category}`;
-      }
+      console.log('📤 Uploading file:', file.name, 'to category:', category);
+      
+      // Always use public folder for consistency and easier access
+      const uploadPath = `public/media/${category}`;
 
       const validation = this.validateFile(file);
       if (!validation.valid) {
+        console.error('❌ File validation failed:', validation.error);
         return { success: false, error: validation.error };
       }
 
@@ -41,8 +35,11 @@ class MediaManager {
       const fileName = `${timestamp}-${file.name}`;
       const fileRef = ref(storage, `${uploadPath}/${fileName}`);
 
+      console.log('⬆️ Uploading to path:', `${uploadPath}/${fileName}`);
       await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(fileRef);
+      
+      console.log('✅ File uploaded successfully. URL:', downloadURL);
 
       return {
         success: true,

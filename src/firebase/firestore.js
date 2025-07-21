@@ -19,21 +19,39 @@ const getUserSectionsCollection = (userId = 'default-user') => `users/${userId}/
 // Get all sections from Firestore for specific user
 export const getAllSections = async (userId = 'default-user') => {
   try {
-    const sectionsRef = collection(db, getUserSectionsCollection(userId));
-    const q = query(sectionsRef, orderBy('order', 'asc'));
-    const snapshot = await getDocs(q);
+    console.log('🔍 getAllSections called for userId:', userId);
+    const collectionPath = getUserSectionsCollection(userId);
+    console.log('📂 Collection path:', collectionPath);
+    
+    const sectionsRef = collection(db, collectionPath);
+    
+    // First try without orderBy to see if we can get any documents
+    console.log('📊 Querying sections without orderBy...');
+    let snapshot = await getDocs(sectionsRef);
+    console.log('📄 Raw documents found:', snapshot.size);
     
     const sections = [];
     snapshot.forEach((doc) => {
+      console.log(`  - Document: ${doc.id}`, doc.data());
       sections.push({
         id: doc.id,
         ...doc.data()
       });
     });
     
+    // Now try to sort by order if the field exists
+    const sectionsWithOrder = sections.filter(s => s.order !== undefined);
+    if (sectionsWithOrder.length > 0) {
+      console.log('✅ Some sections have order field, sorting...');
+      sections.sort((a, b) => (a.order || 0) - (b.order || 0));
+    } else {
+      console.log('⚠️ No sections have order field, returning unsorted');
+    }
+    
+    console.log('📋 Final sections:', sections.length);
     return sections;
   } catch (error) {
-    console.error('Error fetching sections:', error);
+    console.error('❌ Error fetching sections:', error);
     throw error;
   }
 };

@@ -62,7 +62,9 @@ const MainContent = styled(Box)(({ theme }) => ({
   }
 }));
 
-const NavButton = styled(Button)(({ theme, isActive }) => ({
+const NavButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'isActive',
+})(({ theme, isActive }) => ({
   position: 'relative',
   padding: theme.spacing(1, 2.2),
   borderRadius: theme.shape.borderRadius,
@@ -75,7 +77,9 @@ const NavButton = styled(Button)(({ theme, isActive }) => ({
   }
 }));
 
-const IndicatorLine = styled(Box)(({ theme, isActive }) => ({
+const IndicatorLine = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'isActive',
+})(({ theme, isActive }) => ({
   display: 'none',
   [theme.breakpoints.up('md')]: {
     display: 'block',
@@ -251,7 +255,7 @@ function MainComponent() {
                   key={section.id}
                   id={section.id}
                   title={section.title}
-                  educationList={section.experience}
+                  experiences={section.data.experiences}
                 />
               );
             default:
