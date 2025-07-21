@@ -1,161 +1,215 @@
-// Firebase Firestore utility functions
 import { 
   collection, 
   doc, 
   getDocs, 
+  getDoc, 
   setDoc, 
+  updateDoc, 
   deleteDoc, 
-  onSnapshot 
+  onSnapshot,
+  query,
+  orderBy,
+  where
 } from 'firebase/firestore';
 import { db } from './config';
 
-// Collection names
-export const COLLECTIONS = {
-  INTRO: 'intro',
-  CAPABILITIES: 'capabilities',
-  SKILLS: 'skills',
-  PROJECTS: 'projects',
-  EDUCATION: 'education',
-  EXPERIENCE: 'experience'
-};
+// User-specific collection structure
+const getUserSectionsCollection = (userId = 'default-user') => `users/${userId}/sections`;
 
-// Get all documents from a collection
-export const getCollectionData = async (collectionName) => {
+// Get all sections from Firestore for specific user
+export const getAllSections = async (userId = 'default-user') => {
   try {
-    const querySnapshot = await getDocs(collection(db, collectionName));
-    const data = [];
-    querySnapshot.forEach((doc) => {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-    return data;
-  } catch (error) {
-    console.error(`Error fetching ${collectionName}:`, error);
-    return [];
-  }
-};
-
-// Set/update a document in a collection
-export const setDocument = async (collectionName, docId, data) => {
-  try {
-    await setDoc(doc(db, collectionName, docId), data, { merge: true });
-    console.log(`Document ${docId} updated in ${collectionName}`);
-    return true;
-  } catch (error) {
-    console.error(`Error updating document in ${collectionName}:`, error);
-    return false;
-  }
-};
-
-// Delete a document from a collection
-export const deleteDocument = async (collectionName, docId) => {
-  try {
-    await deleteDoc(doc(db, collectionName, docId));
-    console.log(`Document ${docId} deleted from ${collectionName}`);
-    return true;
-  } catch (error) {
-    console.error(`Error deleting document from ${collectionName}:`, error);
-    return false;
-  }
-};
-
-// Listen to real-time updates for a collection
-export const subscribeToCollection = (collectionName, callback) => {
-  return onSnapshot(collection(db, collectionName), (snapshot) => {
-    const data = [];
+    const sectionsRef = collection(db, getUserSectionsCollection(userId));
+    const q = query(sectionsRef, orderBy('order', 'asc'));
+    const snapshot = await getDocs(q);
+    
+    const sections = [];
     snapshot.forEach((doc) => {
-      data.push({ id: doc.id, ...doc.data() });
+      sections.push({
+        id: doc.id,
+        ...doc.data()
+      });
     });
-    callback(data);
-  }, (error) => {
-    console.error(`Error listening to ${collectionName}:`, error);
-  });
+    
+    return sections;
+  } catch (error) {
+    console.error('Error fetching sections:', error);
+    throw error;
+  }
 };
 
-// Migrate JSON data to Firestore
-export const migrateDataToFirestore = async (sectionsData) => {
+// Subscribe to real-time section updates for specific user
+export const subscribeToSections = (callback, userId = 'default-user') => {
   try {
-    for (const section of sectionsData) {
-      let collectionName;
-      let docData;
+    const sectionsRef = collection(db, getUserSectionsCollection(userId));
+    const q = query(sectionsRef, orderBy('order', 'asc'));
+    
+    return onSnapshot(q, (snapshot) => {
+      const sections = [];
+      snapshot.forEach((doc) => {
+        sections.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      callback(sections);
+    }, (error) => {
+      console.error('Error in sections subscription:', error);
+      callback(null, error);
+    });
+  } catch (error) {
+    console.error('Error setting up sections subscription:', error);
+    return () => {}; // Return empty unsubscribe function
+  }
+};
 
-      switch (section.type) {
-        case 'intro':
-          collectionName = COLLECTIONS.INTRO;
-          docData = {
-            name: section.name,
-            title: section.title,
-            type: section.type,
-            content: section.content,
-            data: section.data,
-            updatedAt: new Date()
-          };
-          break;
-
-        case 'capabilities':
-          collectionName = COLLECTIONS.CAPABILITIES;
-          docData = {
-            title: section.title,
-            type: section.type,
-            content: section.content,
-            updatedAt: new Date()
-          };
-          break;
-
-        case 'skills':
-          collectionName = COLLECTIONS.SKILLS;
-          docData = {
-            title: section.title,
-            type: section.type,
-            content: section.content,
-            data: section.data,
-            updatedAt: new Date()
-          };
-          break;
-
-        case 'projects':
-          collectionName = COLLECTIONS.PROJECTS;
-          docData = {
-            title: section.title,
-            type: section.type,
-            content: section.content,
-            data: section.data,
-            updatedAt: new Date()
-          };
-          break;
-
-        case 'education':
-          collectionName = COLLECTIONS.EDUCATION;
-          docData = {
-            title: section.title,
-            type: section.type,
-            content: section.content,
-            data: section.data,
-            updatedAt: new Date()
-          };
-          break;
-
-        case 'experience':
-          collectionName = COLLECTIONS.EXPERIENCE;
-          docData = {
-            title: section.title,
-            type: section.type,
-            experience: section.experience,
-            updatedAt: new Date()
-          };
-          break;
-
-        default:
-          console.warn(`Unknown section type: ${section.type}`);
-          continue;
-      }
-
-      await setDocument(collectionName, section.id, docData);
+// Get a specific section by ID for specific user
+export const getSection = async (sectionId, userId = 'default-user') => {
+  try {
+    const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
+    const sectionSnap = await getDoc(sectionRef);
+    
+    if (sectionSnap.exists()) {
+      return {
+        id: sectionSnap.id,
+        ...sectionSnap.data()
+      };
+    } else {
+      return null;
     }
+  } catch (error) {
+    console.error('Error fetching section:', error);
+    throw error;
+  }
+};
 
-    console.log('Data migration completed successfully!');
+// Update a section for specific user
+export const updateSection = async (sectionId, sectionData, userId = 'default-user') => {
+  try {
+    const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
+    
+    const updateData = {
+      ...sectionData,
+      lastUpdated: new Date().toISOString(),
+      userId: userId
+    };
+    
+    await updateDoc(sectionRef, updateData);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating section:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Create a new section
+export const createSection = async (sectionData) => {
+  try {
+    const sectionRef = doc(collection(db, SECTIONS_COLLECTION));
+    
+    const newSectionData = {
+      ...sectionData,
+      createdAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString()
+    };
+    
+    await setDoc(sectionRef, newSectionData);
+    
+    return { success: true, id: sectionRef.id };
+  } catch (error) {
+    console.error('Error creating section:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Delete a section
+export const deleteSection = async (sectionId) => {
+  try {
+    const sectionRef = doc(db, SECTIONS_COLLECTION, sectionId);
+    await deleteDoc(sectionRef);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting section:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Upload section data (used by migration tool)
+export const uploadSectionData = async (sectionId, sectionData) => {
+  try {
+    const sectionRef = doc(db, SECTIONS_COLLECTION, sectionId);
+    
+    const uploadData = {
+      ...sectionData,
+      uploadedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString()
+    };
+    
+    await setDoc(sectionRef, uploadData);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error uploading section data:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Get sections count for dashboard stats
+export const getSectionsCount = async () => {
+  try {
+    const sectionsRef = collection(db, SECTIONS_COLLECTION);
+    const snapshot = await getDocs(sectionsRef);
+    return snapshot.size;
+  } catch (error) {
+    console.error('Error getting sections count:', error);
+    return 0;
+  }
+};
+
+// Check if Firebase is properly connected
+export const checkFirebaseConnection = async () => {
+  try {
+    // Try to read from a test document
+    const testRef = doc(db, 'test', 'connection');
+    await getDoc(testRef);
     return true;
   } catch (error) {
-    console.error('Error during data migration:', error);
+    console.error('Firebase connection error:', error);
     return false;
   }
+};
+
+// Legacy functions for backward compatibility
+export const getIntroData = async () => {
+  return await getSection('intro');
+};
+
+export const getSkillsData = async () => {
+  return await getSection('skills');
+};
+
+export const getProjectsData = async () => {
+  return await getSection('projects');
+};
+
+export const getCapabilitiesData = async () => {
+  return await getSection('capabilities');
+};
+
+export const updateIntroData = async (data) => {
+  return await updateSection('intro', data);
+};
+
+export const updateSkillsData = async (data) => {
+  return await updateSection('skills', data);
+};
+
+export const updateProjectsData = async (data) => {
+  return await updateSection('projects', data);
+};
+
+export const updateCapabilitiesData = async (data) => {
+  return await updateSection('capabilities', data);
 };

@@ -1,6 +1,6 @@
 // Portfolio Data Context with Firestore integration
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { COLLECTIONS, getCollectionData, subscribeToCollection } from '../firebase/firestore';
+import { getAllSections, subscribeToSections } from '../firebase/firestore';
 
 const DataContext = createContext();
 
@@ -28,35 +28,23 @@ export const DataProvider = ({ children }) => {
 
     try {
       // First, try to load from Firestore
-      const collections = Object.values(COLLECTIONS);
-      let firestoreData = [];
-      let hasFirestoreData = false;
+      console.log('Attempting to load from Firestore...');
+      const firestoreData = await getAllSections();
 
-      for (const collectionName of collections) {
-        const data = await getCollectionData(collectionName);
-        if (data.length > 0) {
-          hasFirestoreData = true;
-          firestoreData.push(...data);
-        }
-      }
-
-      if (hasFirestoreData) {
-        // Sort sections by a predefined order
-        const sectionOrder = ['intro', 'capabilities', 'skills', 'projects', 'education', 'experience'];
-        const sortedSections = firestoreData.sort((a, b) => {
-          const aIndex = sectionOrder.indexOf(a.type || a.id);
-          const bIndex = sectionOrder.indexOf(b.type || b.id);
-          return aIndex - bIndex;
-        });
-        
-        setSections(sortedSections);
+      if (firestoreData.length > 0) {
+        console.log('Firestore data loaded successfully');
+        setSections(firestoreData);
         setUseFirestore(true);
         
-        // Set up real-time listeners for all collections
+        // Set up real-time listeners
         setupRealtimeListeners();
       } else {
         // Fallback to JSON file
+        console.log('No Firestore data found, falling back to JSON...');
         const response = await fetch('/data/sectionsData.json');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch JSON data: ${response.status}`);
+        }
         const jsonData = await response.json();
         setSections(jsonData);
         setUseFirestore(false);
@@ -67,6 +55,7 @@ export const DataProvider = ({ children }) => {
       
       // Fallback to JSON file on error
       try {
+        console.log('Falling back to JSON file due to error...');
         const response = await fetch('/data/sectionsData.json');
         const jsonData = await response.json();
         setSections(jsonData);
@@ -81,30 +70,17 @@ export const DataProvider = ({ children }) => {
   };
 
   const setupRealtimeListeners = () => {
-    const unsubscribers = [];
+    console.log('Setting up real-time listeners...');
     
-    Object.values(COLLECTIONS).forEach(collectionName => {
-      const unsubscribe = subscribeToCollection(collectionName, (data) => {
-        if (data.length > 0) {
-          // Update sections with new data
-          setSections(prevSections => {
-            const filtered = prevSections.filter(s => s.type !== collectionName);
-            return [...filtered, ...data].sort((a, b) => {
-              const sectionOrder = ['intro', 'capabilities', 'skills', 'projects', 'education', 'experience'];
-              const aIndex = sectionOrder.indexOf(a.type || a.id);
-              const bIndex = sectionOrder.indexOf(b.type || b.id);
-              return aIndex - bIndex;
-            });
-          });
-        }
-      });
-      
-      unsubscribers.push(unsubscribe);
+    // Subscribe to all sections
+    const unsubscribe = subscribeToSections((updatedSections) => {
+      console.log('Real-time update received:', updatedSections);
+      setSections(updatedSections);
     });
 
-    // Cleanup function
+    // Clean up listener on component unmount
     return () => {
-      unsubscribers.forEach(unsub => unsub());
+      unsubscribe();
     };
   };
 

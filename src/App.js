@@ -9,10 +9,14 @@ import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
 import Login from './components/admin/Login';
 import AdminDashboard from './components/admin/AdminDashboard';
+import ModernAdminDashboard from './components/admin/ModernAdminDashboard';
 import SectionEditor from './components/admin/SectionEditor';
+import ModernSectionEditor from './components/admin/ModernSectionEditor';
+import UniversalSectionEditor from './components/admin/UniversalSectionEditor';
 import MediaUpload from './components/admin/MediaUpload';
 import ProjectEditor from './components/admin/ProjectEditor';
 import ProtectedRoute from './components/admin/ProtectedRoute';
+import FirebaseSetupGuide from './components/admin/FirebaseSetupGuide';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -26,7 +30,12 @@ function App() {
       <CssBaseline />
       <AuthProvider>
         <DataProvider>
-          <Router>
+          <Router 
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true
+            }}
+          >
             <Routes>
               {/* Public routes */}
               <Route path="/" element={
@@ -44,9 +53,29 @@ function App() {
                   <AdminDashboard />
                 </ProtectedRoute>
               } />
+              <Route path="/admin/classic" element={
+                <ProtectedRoute>
+                  <ModernAdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/setup" element={
+                <ProtectedRoute>
+                  <FirebaseSetupGuide />
+                </ProtectedRoute>
+              } />
               <Route path="/admin/edit/:sectionType" element={
                 <ProtectedRoute>
                   <SectionEditor />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/modern/edit/:sectionType" element={
+                <ProtectedRoute>
+                  <ModernSectionEditor />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/universal/edit/:sectionType" element={
+                <ProtectedRoute>
+                  <UniversalSectionEditor />
                 </ProtectedRoute>
               } />
               <Route path="/admin/media" element={

@@ -28,7 +28,7 @@ import {
   Image as ImageIcon,
   VideoFile as VideoIcon
 } from '@mui/icons-material';
-import { getCollectionData, setDocument } from '../../firebase/firestore';
+import { getSection, updateSection } from '../../firebase/firestore';
 
 const ProjectEditor = () => {
   const { projectId } = useParams();
@@ -46,9 +46,9 @@ const ProjectEditor = () => {
   const loadProjectsData = async () => {
     setLoading(true);
     try {
-      const data = await getCollectionData('projects');
-      if (data.length > 0) {
-        setProjectsData(data[0]);
+      const projectsSection = await getSection('projects');
+      if (projectsSection) {
+        setProjectsData(projectsSection);
         
         if (projectId === 'new') {
           // Create new project
@@ -56,7 +56,7 @@ const ProjectEditor = () => {
           setCurrentProject(newProject);
         } else {
           // Find existing project
-          const project = data[0].data?.projects?.find(p => p.id === parseInt(projectId));
+          const project = projectsSection.data?.projects?.find(p => p.id === parseInt(projectId));
           if (project) {
             setCurrentProject(project);
           } else {
@@ -117,9 +117,9 @@ const ProjectEditor = () => {
         }
       };
 
-      const success = await setDocument('projects', 'projects', updatedProjectsData);
+      const result = await updateSection('projects', updatedProjectsData);
       
-      if (success) {
+      if (result.success) {
         setMessage({ type: 'success', text: 'Project saved successfully!' });
         if (projectId === 'new') {
           // Redirect to edit the newly created project

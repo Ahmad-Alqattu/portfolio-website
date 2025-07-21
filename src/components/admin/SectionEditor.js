@@ -20,7 +20,7 @@ import {
   Add as AddIcon,
   CloudUpload as UploadIcon
 } from '@mui/icons-material';
-import { getCollectionData, setDocument } from '../../firebase/firestore';
+import { getSection, uploadSectionData } from '../../firebase/firestore';
 
 const SectionEditor = () => {
   const { sectionType } = useParams();
@@ -37,9 +37,9 @@ const SectionEditor = () => {
   const loadSectionData = async () => {
     setLoading(true);
     try {
-      const data = await getCollectionData(sectionType);
-      if (data.length > 0) {
-        setSectionData(data[0]); // Assuming one document per section
+      const section = await getSection(sectionType);
+      if (section) {
+        setSectionData(section);
       } else {
         // Create default structure based on section type
         setSectionData(createDefaultSectionData(sectionType));
@@ -118,11 +118,11 @@ const SectionEditor = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const success = await setDocument(sectionType, sectionData.id, sectionData);
-      if (success) {
+      const result = await uploadSectionData(sectionData.id, sectionData);
+      if (result.success) {
         setMessage({ type: 'success', text: 'Section saved successfully!' });
       } else {
-        setMessage({ type: 'error', text: 'Failed to save section' });
+        setMessage({ type: 'error', text: result.error || 'Failed to save section' });
       }
     } catch (error) {
       console.error('Error saving section:', error);
