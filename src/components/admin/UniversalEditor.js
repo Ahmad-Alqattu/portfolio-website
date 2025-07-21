@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { mediaManager } from '../../firebase/mediaManager';
 import { updateSection } from '../../firebase/firestore';
 import { migrateLocalDataToFirebase } from '../../utils/dataMigration';
-import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings } from 'lucide-react';
+import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff } from 'lucide-react';
 import SectionPreview from './SectionPreview';
 import FileUpload from './FileUpload';
 import SectionOrderManager from './SectionOrderManager';
@@ -316,6 +317,8 @@ const UniversalEditor = () => {
         return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
       case 'contact':
         return <ContactEditor data={editingData} onChange={handleChange} />;
+      case 'footerAndLinks':
+        return <FooterAndLinksEditor data={editingData} onChange={handleChange} />;
       default:
         return <BasicEditor data={editingData} onChange={handleChange} />;
     }
@@ -684,7 +687,8 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
       fullDescription: '',
       images: [],
       videos: [],
-      link: ['', ''] // Two link fields
+      link: ['', ''], // Two link fields
+      active: true // Add active state
     };
     onChange('data.projects', [...projects, newProject]);
   };
@@ -692,6 +696,23 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
   const removeProject = (idx) => {
     const newProjects = projects.filter((_, i) => i !== idx);
     onChange('data.projects', newProjects);
+  };
+
+  const toggleProjectActive = (idx) => {
+    const updatedProjects = projects.map((project, i) => 
+      i === idx ? { ...project, active: !project.active } : project
+    );
+    onChange('data.projects', updatedProjects);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(projects);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    onChange('data.projects', items);
   };
 
   const handleImageUpload = async (file, projectIdx) => {
@@ -1396,6 +1417,153 @@ const BasicEditor = ({ data, onChange }) => (
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter content for this section..."
         />
+      </div>
+    </div>
+  </div>
+);
+
+// Footer and Links Editor
+const FooterAndLinksEditor = ({ data, onChange }) => (
+  <div className="bg-white rounded-lg shadow-sm border p-6">
+    <h3 className="text-lg font-medium text-gray-900 mb-6">Footer & Links</h3>
+    
+    <div className="space-y-6">
+      {/* Welcome Message */}
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-3">Welcome Message</h4>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+            <input
+              type="text"
+              value={data.data?.welcomeMessage?.title || ''}
+              onChange={(e) => onChange('data.welcomeMessage.title', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Welcome to My Portfolio"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <textarea
+              value={data.data?.welcomeMessage?.description || ''}
+              onChange={(e) => onChange('data.welcomeMessage.description', e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Thank you for visiting..."
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Information */}
+      <div className="p-4 bg-green-50 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">📞 Phone</label>
+            <input
+              type="tel"
+              value={data.data?.contactInfo?.phone || ''}
+              onChange={(e) => onChange('data.contactInfo.phone', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="+970 0598-682-679"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">📧 Email</label>
+            <input
+              type="email"
+              value={data.data?.contactInfo?.email || ''}
+              onChange={(e) => onChange('data.contactInfo.email', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="ahmadl.qatu@gmail.com"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">📍 Location</label>
+            <input
+              type="text"
+              value={data.data?.contactInfo?.location || ''}
+              onChange={(e) => onChange('data.contactInfo.location', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Ramallah, Palestine"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Social Links */}
+      <div className="p-4 bg-purple-50 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-3">Social Links</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">🐙 GitHub</label>
+            <input
+              type="url"
+              value={data.data?.socialLinks?.github || ''}
+              onChange={(e) => onChange('data.socialLinks.github', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="https://github.com/Ahmad-Alqattu"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">💼 LinkedIn</label>
+            <input
+              type="url"
+              value={data.data?.socialLinks?.linkedin || ''}
+              onChange={(e) => onChange('data.socialLinks.linkedin', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="https://www.linkedin.com/in/ahmad-al-qattu-987587201/"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">📘 Facebook</label>
+            <input
+              type="url"
+              value={data.data?.socialLinks?.facebook || ''}
+              onChange={(e) => onChange('data.socialLinks.facebook', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="https://www.facebook.com/ahmadluay.alqatu.5"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">📧 Email Link</label>
+            <input
+              type="text"
+              value={data.data?.socialLinks?.email || ''}
+              onChange={(e) => onChange('data.socialLinks.email', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="mailto:ahmadl.qatu@gmail.com"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Other Links */}
+      <div className="p-4 bg-yellow-50 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-3">Additional Links</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">📄 CV/Resume Link</label>
+            <input
+              type="text"
+              value={data.data?.cvLink || ''}
+              onChange={(e) => onChange('data.cvLink', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="/assets/AhmadQattu_resume.pdf"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">© Copyright Text</label>
+            <input
+              type="text"
+              value={data.data?.copyrightText || ''}
+              onChange={(e) => onChange('data.copyrightText', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Ahmad AL-Qatu"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
