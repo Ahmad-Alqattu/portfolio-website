@@ -160,7 +160,9 @@ function MainComponent() {
         <DesktopNav>
           <NavContainer>
             <NavItemsContainer>
-              {sections.map((section) => {
+              {sections
+                .filter(section => section.type !== 'footerAndLinks') // Exclude footer from navigation
+                .map((section) => {
                 const isActive = activeSection === section.id;
                 return (
                   <NavItem
@@ -197,7 +199,9 @@ function MainComponent() {
 
      
       <MainContent>
-        {sections.map((section) => {
+        {sections
+          .filter(section => section.type !== 'footerAndLinks') // Exclude footer from regular sections
+          .map((section) => {
           switch (section.type) {
             case 'intro':
               return (

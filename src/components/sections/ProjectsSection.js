@@ -157,7 +157,12 @@ function ProjectsSection({ id, title, content, projects }) {
     setSelectedProject(null);
   };
 
-  const visibleProjects = projects.slice(0, visibleCount);
+  // Filter only active projects and sort by order if available
+  const activeProjects = projects
+    .filter(project => project.active !== false) // Show projects that are not explicitly inactive
+    .sort((a, b) => (a.order || 999) - (b.order || 999)); // Sort by order, fallback to end if no order
+
+  const visibleProjects = activeProjects.slice(0, visibleCount);
 
   return (
     <section id={id} className="py-16">
@@ -277,7 +282,7 @@ function ProjectsSection({ id, title, content, projects }) {
         ))}
       </Grid>
 
-      {visibleCount < projects.length && (
+      {visibleCount < activeProjects.length && (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Button
             variant="contained"

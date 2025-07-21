@@ -4,66 +4,46 @@
     "name": "Ahmad Al-Qattu",
     "title": "Introduction",
     "type": "intro",
-    "content": "I'm a software developer who transforms ideas into practical, dependable applications. Working across the full stack, I create stable and efficient solutions—whether building web platforms, mobile products, or integrated backend services. My aim is always to deliver software that people find useful, accessible, and easy to trust.",
+    "content": "I’m a software developer who transforms ideas into practical, dependable applications. Working across the full stack, I create stable and efficient solutions—whether building web platforms, mobile products, or integrated backend services. My aim is always to deliver software that people find useful, accessible, and easy to trust.",
     "data": {
       "subtitle": "Software Engineer",
       "highlight": "Transforming Ideas into Modern, Scalable Solutions",
       "image": "\\assets\\logo192.png",
       "cvLink": "assets\\AhmadQattu_resume.pdf"
-    },
-    "active": true,
-    "order": 1
-  },
+    }
+  }
+  
+  ,
   {
     "id": "capabilities",
     "title": "What Can I Do?",
     "type": "capabilities",
-    "content": "Over the years, I've gained experience across multiple domains, from front-end UI development to back-end services and databases.",
-    "data": {
-      "capabilities": [
-        {
-          "title": "Full-Stack Development",
-          "description": "Building complete web applications from frontend to backend with modern technologies and best practices.",
-          "active": true
-        },
-        {
-          "title": "Mobile App Development",
-          "description": "Creating cross-platform mobile applications using Flutter and React Native for iOS and Android.",
-          "active": true
-        },
-        {
-          "title": "Database Design & Management",
-          "description": "Designing efficient database schemas and managing data flow in various database systems.",
-          "active": true
-        },
-        {
-          "title": "API Development & Integration",
-          "description": "Building robust APIs and integrating third-party services for seamless data exchange.",
-          "active": true
-        }
-      ]
-    },
-    "active": true,
-    "order": 2
-  },
-  {
-    "id": "skills",
-    "title": "Skills",
-    "type": "skills",
-    "content": "Over the years, I've gained experience across multiple domains, from front-end UI development to back-end services and databases.",
-    "data": {
-      "skillsList": {
-        "Front-End": ["React.js", "HTML5", "CSS3", "Tailwind CSS", "JavaScript", "Bootstrap"],
-        "Back-End": ["Java", "Python", "Spring Boot", "Django", "javalin", ".NET Core", "PHP"],
-        "Databases": ["MySQL", "PostgreSQL", "MongoDB", "MsSQL", "Firebase"],
-        "Mobile": ["Flutter", "React Native", "Android (Java)"],
-        "Apps and Script": ["Java-fx", "Java", "Python"],
-        "Tools & Other": ["Git", "Docker", "Linux", "Firebase", "IIS"]
-      }
-    },
-    "active": true,
-    "order": 3
-  },
+    "content": "Over the years, I've gained experience across multiple domains, from front-end UI development to back-end services and databases."
+
+    
+  }
+,  
+
+
+
+{
+  "id": "skills",
+  "title": "Skills",
+  "type": "skills",
+  "content": "Over the years, I've gained experience across multiple domains, from front-end UI development to back-end services and databases.",
+  "data": {
+    "skillsList": {
+      "Front-End": ["React.js", "HTML5", "CSS3", "Tailwind CSS"],
+      "Back-End": ["Java", "Python", "Spring Boot", "Django"],
+      "Databases": ["MySQL", "PostgreSQL", "MongoDB"],
+      "Mobile": ["Flutter", "React Native"],
+      "Tools & Other": ["Git", "Docker", "Linux", "Firebase"]
+    }
+  }
+}
+
+
+,
   {
     "id": "projects",
     "title": "Projects",
@@ -78,124 +58,93 @@
           "fullDescription": "Developed a Twitter clone using Javalin, Pebble template, HTMX, Bootstrap, and PostgreSQL. Features include user authentication, tweeting, retweeting, and following. Containerized with Docker, implemented unit tests and integration tests using Selenide. Provides a responsive UI and robust backend.",
           "images": ["projects/Twitter/image.png","projects/Twitter/image1.png","projects/Twitter/image2.png","projects/Twitter/image3.png","projects/Twitter/image4.png"],
           "videos": ["\\projects\\Twitter\\Twitter Clone - Welcome - Google Chrome 2024-09-05 23-40-50.mp4"],
-          "link": ["https://github.com/Ahmad-Alqattu/twitterClone"],
-          "active": true,
-          "order": 1
-        },
-        {
-          "id": 2,
+          "link": ["https://github.com/Ahmad-Alqattu/twitterClone"]
+        },{
+          "id":2,
           "name": "رﺣﻠﺗﻲ",
-          "description": "A mobile app for Local Tours and Booking",
+          "description": "A microblogging platform clone with user auth and tweeting",
           "fullDescription": "'رﺣﻠﺗﻲ' – mobile app for Local Tours and Booking Implemented features for tour booking, itinerary planning, and user profile for suggestions, admin panel, group for messages for every tour. using Flutter and firebase firestore, add foreign Api to get weather.",
           "images": ["projects/Gproject/WhatsApp Image 2025-01-01 at 23.01.07_5573f157.jpg","projects/Gproject/WhatsApp Image 2025-01-01 at 23.01.06_5ac5998d.jpg","projects\\Gproject\\WhatsApp Image 2025-01-01 at 23.01.07_c3657213.jpg"],
-          "videos": ["projects\\Gproject\\Media1.mp4"],
-          "link": [],
-          "active": true,
-          "order": 2
-        },
-        {
-          "id": 3,
+          "videos": ["projects\\Gproject\\Media1.mp4"]
+      
+    
+        },{
+          "id":3,
           "name": "eMunicipality",
-          "description": "A web application for municipal services",
+          "description": "A microblogging platform clone with user auth and tweeting",
           "fullDescription": "Participated in the development of an eMunicipalities API using .NET Core, leveraging Entity Framework for database operations, implementing JWT authentication for secure access, and integrating legacy .NET SOAP services via WCF. On the front end, Participated in the development a Progressive Web App (PWA) with React and Material-UI, thin deploying the application to the store for accessible user experience.",
           "images": ["\\projects\\emun\\image.png"],
           "videos": [],
-          "link": ["https://eservice.mtulkarm.com/"],
-          "active": true,
-          "order": 3
-        },
-        {
-          "id": 4,
+          "link": ["https://eservice.mtulkarm.com/"]
+        }
+        ,{
+          "id":4,
           "name": "Land Settlement Archiving",
-          "description": "Land Settlement Archiving System",
-          "fullDescription": "Land Settlement Archiving Developed a Python algorithm to process Excel files for the Land Authority's archiving initiative, focusing on data cleaning and extraction. created JavaFX desktop apps for PDF auditing, merging, and other utilities. thes app is example of the desktop app for auditing PDF scand files.",
+          "description": "Land Settlement Archiving Developed a Python algorithm to process Excel files for the Land Authority’s archiving initiative, focusing on data cleaning and extraction. created JavaFX desktop apps for PDF auditing, merging, and other utilities. thes app is example of the desktop app for auditing PDF scand files.",
           "images": ["\\projects\\land\\image.png"],
-          "videos": [],
-          "link": [],
-          "active": true,
-          "order": 4
-        },
-        {
-          "id": 5,
+          "videos": []
+        },{
+          "id":5,
           "name": "web-project-php-sql",
-          "description": "A university-level web application demonstrating CRUD operations",
+          "description": "A microblogging platform clone with user auth and tweeting",
           "fullDescription": "This university-level web application demonstrates fundamental CRUD operations through its task management interface. Users can create new tasks, view existing tasks in real time, update task details, and delete them when no longer needed—all powered by a SQL-driven database and a PHP back end. This seamless interaction is further enhanced by role-based access controls and client-side scripting, ensuring a secure, user-friendly environment for managing and tracking tasks.",
           "images": ["https://user-images.githubusercontent.com/19889053/219016291-724f7c9f-58f7-4be8-a290-d51ae926b2bf.png", "https://user-images.githubusercontent.com/19889053/219016246-96c95d75-9001-4b9f-a12a-72e5149f8f71.png","https://user-images.githubusercontent.com/19889053/219016304-36169340-51af-4b14-80dd-8db939aad2d8.png","https://user-images.githubusercontent.com/19889053/219016347-eebec546-995c-46d7-b2b4-cbd2e127d76e.png","https://user-images.githubusercontent.com/19889053/219016374-da08089d-1e26-4519-b4d9-0113b59f92ab.png"],
           "videos": [],
-          "link": ["https://github.com/Ahmad-Alqattu/web-project-php-sql"],
-          "active": true,
-          "order": 5
-        },
-        {
-          "id": 6,
+          "link": ["https://github.com/Ahmad-Alqattu/web-project-php-sql"]
+        }
+        ,{
+          "id":6,
           "name": "AI-3-gram_word_prediction",
-          "description": "AI text prediction system using 3-gram language model",
-          "fullDescription": "AI 3-gram word prediction, built with Java and JavaFX, showcases an Arabic text prediction system utilizing a 3-gram language model. Through an intuitive graphical interface, users can input partial text and receive likely completions, with probabilities displayed in real time. This combination of Java's robust backend and JavaFX's sleek UI design.",
+          "description": "A microblogging platform clone with user auth and tweeting",
+          "fullDescription": "AI 3-gram word prediction, built with Java and JavaFX, showcases an Arabic text prediction system utilizing a 3-gram language model. Through an intuitive graphical interface, users can input partial text and receive likely completions, with probabilities displayed in real time. This combination of Java’s robust backend and JavaFX’s sleek UI design.",
           "images": ["projects\\ai-3gram\\image.png"],
           "videos": [],
-          "link": ["https://github.com/Ahmad-Alqattu/AI-3-gram_word_prediction"],
-          "active": true,
-          "order": 6
-        },
-        {
-          "id": 7,
+          "link": ["https://github.com/Ahmad-Alqattu/AI-3-gram_word_prediction"]
+        },{
+          "id":7,
           "name": "dijkstra algorithm routing",
-          "description": "Network routing interface using Dijkstra's algorithm",
-          "fullDescription": "This network routing interface demonstrates how Dijkstra's algorithm can be employed to find the shortest path between nodes in a graph. By generating a randomized set of points (nodes) and allowing users to select a source and target, the tool computes and displays the minimal path cost in real time. This visual, JavaFX‐based application highlights both the algorithm's step‐by‐step evaluation of path weights and the interactive nature of modern graph‐based routing solutions.",
+          "description": "A microblogging platform clone with user auth and tweeting",
+          "fullDescription": "This network routing interface demonstrates how Dijkstra’s algorithm can be employed to find the shortest path between nodes in a graph. By generating a randomized set of points (nodes) and allowing users to select a source and target, the tool computes and displays the minimal path cost in real time. This visual, JavaFX‐based application highlights both the algorithm’s step‐by‐step evaluation of path weights and the interactive nature of modern graph‐based routing solutions.",
           "images": ["https://user-images.githubusercontent.com/19889053/192376178-bd552c9e-42c7-4bd7-a7cf-b462bd465c57.png"],
           "videos": ["https://private-user-images.githubusercontent.com/19889053/192378694-479b531d-ab76-4b58-9d65-50d8498fa4ba.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzU4MTUwMjQsIm5iZiI6MTczNTgxNDcyNCwicGF0aCI6Ii8xOTg4OTA1My8xOTIzNzg2OTQtNDc5YjUzMWQtYWI3Ni00YjU4LTlkNjUtNTBkODQ5OGZhNGJhLm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMDIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTAyVDEwNDUyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPThiMDAyZWI3NDA5OGEzNjAzMTFmNzMwNGQyY2M4MTRhYmFkMmUyZGRjMDg2ZDQzZDY3NGFiZDc0OTNkYzkwMTImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.tVDEyK22v59l5semWSXfthzLqEpqDvtIk_5nQxT1Vqg"],
-          "link": ["https://github.com/Ahmad-Alqattu/dijkstra-algorithm-network-routing"],
-          "active": true,
-          "order": 7
-        },
-        {
-          "id": 8,
+          "link": ["https://github.com/Ahmad-Alqattu/dijkstra-algorithm-network-routing"]
+        },{
+          "id":8,
           "name": "library DBMS",
-          "description": "Library management system with JavaFX and MySQL",
+          "description": "A microblogging platform clone with user auth and tweeting",
           "fullDescription": "This library management system, implemented with MySQL, Java, and JavaFX, handles essential CRUD operations for employees, members, publishers, and books, as well as borrowing/returning transactions and invoicing. it employs real‐time statistics and a streamlined UI in JavaFX.",
           "images": ["https://user-images.githubusercontent.com/19889053/192526121-d8585ff8-cb41-414a-9e05-2ec56833125d.png"],
           "videos": ["https://private-user-images.githubusercontent.com/19889053/192529718-d9707987-6d92-41b6-93e3-58b597a2bd04.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzU4MTU1MDksIm5iZiI6MTczNTgxNTIwOSwicGF0aCI6Ii8xOTg4OTA1My8xOTI1Mjk3MTgtZDk3MDc5ODctNmQ5Mi00MWI2LTkzZTMtNThiNTk3YTJiZDA0Lm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMDIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTAyVDEwNTMyOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ1MjZkZWVmZGZhYTE4NjYwNTEyZGUwOWZiZTYxZWYxYzc2OTlhM2Q1NWZlNjE1OGQwZTlhNTFiNDliMWJmMWMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.sz_iYFyQkUhLsBE4L9BA9O65WHz-QeQCrBDXmdWwbDA"],
-          "link": ["https://github.com/Ahmad-Alqattu/library-DBMS"],
-          "active": true,
-          "order": 8
-        },
-        {
-          "id": 9,
+          "link": ["https://github.com/Ahmad-Alqattu/library-DBMS"]
+        },{
+          "id":9,
           "name": "Ramallah A-star algorithm",
-          "description": "A* pathfinding algorithm applied to real-world geography",
+          "description": "A microblogging platform clone with user auth and tweeting",
           "fullDescription": "This Ramallah A* map application showcases how the A* pathfinding algorithm can be applied to real‐world geography. By selecting a source and target from an interactive JavaFX interface, users can compute the shortest route and view relevant details such as path distance, travel time, and memory usage. This demonstration highlights the efficiency of heuristic‐driven search for routing in complex, map‐based environments.",
           "images": ["https://user-images.githubusercontent.com/19889053/192509242-7950d130-e817-4a70-93d6-558671673935.png"],
           "videos": ["https://private-user-images.githubusercontent.com/19889053/192509781-6e2f4bb7-3109-4729-a927-b3f923287b66.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzU4MTg1NzcsIm5iZiI6MTczNTgxODI3NywicGF0aCI6Ii8xOTg4OTA1My8xOTI1MDk3ODEtNmUyZjRiYjctMzEwOS00NzI5LWE5MjctYjNmOTIzMjg3YjY2Lm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMDIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTAyVDExNDQzN1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWE2MTI2NzE5ZDIzOTk2NmZkNjcyYmFhMjExYTk1MWIzMDY0MDI0OGIzODUyMDFhMGVkYjQ4YzUwMGI5ZmQ5NjUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.JZdXIk1xAvKfBtI-6oHAbtaqXrzFuOROpc_1UO-nV_M"],
-          "link": ["https://github.com/Ahmad-Alqattu/Ramallah-Map-A-star-algorithm"],
-          "active": true,
-          "order": 9
+          "link": ["https://github.com/Ahmad-Alqattu/Ramallah-Map-A-star-algorithm"]
         }
       ]
-    },
-    "active": true,
-    "order": 4
+    }
   },
   {
     "id": "education",
     "title": "Education",
     "type": "education",
-    "content": "My educational background and qualifications that have shaped my technical foundation.",
+    "content": "",
     "data": {
       "educationList": [
         {
-          "id": 1,
           "level": "school",
           "institution": "High School of Ain Misbah",
           "degree": "High School Diploma",
           "major": "Science",
           "years": "2016 - 2019",
           "logo": "", 
-          "details": "Completed secondary education with focus on science and mathematics.",
-          "active": true,
-          "order": 1
+          "details": ""
         },
         {
-          "id": 2,
           "level": "university",
           "institution": "Birzeit University",
           "degree": "BsC",
@@ -203,54 +152,71 @@
           "years": "2019 - 2024",
           "logo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEVHcEwTXh0TXh0TXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhxEb/v+AAAAE3RSTlMACpBoHcP/9S/hcqGwgdJD6llJTAv5AQAAAOtJREFUeAHV0UWiQjEQRNE8O/EQ2P9ev7vAmDts76pwjyzrdi29H4h7yvsfrSVty4ZYG+l3QcW2EkX00pbv+XJApVVg/CjYBjDEIvdoOzmFr5sWW8zE2MSZI2zD/nE+Nc3ptQKz0FlfF/WaGKtvRLA+51ECtC/Jcuby0p9W5Do5wgDT2MARRwgFqNkcjqOOAzLGwVzCuTTa84rX69acxwDG5e2Jnp43AbawclnBbEd4JaUMGvWsTxBxfisYxEUbO6hPy9b92LP63Y49hAN52UMP/7AihSvUGwUd2vV+WE//FJReTpet9l7CffEIUOALmNNtN44AAAAASUVORK5CYII=", 
           "electives": ["Data Science", "Web Services", "Android Development", "Human-Computer Interaction","Games and Gamification"],
-          "details": "Specialized in full-stack development with projects in web services and mobile applications.",
-          "active": true,
-          "order": 2
+          "details": "Specialized in full-stack development with projects in web services and mobile applications."
         }
       ]
-    },
-    "active": true,
-    "order": 5
+    }
   },
-  {
-    "id": "experience",
-    "title": "My Experience",
-    "type": "experience",
-    "content": "My professional journey and work experience in software development.",
-    "data": {
-      "experiences": [
-        {
-          "id": 1,
-          "title": "Software Developer",
-          "company": "Al-Ameen Technology",
-          "period": "2023 – Present",
-          "responsibilities": [
-            "development of custom scripts and desktop applications in java and python for varies projects",
-            "Provided technical support and server monitoring ,responsible for deploying wep applications to server and pwa to PayStore",
-            "Contributed to the development and maintenance of the .NET-core based project, implementing new features and optimizing existing functionality",
-            "contact with clients to get requirements and notes and deliver solutions that meet their needs"
-          ],
-          "logo": "",
-          "active": true,
-          "order": 1
-        },
-        {
-          "id": 2,
-          "title": "Full Stack Intern",
-          "company": "Equiptal",
-          "period": "June – August 2024",
-          "responsibilities": [
-            "Developed a full-featured Twitter clone utilizing modern development tools and best practices",
-            "Engaged in continuous learning through technical documentation and industry articles",
-            "Collaborated with senior developers to understand and implement industry best practices"
-          ],
-          "logo": "",
-          "active": true,
-          "order": 2
-        }
+  
+{
+  "id": "experience",
+  "title": "My Experience",
+  "type": "experience",
+  "experience": [
+    {
+      "title": "Software Developer",
+      "company": "Al-Ameen Technology",
+      "period": "2023 – Present",
+      "responsibilities": [
+        "development of custom scripts and desktop applications in java and python for varies projects",
+        "Provided technical support and server monitoring ,responsible for deploying wep applications to server and pwa to PayStore",
+        "Contributed to the development and maintenance of the .NET-core based project, implementing new features and optimizing existing functionality",
+        "contact with clients to get requirements and notes and deliver solutions that meet their needs"
       ]
     },
-    "active": true,
-    "order": 6
+    {
+      "title": "Full Stack Intern",
+      "company": "Equiptal",
+      "period": "June – August 2024",
+      "responsibilities": [
+        "Developed a full-featured Twitter clone utilizing modern development tools and best practices",
+        "Engaged in continuous learning through technical documentation and industry articles",
+        "Collaborated with senior developers to understand and implement industry best practices"
+      ]
+    }
+  ]
+
+  
+}
+,
+  {
+    "id": "footerAndLinks",
+    "title": "Footer & Links",
+    "type": "footerAndLinks",
+    "content": "Footer section containing contact information, social links, and welcome message.",
+    "data": {
+      "contactInfo": {
+        "phone": "+970 0598-682-679",
+        "email": "ahmadl.qatu@gmail.com",
+        "location": "Ramallah, Palestine"
+      },
+      "socialLinks": {
+        "github": "https://github.com/Ahmad-Alqattu",
+        "linkedin": "https://www.linkedin.com/in/ahmad-al-qattu-987587201/",
+        "facebook": "https://www.facebook.com/ahmadluay.alqatu.5",
+        "email": "mailto:ahmadl.qatu@gmail.com"
+      },
+      "welcomeMessage": {
+        "title": "Welcome to My Portfolio",
+        "description": "Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!"
+      },
+      "cvLink": "/assets/AhmadQattu_resume.pdf",
+      "copyrightText": "Ahmad AL-Qatu"
+    }
   }
+
+
+
+  
+
 ]

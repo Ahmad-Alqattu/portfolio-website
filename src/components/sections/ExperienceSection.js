@@ -30,7 +30,10 @@ fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
       </Typography>
       
       <Grid container spacing={3}>
-        {experiences.map((exp, index) => (
+        {experiences
+          .filter(exp => exp.active !== false) // Show only active experiences
+          .sort((a, b) => (a.order || 999) - (b.order || 999)) // Sort by order
+          .map((exp, index) => (
           <Grid item xs={12} key={index}>
             <Paper 
               elevation={3}
