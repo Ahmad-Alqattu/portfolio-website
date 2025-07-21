@@ -18,6 +18,22 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    // Development mode bypass
+    const isDevelopment = import.meta.env.DEV;
+    
+    if (isDevelopment) {
+      // In development mode, simulate an authenticated admin user
+      const devUser = {
+        uid: 'dev-user',
+        email: 'dev@admin.com',
+        displayName: 'Development Admin'
+      };
+      setCurrentUser(devUser);
+      setIsAdmin(true);
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChangedListener((user) => {
       setCurrentUser(user);
       setIsAdmin(isUserAdmin(user));

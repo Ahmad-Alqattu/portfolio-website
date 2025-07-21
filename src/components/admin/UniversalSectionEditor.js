@@ -4,10 +4,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getSection, updateSection } from '../../firebase/firestore';
 import { useData } from '../../contexts/DataContext';
 
-const UniversalSectionEditor = () => {
-  const { sectionType } = useParams();
+const UniversalSectionEditor = ({ sectionType: propSectionType, embedded = false, onSave }) => {
+  const { sectionType: paramSectionType } = useParams();
   const navigate = useNavigate();
   const { sections, useFirestore } = useData();
+  
+  // Use prop sectionType if provided (for embedded mode), otherwise use URL param
+  const sectionType = propSectionType || paramSectionType;
   
   const [sectionData, setSectionData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +56,11 @@ const UniversalSectionEditor = () => {
       if (result.success) {
         setMessage({ type: 'success', text: 'Section updated successfully!' });
         setTimeout(() => setMessage(null), 3000);
+        
+        // Call onSave callback if provided (for embedded mode)
+        if (embedded && onSave) {
+          setTimeout(() => onSave(), 1500); // Small delay to show success message
+        }
       } else {
         setMessage({ type: 'error', text: result.error || 'Failed to update section' });
       }
@@ -676,41 +684,70 @@ const UniversalSectionEditor = () => {
 
   if (!sectionData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className={embedded ? "text-center p-8" : "min-h-screen bg-gray-50 flex items-center justify-center"}>
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Section Not Found</h2>
-          <button
-            onClick={() => navigate('/admin')}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Back to Dashboard
-          </button>
+          {!embedded && (
+            <button
+              onClick={() => navigate('/admin')}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Back to Dashboard
+            </button>
+          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigate('/admin')}
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back
-              </button>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Edit {sectionData.title || sectionData.name || sectionType}
-              </h1>
-            </div>
+    <div className={embedded ? "" : "min-h-screen bg-gray-50"}>
+      {/* Header - only show in non-embedded mode */}
+      {!embedded && (
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="flex items-center text-gray-600 hover:text-gray-900"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Back
+                </button>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Edit {sectionData.title || sectionData.name || sectionType}
+                </h1>
+              </div>
             
+              <button
+                onClick={handleSave}
+                disabled={saving || !useFirestore}
+                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 flex items-center"
+              >
+                {saving ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </button>
+            </div>
+          </div>
+        </header>
+      )}
+
+      <div className={embedded ? "p-4" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>
+        {/* Save button for embedded mode */}
+        {embedded && (
+          <div className="mb-4 flex justify-end">
             <button
               onClick={handleSave}
               disabled={saving || !useFirestore}
@@ -729,10 +766,8 @@ const UniversalSectionEditor = () => {
               )}
             </button>
           </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        )}
+        
         {/* Status Messages */}
         {message && (
           <div className={`mb-6 p-4 rounded-lg border ${

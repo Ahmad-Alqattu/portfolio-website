@@ -10,6 +10,7 @@ import Footer from './components/layout/Footer';
 import Login from './components/admin/Login';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ModernAdminDashboard from './components/admin/ModernAdminDashboard';
+import LiveAdminInterface from './components/admin/LiveAdminInterface';
 import SectionEditor from './components/admin/SectionEditor';
 import ModernSectionEditor from './components/admin/ModernSectionEditor';
 import UniversalSectionEditor from './components/admin/UniversalSectionEditor';
@@ -49,6 +50,11 @@ function App() {
               
               {/* Protected admin routes */}
               <Route path="/admin" element={
+                <ProtectedRoute>
+                  <LiveAdminInterface />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/dashboard" element={
                 <ProtectedRoute>
                   <AdminDashboard />
                 </ProtectedRoute>
