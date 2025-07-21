@@ -259,6 +259,43 @@ function MainComponent() {
           }
         })}
       </MainContent>
+      
+      {/* Small Edit Link */}
+      <div style={{ 
+        position: 'fixed', 
+        bottom: '20px', 
+        right: '20px', 
+        zIndex: 1000 
+      }}>
+        <a
+          href="/edit"
+          target="_blank"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '20px',
+            fontSize: '14px',
+            fontWeight: '500',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = '#2563eb';
+            e.target.style.transform = 'translateY(-2px)';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = '#3b82f6';
+            e.target.style.transform = 'translateY(0)';
+          }}
+        >
+          ✏️ Edit
+        </a>
+      </div>
     </MainContainer>
   );
 }

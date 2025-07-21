@@ -8,20 +8,13 @@ import ResponsiveNavBar from './components/layout/ResponsiveNavBar';
 import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
 import Login from './components/admin/Login';
-import AdminDashboard from './components/admin/AdminDashboard';
-import ModernAdminDashboard from './components/admin/ModernAdminDashboard';
-import SectionEditor from './components/admin/SectionEditor';
-import ModernSectionEditor from './components/admin/ModernSectionEditor';
-import UniversalSectionEditor from './components/admin/UniversalSectionEditor';
-import MediaUpload from './components/admin/MediaUpload';
-import ProjectEditor from './components/admin/ProjectEditor';
+import UniversalEditor from './components/admin/UniversalEditor';
 import ProtectedRoute from './components/admin/ProtectedRoute';
-import FirebaseSetupGuide from './components/admin/FirebaseSetupGuide';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   useEffect(() => {
-    document.title = "Ahmad Al-Qattu Portfolio "; // Change tab title here
+    document.title = "Ahmad's Portfolio";
   }, []);
   const theme = createMyTheme(darkMode ? 'dark' : 'light');
 
@@ -37,7 +30,7 @@ function App() {
             }}
           >
             <Routes>
-              {/* Public routes */}
+              {/* Home portfolio */}
               <Route path="/" element={
                 <>
                   <ResponsiveNavBar darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -45,49 +38,15 @@ function App() {
                   <Footer />
                 </>
               } />
+              
+              {/* Authentication */}
               <Route path="/login" element={<Login />} />
               
-              {/* Protected admin routes */}
-              <Route path="/admin" element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/classic" element={
-                <ProtectedRoute>
-                  <ModernAdminDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/setup" element={
-                <ProtectedRoute>
-                  <FirebaseSetupGuide />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/edit/:sectionType" element={
-                <ProtectedRoute>
-                  <SectionEditor />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/modern/edit/:sectionType" element={
-                <ProtectedRoute>
-                  <ModernSectionEditor />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/universal/edit/:sectionType" element={
-                <ProtectedRoute>
-                  <UniversalSectionEditor />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/media" element={
-                <ProtectedRoute>
-                  <MediaUpload />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/projects/:projectId" element={
-                <ProtectedRoute>
-                  <ProjectEditor />
-                </ProtectedRoute>
-              } />
+              {/* Universal Editor - Edit all sections */}
+              <Route path="/edit" element={<UniversalEditor />} />
+              
+              {/* Admin redirect to universal editor */}
+              <Route path="/admin" element={<UniversalEditor />} />
             </Routes>
           </Router>
         </DataProvider>

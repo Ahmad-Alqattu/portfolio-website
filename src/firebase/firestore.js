@@ -83,7 +83,7 @@ export const getSection = async (sectionId, userId = 'default-user') => {
   }
 };
 
-// Update a section for specific user
+// Update a section for specific user (creates if doesn't exist)
 export const updateSection = async (sectionId, sectionData, userId = 'default-user') => {
   try {
     const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
@@ -94,7 +94,8 @@ export const updateSection = async (sectionId, sectionData, userId = 'default-us
       userId: userId
     };
     
-    await updateDoc(sectionRef, updateData);
+    // Use setDoc instead of updateDoc to create if doesn't exist
+    await setDoc(sectionRef, updateData, { merge: true });
     
     return { success: true };
   } catch (error) {

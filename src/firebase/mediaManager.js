@@ -24,8 +24,12 @@ class MediaManager {
 
   async uploadFile(file, category = 'general') {
     try {
+      // Allow uploads even without authentication - use public folder
+      let uploadPath;
       if (this.userId === 'default-user') {
-        return { success: false, error: 'User must be authenticated to upload files' };
+        uploadPath = `public/media/${category}`;
+      } else {
+        uploadPath = `${this.basePath}/${category}`;
       }
 
       const validation = this.validateFile(file);
@@ -35,7 +39,7 @@ class MediaManager {
 
       const timestamp = Date.now();
       const fileName = `${timestamp}-${file.name}`;
-      const fileRef = ref(storage, `${this.basePath}/${category}/${fileName}`);
+      const fileRef = ref(storage, `${uploadPath}/${fileName}`);
 
       await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(fileRef);

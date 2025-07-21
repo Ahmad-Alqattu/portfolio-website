@@ -12,7 +12,9 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '../../contexts/AuthContext';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import EditIcon from '@mui/icons-material/Edit';
 
 const pages = [
   { title: 'Home', path: '/' },
@@ -21,6 +23,7 @@ const pages = [
 function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { currentUser } = useAuth();
 
   const onPageClick = (path) => {
     navigate(path);
@@ -84,7 +87,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
               ))}
             </Box>
 
-            {/* Right side: GitHub and Dark Mode Toggle, plus Mobile Menu */}
+            {/* Right side: GitHub and Dark Mode Toggle */}
             <Stack direction="row" spacing={1} alignItems="center">
               {/* GitHub Icon */}
               <IconButton
