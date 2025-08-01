@@ -13,7 +13,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { Google as GoogleIcon, Email as EmailIcon } from '@mui/icons-material';
-import { signInWithEmail, signInWithGoogle } from '../../firebase/auth';
+import { signInWithEmail, signInWithGoogle, logOut } from '../../firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -48,7 +48,14 @@ const Login = () => {
     const result = await signInWithGoogle();
     
     if (result.success) {
-      navigate(from, { replace: true });
+      // Check if user is authorized admin after successful login
+      if (result.user.email === 'ahmadl.qatu@gmail.com') {
+        navigate(from, { replace: true });
+      } else {
+        setError('Access denied. Only ahmadl.qatu@gmail.com is authorized.');
+        // Optional: sign out unauthorized user
+        await logOut();
+      }
     } else {
       setError(result.error);
     }
@@ -138,6 +145,9 @@ const Login = () => {
             </Button>
 
             <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                Access restricted to: ahmadl.qatu@gmail.com
+              </Typography>
               <Button
                 variant="text"
                 onClick={() => navigate('/')}

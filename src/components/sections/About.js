@@ -5,10 +5,10 @@ function About() {
   return (
     <Container id="about" sx={{ padding: '50px 0' }}>
       <Grid container spacing={3} alignItems="center">
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           {/* <Avatar alt="Ahmad Al-Qattu" src={myPhoto} sx={{ width: 150, height: 150, margin: '0 auto' }} /> */}
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Typography variant="h4">About Me</Typography>assets\logo192.png
           <Typography variant="body1" sx={{ marginY: 2 }}>
             Hi! I'm Ahmad Al-Qattu, a passionate Full-Stack Developer with experience in building web and mobile

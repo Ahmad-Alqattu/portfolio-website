@@ -10,7 +10,7 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
     // Initialize with current sections and add order property if missing
     const sectionsWithOrder = sections.map((section, index) => ({
       ...section,
-      order: section.order !== undefined ? section.order : index,
+      order: section.order !== undefined ? section.order : index + 1,
       visible: section.visible !== undefined ? section.visible : true
     }));
     
@@ -26,10 +26,10 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Update order property
+    // Update order property (start from 1, not 0)
     const updatedItems = items.map((item, index) => ({
       ...item,
-      order: index
+      order: index + 1
     }));
 
     setOrderedSections(updatedItems);

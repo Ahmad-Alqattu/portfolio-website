@@ -1,7 +1,13 @@
-// Portfolio Data Context with Firestore integration
+// Portfolio Data Context with Firestore integration and caching
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getAllSections, subscribeToSections } from '../firebase/firestore';
 import { auth } from '../firebase/config';
+import { PageSkeleton } from '../components/ui/SkeletonLoader';
+
+// Cache configuration
+const CACHE_KEY = 'portfolio_sections_cache';
+const CACHE_TIMESTAMP_KEY = 'portfolio_cache_timestamp';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 const DataContext = createContext();
 
@@ -19,6 +25,46 @@ export const DataProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [useFirestore, setUseFirestore] = useState(false);
   const [cleanupRef, setCleanupRef] = useState(null);
+  const [cacheLoaded, setCacheLoaded] = useState(false);
+
+  // Cache utility functions
+  const getCachedData = () => {
+    try {
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      const cacheTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+      
+      if (cachedData && cacheTimestamp) {
+        const now = Date.now();
+        const timestamp = parseInt(cacheTimestamp, 10);
+        
+        // Check if cache is still valid
+        if (now - timestamp < CACHE_DURATION) {
+          return JSON.parse(cachedData);
+        }
+      }
+    } catch (error) {
+      console.warn('Error reading cache:', error);
+    }
+    return null;
+  };
+
+  const setCachedData = (data) => {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+    } catch (error) {
+      console.warn('Error setting cache:', error);
+    }
+  };
+
+  const clearCache = () => {
+    try {
+      localStorage.removeItem(CACHE_KEY);
+      localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+    } catch (error) {
+      console.warn('Error clearing cache:', error);
+    }
+  };
 
   useEffect(() => {
     let unsubscribeAuth;
@@ -26,8 +72,6 @@ export const DataProvider = ({ children }) => {
     let hasLoaded = false;
 
     const initializeData = () => {
-      console.log('🔄 DataContext initializing...');
-      
       // Wait for auth state to be determined
       unsubscribeAuth = auth.onAuthStateChanged(async (user) => {
         // Prevent multiple loads
@@ -35,14 +79,9 @@ export const DataProvider = ({ children }) => {
         
         // Always use default-user for consistency with migration
         const userId = 'default-user';
-        console.log('🔐 Auth state changed. User ID:', userId);
         
         if (user) {
-          console.log('✅ User authenticated:', user.email);
-          console.log('🔑 Using default collection path: users/default-user/sections');
         } else {
-          console.log('❌ No authenticated user, using default-user collection');
-          console.log('🔑 Using default collection path: users/default-user/sections');
         }
         
         hasLoaded = true;
@@ -69,58 +108,103 @@ export const DataProvider = ({ children }) => {
     };
   }, []);
 
-  const loadPortfolioData = async (userId = 'default-user') => {
+  const loadPortfolioData = async (userId = 'default-user', forceRefresh = false) => {
     setLoading(true);
     setError(null);
 
     try {
       // Always use default-user for consistency
       const finalUserId = 'default-user';
-      console.log('📊 Loading from Firestore for user:', finalUserId);
       
-      // Always load from Firestore - no JSON fallback in production
+      // Check cache first (unless force refresh)
+      if (!forceRefresh && !cacheLoaded) {
+        const cachedData = getCachedData();
+        if (cachedData && cachedData.length > 0) {
+    
+          const sortedSections = cachedData.sort((a, b) => (a.order || 999) - (b.order || 999));
+          setSections(sortedSections);
+          setCacheLoaded(true);
+          setLoading(false);
+          setUseFirestore(true);
+          
+          // Load fresh data in background
+          setTimeout(() => {
+            loadPortfolioData(finalUserId, true);
+          }, 100);
+          return;
+        }
+      }
+      
+      // Load from Firestore
+
       const firestoreData = await getAllSections(finalUserId);
 
-      console.log('✅ Firestore data loaded:', firestoreData.length, 'sections');
       if (firestoreData.length > 0) {
-        console.log('📋 Section IDs found:', firestoreData.map(s => s.id || s.type));
+        // Ensure sections are properly sorted by order
+        const sortedSections = firestoreData.sort((a, b) => (a.order || 999) - (b.order || 999));
+        setSections(sortedSections);
+        
+        // Cache the fresh data
+        setCachedData(sortedSections);
       } else {
-        console.log('⚠️ No sections found in Firestore. You may need to run migration.');
+        setSections([]);
+        clearCache(); // Clear cache if no data
       }
-      setSections(firestoreData);
       setUseFirestore(true);
+      setCacheLoaded(true);
       
     } catch (err) {
       console.error('Error loading portfolio data from Firestore:', err);
-      setError(`Failed to load data from Firebase: ${err.message}. Please check your connection and Firebase configuration.`);
-      setSections([]);
-      setUseFirestore(true); // Still mark as using Firestore for admin functionality
+      
+      // Try to load from cache as fallback
+      if (!cacheLoaded) {
+        const cachedData = getCachedData();
+        if (cachedData && cachedData.length > 0) {
+  
+          const sortedSections = cachedData.sort((a, b) => (a.order || 999) - (b.order || 999));
+          setSections(sortedSections);
+          setError('Using cached data. Some features may be limited.');
+        } else {
+          setError(`Failed to load data from Firebase: ${err.message}. Please check your connection and Firebase configuration.`);
+          setSections([]);
+        }
+      } else {
+        setError(`Failed to refresh data: ${err.message}`);
+      }
+      setUseFirestore(true);
     }
 
     setLoading(false);
   };
 
   const setupRealtimeListeners = (userId = 'default-user') => {
-    console.log('👂 Setting up real-time listeners for user:', userId);
-    
     // Subscribe to all sections
     const unsubscribe = subscribeToSections((updatedSections) => {
-      console.log('🔄 Real-time update received:', updatedSections.length, 'sections');
       if (updatedSections.length > 0) {
-        console.log('📋 Updated section details:', updatedSections.map(s => ({ id: s.id, type: s.type, title: s.title })));
+
+        // Update cache with real-time data
+        const sortedSections = updatedSections.sort((a, b) => (a.order || 999) - (b.order || 999));
+        setCachedData(sortedSections);
+      } else {
+        // Clear cache if no sections
+        clearCache();
       }
       setSections(updatedSections);
     }, userId);
 
     // Clean up listener on component unmount
     return () => {
-      console.log('🔌 Cleaning up real-time listeners');
       unsubscribe();
     };
   };
 
   const refreshData = async () => {
-    await loadPortfolioData('default-user');
+    await loadPortfolioData('default-user', true); // Force refresh
+  };
+
+  const clearDataCache = () => {
+    clearCache();
+    setCacheLoaded(false);
   };
 
   const value = {
@@ -128,7 +212,9 @@ export const DataProvider = ({ children }) => {
     loading,
     error,
     useFirestore,
-    refreshData
+    refreshData,
+    clearDataCache,
+    cacheLoaded
   };
 
   return (

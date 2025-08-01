@@ -9,20 +9,20 @@
     "start": "vite"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@hello-pangea/dnd": "^18.0.1",
-    "@mui/icons-material": "^5.15.15",
-    "@mui/material": "^5.15.15",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
     "firebase": "^10.12.2",
-    "formik": "^2.4.6",
     "framer-motion": "^11.18.2",
-    "lucide-react": "^0.525.0",
+    "lucide-react": "^0.534.0",
     "react": "^18.3.1",
-    "react-beautiful-dnd": "^13.1.1",
+    "react-chrono": "^2.9.1",
     "react-dom": "^18.3.1",
+    "react-lazyload": "^3.2.1",
+    "react-pdf": "^10.0.1",
     "react-router-dom": "^6.23.1",
-    "react-scroll": "^1.9.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
@@ -31,7 +31,9 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
+    "rollup-plugin-critical": "^1.0.15",
     "tailwindcss": "^3.4.3",
+    "terser": "^5.43.1",
     "vite": "^5.3.1"
   }
 }

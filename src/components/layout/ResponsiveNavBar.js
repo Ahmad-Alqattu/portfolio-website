@@ -41,7 +41,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
     <>
       <CssBaseline />
       <AppBar
-        position="sticky"
+        position="fixed"
         // Use theme background colors instead of fixed color
         sx={{
           backgroundColor: theme.palette.background.paper,
@@ -57,11 +57,11 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
           >
             {/* Left side: Brand */}
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{ fontWeight: 'bold', cursor: 'pointer' }}
               onClick={() => navigate('/')}
             >
-              Ahmad Luay 
+              Ahmad Luay Al-Qattu
             </Typography>
 
             {/* Center: Desktop Nav Links */}

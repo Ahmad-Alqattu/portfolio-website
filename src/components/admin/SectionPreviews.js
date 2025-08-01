@@ -17,6 +17,8 @@ export const IntroPreview = ({ section }) => {
                 src={data.profilePicture} 
                 alt={data.name} 
                 className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg border-4 border-white"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-300 flex items-center justify-center shadow-lg border-4 border-white">

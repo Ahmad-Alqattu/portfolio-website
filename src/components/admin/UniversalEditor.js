@@ -5,11 +5,6 @@ import { useData } from '../../contexts/DataContext';
 import { mediaManager } from '../../firebase/mediaManager';
 import { updateSection } from '../../firebase/firestore';
 import { migrateLocalDataToFirebase } from '../../utils/dataMigration';
-import '../../utils/debugFirestore'; // Import debug functions for console access
-import '../../utils/authDebug'; // Import auth debug functions
-import '../../utils/dataInvestigation'; // Import data investigation tools
-import '../../utils/firebaseStructureDebug'; // Import Firebase structure debug
-import '../../utils/uploadTest'; // Import upload testing tools
 import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff, ToggleLeft, ToggleRight } from 'lucide-react';
 import SectionPreview from './SectionPreview';
 import FileUpload from './FileUpload';
@@ -17,7 +12,7 @@ import SectionOrderManager from './SectionOrderManager';
 
 const UniversalEditor = () => {
   const { currentUser } = useAuth();
-  const { sections, useFirestore } = useData();
+  const { sections, useFirestore, refreshData } = useData();
   const [activeTab, setActiveTab] = useState('manage');
   const [editingData, setEditingData] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -34,6 +29,7 @@ const UniversalEditor = () => {
     { id: 'capabilities', name: 'Capabilities', icon: '💡' },
     { id: 'experience', name: 'Experience', icon: '💼' },
     { id: 'education', name: 'Education', icon: '🎓' },
+    { id: 'certificates', name: 'Certificates', icon: '📜' },
     { id: 'footerAndLinks', name: 'Footer & Links', icon: '🔗' }
   ];
 
@@ -142,7 +138,7 @@ const UniversalEditor = () => {
           title: 'Education',
           content: 'My educational background and qualifications...',
           data: {
-            educations: [{
+            educationList: [{
               id: 1,
               degree: 'Your Degree',
               institution: 'University Name',
@@ -152,7 +148,25 @@ const UniversalEditor = () => {
             }]
           }
         };
-      case 'contact':
+      case 'certificates':
+        return {
+          ...base,
+          title: 'Certificates',
+          content: 'My professional certifications and achievements...',
+          data: {
+            certificates: [{
+              id: 1,
+              name: 'Certificate Name',
+              issuer: 'Issuing Organization',
+              issueDate: '2023',
+              description: 'Description of the certificate...',
+              image: '',
+              pdf: '',
+              link: '', // Optional verification link
+              active: true
+            }]
+          }
+        };
         return {
           ...base,
           title: 'Contact',
@@ -215,14 +229,11 @@ const UniversalEditor = () => {
   };
 
   const handleImageUpload = async (file, targetField = 'data.image') => {
-    console.log('🖼️ Starting image upload for field:', targetField, 'File:', file.name);
     setUploading(true);
     try {
       const result = await mediaManager.uploadFile(file, 'images');
-      console.log('📤 Upload result:', result);
       
       if (result.success) {
-        console.log('✅ Upload successful, setting field:', targetField, 'to:', result.file.url);
         handleChange(targetField, result.file.url);
         setMessage('✅ Image uploaded successfully!');
         setTimeout(() => setMessage(''), 3000);
@@ -248,7 +259,6 @@ const UniversalEditor = () => {
       const result = await updateSection(editingData.id || editingData.type, editingData, 'default-user');
       if (result.success) {
         setMessage('✅ Section saved to Firebase successfully!');
-        console.log('💾 Section saved:', editingData.type || editingData.id);
       } else {
         setMessage('❌ Firebase save failed: ' + result.error);
         console.error('❌ Save failed:', result.error);
@@ -284,7 +294,6 @@ const UniversalEditor = () => {
 
   const handleSectionOrderChange = (orderedSections) => {
     // Update sections order in real-time
-    console.log('Section order changed:', orderedSections);
   };
 
   const handleSectionOrderSave = async (orderedSections) => {
@@ -332,6 +341,8 @@ const UniversalEditor = () => {
         return <ExperienceEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
       case 'education':
         return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
+      case 'certificates':
+        return <CertificatesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
       case 'footerAndLinks':
         return <FooterAndLinksEditor data={editingData} onChange={handleChange} />;
       default:
@@ -360,17 +371,17 @@ const UniversalEditor = () => {
               <h1 className="text-2xl font-bold text-gray-900">Portfolio Editor</h1>
               <p className="text-gray-600">Edit all sections of your portfolio</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:w-auto mt-4 md:mt-0">
               <button
                 onClick={handleMigrateData}
-                className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 w-full md:w-auto"
               >
-                <Download size={16} />
+                <FileText size={16} />
                 Import JSON
               </button>
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg w-full md:w-auto ${
                   showPreview 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
                     : 'text-gray-600 border border-gray-300 hover:bg-gray-50'
@@ -381,7 +392,7 @@ const UniversalEditor = () => {
               </button>
               <button
                 onClick={() => window.open('/', '_blank')}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 w-full md:w-auto"
               >
                 <Eye size={16} />
                 Full Preview
@@ -389,7 +400,7 @@ const UniversalEditor = () => {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 w-full md:w-auto"
               >
                 <Save size={16} />
                 {saving ? 'Saving...' : 'Save'}
@@ -684,6 +695,18 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
   const projects = data.data?.projects || [];
   const [expandedProject, setExpandedProject] = useState(0);
   
+  // Initialize order values for projects that don't have them
+  useEffect(() => {
+    const needsOrder = projects.some(project => project.order === undefined);
+    if (needsOrder) {
+      const projectsWithOrder = projects.map((project, index) => ({
+        ...project,
+        order: project.order !== undefined ? project.order : index + 1
+      }));
+      onChange('data.projects', projectsWithOrder);
+    }
+  }, []); // Only run once when component mounts
+  
   // Color scheme for projects
   const projectColors = [
     'bg-blue-50 border-blue-200',
@@ -703,7 +726,8 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
       images: [],
       videos: [],
       link: ['', ''], // Two link fields
-      active: true // Add active state
+      active: true, // Add active state
+      order: projects.length + 1 // Add order based on current position
     };
     onChange('data.projects', [...projects, newProject]);
   };
@@ -727,7 +751,13 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    onChange('data.projects', items);
+    // Add order property to each project based on its new position
+    const itemsWithOrder = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+
+    onChange('data.projects', itemsWithOrder);
   };
 
   const handleImageUpload = async (file, projectIdx) => {
@@ -984,8 +1014,11 @@ const CapabilitiesEditor = ({ data, onChange }) => {
   
   const addCapability = () => {
     const newCapability = {
+      id: Date.now(),
       title: 'New Capability',
-      description: 'Describe this capability...'
+      description: 'Describe this capability...',
+      active: true,
+      order: capabilities.length + 1
     };
     onChange('data.capabilities', [...capabilities, newCapability]);
   };
@@ -997,8 +1030,11 @@ const CapabilitiesEditor = ({ data, onChange }) => {
     if (typeof updatedCapabilities[index] === 'string') {
       // Convert string to object
       updatedCapabilities[index] = {
+        id: Date.now(),
         title: updatedCapabilities[index],
-        description: 'Professional capability in this area.'
+        description: 'Professional capability in this area.',
+        active: true,
+        order: index + 1
       };
     }
     
@@ -1009,6 +1045,22 @@ const CapabilitiesEditor = ({ data, onChange }) => {
   const removeCapability = (index) => {
     const updatedCapabilities = capabilities.filter((_, i) => i !== index);
     onChange('data.capabilities', updatedCapabilities);
+  };
+
+  const toggleCapabilityActive = (index) => {
+    const updatedCapabilities = capabilities.map((capability, i) => 
+      i === index ? { ...capability, active: !capability.active } : capability
+    );
+    onChange('data.capabilities', updatedCapabilities);
+  };
+
+  const handleDragEnd = (items) => {
+    const reorderedItems = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+
+    onChange('data.capabilities', reorderedItems);
   };
 
   return (
@@ -1035,54 +1087,99 @@ const CapabilitiesEditor = ({ data, onChange }) => {
         />
       </div>
       
-      <div className="space-y-4">
-        {capabilities.map((capability, idx) => {
-          // Handle both string and object formats
-          const capabilityObj = typeof capability === 'string' 
-            ? { title: capability, description: '' }
-            : capability;
-            
-          return (
-            <div key={idx} className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex justify-between items-center mb-3">
-                <h4 className="font-medium text-gray-900">Capability #{idx + 1}</h4>
-                <button
-                  onClick={() => removeCapability(idx)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-              
-              <div className="space-y-3">
-                {/* Capability Title */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                  <input
-                    type="text"
-                    value={capabilityObj.title || ''}
-                    onChange={(e) => updateCapability(idx, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Capability title..."
-                  />
-                </div>
-                
-                {/* Capability Description */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                  <textarea
-                    value={capabilityObj.description || ''}
-                    onChange={(e) => updateCapability(idx, 'description', e.target.value)}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Describe this capability in detail..."
-                  />
-                </div>
-              </div>
+      <DragDropContext onDragEnd={(result) => {
+        if (!result.destination) return;
+        
+        const items = Array.from(capabilities);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        
+        handleDragEnd(items);
+      }}>
+        <Droppable droppableId="capabilities">
+          {(provided) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="space-y-4"
+            >
+              {capabilities.map((capability, idx) => {
+                // Handle both string and object formats
+                const capabilityObj = typeof capability === 'string' 
+                  ? { id: idx, title: capability, description: '', active: true }
+                  : capability;
+                  
+                return (
+                  <Draggable key={capabilityObj.id || idx} draggableId={String(capabilityObj.id || idx)} index={idx}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`border rounded-lg p-4 bg-gray-50 ${
+                          snapshot.isDragging ? 'shadow-lg' : ''
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="flex items-center gap-3">
+                            {/* Drag Handle */}
+                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                              <GripVertical size={16} className="text-gray-400" />
+                            </div>
+                            <h4 className="font-medium text-gray-900">Capability #{idx + 1}</h4>
+                            <button
+                              onClick={() => toggleCapabilityActive(idx)}
+                              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                capabilityObj.active !== false 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-red-100 text-red-800'
+                              }`}
+                            >
+                              {capabilityObj.active !== false ? '✓ Active' : '✗ Inactive'}
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => removeCapability(idx)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {/* Capability Title */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input
+                              type="text"
+                              value={capabilityObj.title || ''}
+                              onChange={(e) => updateCapability(idx, 'title', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Capability title..."
+                            />
+                          </div>
+                          
+                          {/* Capability Description */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea
+                              value={capabilityObj.description || ''}
+                              onChange={(e) => updateCapability(idx, 'description', e.target.value)}
+                              rows={3}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Describe this capability in detail..."
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                );
+              })}
+              {provided.placeholder}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 };
@@ -1296,8 +1393,56 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 onChange={(e) => onChange(`data.experiences.${idx}.description`, e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Job responsibilities and achievements..."
+                placeholder="Job overview and summary..."
               />
+            </div>
+
+            {/* Responsibilities Section */}
+            <div className="mt-4">
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">Key Responsibilities</label>
+                <button
+                  onClick={() => {
+                    const currentResponsibilities = exp.responsibilities || [];
+                    onChange(`data.experiences.${idx}.responsibilities`, [...currentResponsibilities, '']);
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                >
+                  <Plus size={14} />
+                  Add Responsibility
+                </button>
+              </div>
+              
+              <div className="space-y-2">
+                {(exp.responsibilities || []).map((responsibility, respIdx) => (
+                  <div key={respIdx} className="flex gap-2">
+                    <textarea
+                      value={responsibility}
+                      onChange={(e) => {
+                        const newResponsibilities = [...(exp.responsibilities || [])];
+                        newResponsibilities[respIdx] = e.target.value;
+                        onChange(`data.experiences.${idx}.responsibilities`, newResponsibilities);
+                      }}
+                      rows={2}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="Describe a key responsibility or achievement..."
+                    />
+                    <button
+                      onClick={() => {
+                        const newResponsibilities = (exp.responsibilities || []).filter((_, i) => i !== respIdx);
+                        onChange(`data.experiences.${idx}.responsibilities`, newResponsibilities);
+                      }}
+                      className="text-red-600 hover:text-red-800 px-2"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+                
+                {(!exp.responsibilities || exp.responsibilities.length === 0) && (
+                  <p className="text-sm text-gray-500 italic">No responsibilities added yet. Click "Add Responsibility" to get started.</p>
+                )}
+              </div>
             </div>
                       </div>
                     )}
@@ -1315,7 +1460,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
 
 // Education Section Editor
 const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
-  const educations = data.data?.educations || [];
+  const educations = data.data?.educationList || [];
   
   const addEducation = () => {
     const newEducation = {
@@ -1329,14 +1474,14 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
       active: true,
       order: educations.length + 1
     };
-    onChange('data.educations', [...educations, newEducation]);
+    onChange('data.educationList', [...educations, newEducation]);
   };
 
   const toggleEducationActive = (idx) => {
     const updatedEducations = educations.map((education, i) => 
       i === idx ? { ...education, active: !education.active } : education
     );
-    onChange('data.educations', updatedEducations);
+    onChange('data.educationList', updatedEducations);
   };
 
   const handleDragEnd = (result) => {
@@ -1352,14 +1497,14 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
       order: index + 1
     }));
 
-    onChange('data.educations', reorderedItems);
+    onChange('data.educationList', reorderedItems);
   };
 
   const handleImageUpload = async (file, eduIdx) => {
     try {
       const result = await onImageUpload(file, 'education');
       if (result?.success) {
-        onChange(`data.educations.${eduIdx}.logo`, result.file.url); // Changed from .image to .logo
+        onChange(`data.educationList.${eduIdx}.logo`, result.file.url); // Changed from .image to .logo
       }
     } catch (error) {
       console.error('Image upload failed:', error);
@@ -1429,7 +1574,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                           <button
                             onClick={() => {
                               const newEducations = educations.filter((_, i) => i !== idx);
-                              onChange('data.educations', newEducations);
+                              onChange('data.educationList', newEducations);
                             }}
                             className="text-red-600 hover:text-red-800"
                           >
@@ -1477,7 +1622,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 <input
                   type="text"
                   value={edu.degree || ''}
-                  onChange={(e) => onChange(`data.educations.${idx}.degree`, e.target.value)}
+                  onChange={(e) => onChange(`data.educationList.${idx}.degree`, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Bachelor of Science in Computer Science"
                 />
@@ -1488,7 +1633,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 <input
                   type="text"
                   value={edu.institution || ''}
-                  onChange={(e) => onChange(`data.educations.${idx}.institution`, e.target.value)}
+                  onChange={(e) => onChange(`data.educationList.${idx}.institution`, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="University Name"
                 />
@@ -1499,7 +1644,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 <input
                   type="text"
                   value={edu.duration || ''}
-                  onChange={(e) => onChange(`data.educations.${idx}.duration`, e.target.value)}
+                  onChange={(e) => onChange(`data.educationList.${idx}.duration`, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="2019 - 2023"
                 />
@@ -1510,7 +1655,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 <input
                   type="text"
                   value={edu.location || ''}
-                  onChange={(e) => onChange(`data.educations.${idx}.location`, e.target.value)}
+                  onChange={(e) => onChange(`data.educationList.${idx}.location`, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="City, Country"
                 />
@@ -1521,7 +1666,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
               <textarea
                 value={edu.description || ''}
-                onChange={(e) => onChange(`data.educations.${idx}.description`, e.target.value)}
+                onChange={(e) => onChange(`data.educationList.${idx}.description`, e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Relevant coursework, achievements, GPA..."
@@ -1572,150 +1717,578 @@ const BasicEditor = ({ data, onChange }) => (
 );
 
 // Footer and Links Editor
-const FooterAndLinksEditor = ({ data, onChange }) => (
-  <div className="bg-white rounded-lg shadow-sm border p-6">
-    <h3 className="text-lg font-medium text-gray-900 mb-6">Footer & Links</h3>
-    
-    <div className="space-y-6">
-      {/* Welcome Message */}
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">Welcome Message</h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-            <input
-              type="text"
-              value={data.data?.welcomeMessage?.title || ''}
-              onChange={(e) => onChange('data.welcomeMessage.title', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Welcome to My Portfolio"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              value={data.data?.welcomeMessage?.description || ''}
-              onChange={(e) => onChange('data.welcomeMessage.description', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Thank you for visiting..."
-            />
+// FooterAndLinksEditor Component
+const FooterAndLinksEditor = ({ data, onChange }) => {
+  // Get intro section data for CV link sync
+  const { sections } = useData();
+  const introSection = sections.find(s => s.type === 'intro');
+  const introCvLink = introSection?.data?.cvLink || '';
+
+  // Sync CV link from intro section if available
+  const handleSyncCvLink = () => {
+    if (introCvLink) {
+      onChange('data.cvLink', introCvLink);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border p-6">
+      <h3 className="text-lg font-medium text-gray-900 mb-6">Footer & Links</h3>
+      
+      <div className="space-y-6">
+        {/* Welcome Message */}
+        <div className="p-4 bg-blue-50 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Welcome Message</h4>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+              <input
+                type="text"
+                value={data.data?.welcomeMessage?.title || ''}
+                onChange={(e) => onChange('data.welcomeMessage.title', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Welcome to My Portfolio"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea
+                value={data.data?.welcomeMessage?.description || ''}
+                onChange={(e) => onChange('data.welcomeMessage.description', e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Thank you for visiting..."
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Contact Information */}
-      <div className="p-4 bg-green-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📞 Phone</label>
-            <input
-              type="tel"
-              value={data.data?.contactInfo?.phone || ''}
-              onChange={(e) => onChange('data.contactInfo.phone', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="+970 0598-682-679"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📧 Email</label>
-            <input
-              type="email"
-              value={data.data?.contactInfo?.email || ''}
-              onChange={(e) => onChange('data.contactInfo.email', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="ahmadl.qatu@gmail.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📍 Location</label>
-            <input
-              type="text"
-              value={data.data?.contactInfo?.location || ''}
-              onChange={(e) => onChange('data.contactInfo.location', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Ramallah, Palestine"
-            />
+        {/* Contact Information */}
+        <div className="p-4 bg-green-50 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">📞 Phone</label>
+              <input
+                type="tel"
+                value={data.data?.contactInfo?.phone || ''}
+                onChange={(e) => onChange('data.contactInfo.phone', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="+970 0598-682-679"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">📧 Email</label>
+              <input
+                type="email"
+                value={data.data?.contactInfo?.email || ''}
+                onChange={(e) => onChange('data.contactInfo.email', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="ahmadl.qatu@gmail.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">📍 Location</label>
+              <input
+                type="text"
+                value={data.data?.contactInfo?.location || ''}
+                onChange={(e) => onChange('data.contactInfo.location', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ramallah, Palestine"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Social Links */}
-      <div className="p-4 bg-purple-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">Social Links</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">🐙 GitHub</label>
-            <input
-              type="url"
-              value={data.data?.socialLinks?.github || ''}
-              onChange={(e) => onChange('data.socialLinks.github', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="https://github.com/Ahmad-Alqattu"
-            />
+        {/* Social Links with Enable/Disable */}
+        <div className="p-4 bg-purple-50 rounded-lg">
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="font-medium text-gray-900">Social Links</h4>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={data.data?.socialLinks?.enabled !== false}
+                onChange={(e) => onChange('data.socialLinks.enabled', e.target.checked)}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-gray-700">Show Social Links</span>
+            </label>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">💼 LinkedIn</label>
-            <input
-              type="url"
-              value={data.data?.socialLinks?.linkedin || ''}
-              onChange={(e) => onChange('data.socialLinks.linkedin', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="https://www.linkedin.com/in/ahmad-al-qattu-987587201/"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📘 Facebook</label>
-            <input
-              type="url"
-              value={data.data?.socialLinks?.facebook || ''}
-              onChange={(e) => onChange('data.socialLinks.facebook', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="https://www.facebook.com/ahmadluay.alqatu.5"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📧 Email Link</label>
-            <input
-              type="text"
-              value={data.data?.socialLinks?.email || ''}
-              onChange={(e) => onChange('data.socialLinks.email', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="mailto:ahmadl.qatu@gmail.com"
-            />
+          
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${data.data?.socialLinks?.enabled === false ? 'opacity-50' : ''}`}>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <label className="block text-sm font-medium text-gray-700">🐙 GitHub</label>
+                <label className="flex items-center gap-1 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={data.data?.socialLinks?.githubEnabled !== false}
+                    onChange={(e) => onChange('data.socialLinks.githubEnabled', e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                  />
+                  <span className="text-gray-600">Enable</span>
+                </label>
+              </div>
+              <input
+                type="url"
+                value={data.data?.socialLinks?.github || ''}
+                onChange={(e) => onChange('data.socialLinks.github', e.target.value)}
+                disabled={data.data?.socialLinks?.githubEnabled === false || data.data?.socialLinks?.enabled === false}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                placeholder="https://github.com/Ahmad-Alqattu"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <label className="block text-sm font-medium text-gray-700">💼 LinkedIn</label>
+                <label className="flex items-center gap-1 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={data.data?.socialLinks?.linkedinEnabled !== false}
+                    onChange={(e) => onChange('data.socialLinks.linkedinEnabled', e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                  />
+                  <span className="text-gray-600">Enable</span>
+                </label>
+              </div>
+              <input
+                type="url"
+                value={data.data?.socialLinks?.linkedin || ''}
+                onChange={(e) => onChange('data.socialLinks.linkedin', e.target.value)}
+                disabled={data.data?.socialLinks?.linkedinEnabled === false || data.data?.socialLinks?.enabled === false}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                placeholder="https://www.linkedin.com/in/ahmad-al-qattu-987587201/"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <label className="block text-sm font-medium text-gray-700">📘 Facebook</label>
+                <label className="flex items-center gap-1 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={data.data?.socialLinks?.facebookEnabled !== false}
+                    onChange={(e) => onChange('data.socialLinks.facebookEnabled', e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                  />
+                  <span className="text-gray-600">Enable</span>
+                </label>
+              </div>
+              <input
+                type="url"
+                value={data.data?.socialLinks?.facebook || ''}
+                onChange={(e) => onChange('data.socialLinks.facebook', e.target.value)}
+                disabled={data.data?.socialLinks?.facebookEnabled === false || data.data?.socialLinks?.enabled === false}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                placeholder="https://www.facebook.com/ahmadluay.alqatu.5"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <label className="block text-sm font-medium text-gray-700">📧 Email Link</label>
+                <label className="flex items-center gap-1 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={data.data?.socialLinks?.emailEnabled !== false}
+                    onChange={(e) => onChange('data.socialLinks.emailEnabled', e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                  />
+                  <span className="text-gray-600">Enable</span>
+                </label>
+              </div>
+              <input
+                type="text"
+                value={data.data?.socialLinks?.email || ''}
+                onChange={(e) => onChange('data.socialLinks.email', e.target.value)}
+                disabled={data.data?.socialLinks?.emailEnabled === false || data.data?.socialLinks?.enabled === false}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                placeholder="mailto:ahmadl.qatu@gmail.com"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Other Links */}
-      <div className="p-4 bg-yellow-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">Additional Links</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📄 CV/Resume Link</label>
-            <input
-              type="text"
-              value={data.data?.cvLink || ''}
-              onChange={(e) => onChange('data.cvLink', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="/assets/AhmadQattu_resume.pdf"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">© Copyright Text</label>
-            <input
-              type="text"
-              value={data.data?.copyrightText || ''}
-              onChange={(e) => onChange('data.copyrightText', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Ahmad AL-Qatu"
-            />
+        {/* CV Link with Sync Option */}
+        <div className="p-4 bg-yellow-50 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">CV/Resume Link</h4>
+          
+          {introCvLink && (
+            <div className="mb-3 p-3 bg-blue-100 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-blue-800">
+                  <strong>Profile CV Link:</strong> {introCvLink}
+                </div>
+                <button
+                  onClick={handleSyncCvLink}
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                >
+                  Sync from Profile
+                </button>
+              </div>
+            </div>
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">📄 Footer CV Link</label>
+              <input
+                type="text"
+                value={data.data?.cvLink || ''}
+                onChange={(e) => onChange('data.cvLink', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="/assets/AhmadQattu_resume.pdf"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                This will be used for the Download CV link in the footer
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">© Copyright Text</label>
+              <input
+                type="text"
+                value={data.data?.copyrightText || ''}
+                onChange={(e) => onChange('data.copyrightText', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ahmad AL-Qatu"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+// Certificates Section Editor
+const CertificatesEditor = ({ data, onChange, onImageUpload, uploading }) => {
+  const certificates = data.data?.certificates || [];
+  const [expandedCertificate, setExpandedCertificate] = useState(0);
+  
+  // Initialize order values for certificates that don't have them
+  useEffect(() => {
+    const needsOrder = certificates.some(cert => cert.order === undefined);
+    if (needsOrder) {
+      const certificatesWithOrder = certificates.map((cert, index) => ({
+        ...cert,
+        order: cert.order !== undefined ? cert.order : index + 1
+      }));
+      onChange('data.certificates', certificatesWithOrder);
+    }
+  }, []);
+
+  const addCertificate = () => {
+    const newCertificate = {
+      id: Date.now(),
+      name: 'New Certificate',
+      issuer: 'Issuing Organization',
+      issueDate: '2024',
+      description: 'Description of the certificate...',
+      image: '',
+      pdf: '',
+      link: '', // Optional verification link
+      active: true,
+      order: certificates.length + 1
+    };
+    onChange('data.certificates', [...certificates, newCertificate]);
+  };
+
+  const removeCertificate = (idx) => {
+    const newCertificates = certificates.filter((_, i) => i !== idx);
+    onChange('data.certificates', newCertificates);
+  };
+
+  const toggleCertificateActive = (idx) => {
+    const updatedCertificates = certificates.map((cert, i) => 
+      i === idx ? { ...cert, active: !cert.active } : cert
+    );
+    onChange('data.certificates', updatedCertificates);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(certificates);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    const itemsWithOrder = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+
+    onChange('data.certificates', itemsWithOrder);
+  };
+
+  const handleFileUpload = async (file, certIdx, fileType) => {
+    try {
+      const result = await onImageUpload(file, 'certificates');
+      if (result?.success) {
+        onChange(`data.certificates.${certIdx}.${fileType}`, result.file.url);
+      }
+    } catch (error) {
+      console.error(`${fileType} upload failed:`, error);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-medium text-gray-900">Certificates</h3>
+        <button
+          onClick={addCertificate}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus size={16} />
+          Add Certificate
+        </button>
+      </div>
+      
+      <div className="space-y-4 mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+        <textarea
+          value={data.content || ''}
+          onChange={(e) => onChange('content', e.target.value)}
+          rows={2}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Describe your certificates section..."
+        />
+      </div>
+      
+      <div className="space-y-4">
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="certificates">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+                {certificates.map((certificate, idx) => (
+                  <Draggable key={certificate.id} draggableId={String(certificate.id)} index={idx}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`border rounded-lg overflow-hidden bg-gradient-to-r from-purple-50 to-blue-50 ${
+                          snapshot.isDragging ? 'shadow-lg' : ''
+                        }`}
+                      >
+                        {/* Certificate Header */}
+                        <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-opacity-80 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                              <GripVertical size={20} className="text-gray-400" />
+                            </div>
+                            
+                            <div 
+                              className={`transform transition-transform ${expandedCertificate === idx ? 'rotate-90' : ''}`}
+                              onClick={() => setExpandedCertificate(expandedCertificate === idx ? -1 : idx)}
+                            >
+                              ▶
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                              <div>
+                                <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                  📜 {certificate.name || `Certificate #${idx + 1}`}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleCertificateActive(idx);
+                                    }}
+                                    className={`text-sm px-2 py-1 rounded-full ${
+                                      certificate.active !== false 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}
+                                  >
+                                    {certificate.active !== false ? '✓ Active' : '✗ Inactive'}
+                                  </button>
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  {certificate.issuer || 'No issuer'} • {certificate.issueDate || 'No date'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeCertificate(idx);
+                            }}
+                            className="text-red-600 hover:text-red-800 p-1 transition-colors"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+
+                        {/* Certificate Details */}
+                        {expandedCertificate === idx && (
+                          <div className="p-4 border-t bg-white space-y-4">
+                            {/* Basic Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Certificate Name</label>
+                                <input
+                                  type="text"
+                                  value={certificate.name || ''}
+                                  onChange={(e) => onChange(`data.certificates.${idx}.name`, e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Enter certificate name"
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Issuing Organization</label>
+                                <input
+                                  type="text"
+                                  value={certificate.issuer || ''}
+                                  onChange={(e) => onChange(`data.certificates.${idx}.issuer`, e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Organization name"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Issue Date</label>
+                                <input
+                                  type="text"
+                                  value={certificate.issueDate || ''}
+                                  onChange={(e) => onChange(`data.certificates.${idx}.issueDate`, e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="2024"
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">🔗 Verification Link (Optional)</label>
+                                <input
+                                  type="url"
+                                  value={certificate.link || ''}
+                                  onChange={(e) => onChange(`data.certificates.${idx}.link`, e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="https://verify-certificate.com/..."
+                                />
+                              </div>
+                            </div>
+                            
+                            {/* Description */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                              <textarea
+                                value={certificate.description || ''}
+                                onChange={(e) => onChange(`data.certificates.${idx}.description`, e.target.value)}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Description of the certificate..."
+                              />
+                            </div>
+                            
+                            {/* File Uploads */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              {/* Certificate Image */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Certificate Image</label>
+                                <div className="space-y-3">
+                                  <div>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                          handleFileUpload(file, idx, 'image');
+                                        }
+                                      }}
+                                      className="hidden"
+                                      id={`cert-image-${idx}`}
+                                    />
+                                    <label
+                                      htmlFor={`cert-image-${idx}`}
+                                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg cursor-pointer hover:bg-blue-200 border border-blue-300"
+                                    >
+                                      <ImageIcon size={16} />
+                                      {uploading ? 'Uploading...' : 'Upload Image'}
+                                    </label>
+                                  </div>
+                                  
+                                  {certificate.image && (
+                                    <div className="relative">
+                                      <img 
+                                        src={certificate.image.startsWith('http') ? certificate.image : `/${certificate.image}`} 
+                                        alt={`${certificate.name} certificate`}
+                                        className="w-full h-32 object-cover rounded border shadow-sm"
+                                      />
+                                      <button
+                                        onClick={() => onChange(`data.certificates.${idx}.image`, '')}
+                                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 text-xs hover:bg-red-600"
+                                      >
+                                        ×
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Certificate PDF */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Certificate PDF</label>
+                                <div className="space-y-3">
+                                  <div>
+                                    <input
+                                      type="file"
+                                      accept=".pdf"
+                                      onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                          handleFileUpload(file, idx, 'pdf');
+                                        }
+                                      }}
+                                      className="hidden"
+                                      id={`cert-pdf-${idx}`}
+                                    />
+                                    <label
+                                      htmlFor={`cert-pdf-${idx}`}
+                                      className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg cursor-pointer hover:bg-red-200 border border-red-300"
+                                    >
+                                      <FileText size={16} />
+                                      {uploading ? 'Uploading...' : 'Upload PDF'}
+                                    </label>
+                                  </div>
+                                  
+                                  {certificate.pdf && (
+                                    <div className="flex items-center gap-2 text-sm text-green-600">
+                                      <FileText size={14} />
+                                      <a 
+                                        href={certificate.pdf} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="underline hover:text-green-800"
+                                      >
+                                        View Certificate PDF
+                                      </a>
+                                      <button
+                                        onClick={() => onChange(`data.certificates.${idx}.pdf`, '')}
+                                        className="text-red-600 hover:text-red-800 ml-2"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+    </div>
+  );
+};
 
 export default UniversalEditor;

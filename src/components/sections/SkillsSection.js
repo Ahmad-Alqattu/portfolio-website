@@ -76,7 +76,7 @@ function SkillsSection({ id, title, content }) {
       <Box sx={{ maxWidth: isMobile? '100%' : '70%', margin: 'auto' }}>
         <Grid container spacing={4}>
           {categories.map((category) => (
-            <Grid item xs={12} sm={6} md={4} key={category}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={category}>
               <Typography
                 variant="h5"
                 sx={{
@@ -90,7 +90,7 @@ function SkillsSection({ id, title, content }) {
               </Typography>
               <Grid container spacing={1} justifyContent="center">
                 {skillsList[category].map((skill, idx) => (
-                  <Grid item key={idx}>
+                  <Grid key={idx}>
                     <Chip
                       label={skill}
                       color={categoryColors[category] || 'default'}

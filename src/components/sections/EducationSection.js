@@ -4,7 +4,7 @@ import { Typography, Grid, Box, Avatar, Divider, Chip, useMediaQuery, useTheme }
 import PropTypes from 'prop-types';
 
 function EducationSection({ id, title, content, educationList = [] }) {
-  // Ensure educationList is an array
+  // Use educationList as the primary data source
   const validEducationList = Array.isArray(educationList) ? educationList : [];
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -49,7 +49,7 @@ function EducationSection({ id, title, content, educationList = [] }) {
           .filter(education => education.active !== false) // Show only active education items
           .sort((a, b) => (a.order || 999) - (b.order || 999)) // Sort by order
           .map((education, index) => (
-          <Grid item xs={12} key={education.id || index}>
+          <Grid size={{ xs: 12 }} key={education.id || index}>
             {/* Display education item */}
             <Box
               sx={{
@@ -64,7 +64,7 @@ function EducationSection({ id, title, content, educationList = [] }) {
             >
               <Grid container spacing={2} alignItems="center" justifyContent="center" textAlign="center">
                 {education.logo && (
-                  <Grid item>
+                  <Grid>
                     <Avatar
                       src={education.logo}
                       alt={`${education.institution} logo`}
@@ -73,7 +73,7 @@ function EducationSection({ id, title, content, educationList = [] }) {
                     />
                   </Grid>
                 )}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography 
                     variant="h4" 
                     sx={{ 
@@ -112,7 +112,7 @@ function EducationSection({ id, title, content, educationList = [] }) {
                   </Typography>
                   <Grid container spacing={1} justifyContent="center">
                     {education.electives.map((subject, idx) => (
-                      <Grid item key={idx}>
+                      <Grid key={idx}>
                         <Chip label={subject} color="primary" variant="outlined" />
                       </Grid>
                     ))}

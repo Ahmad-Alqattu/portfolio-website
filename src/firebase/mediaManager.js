@@ -20,7 +20,7 @@ class MediaManager {
 
   async uploadFile(file, category = 'general') {
     try {
-      console.log('📤 Uploading file:', file.name, 'to category:', category);
+    
       
       // Always use public folder for consistency and easier access
       const uploadPath = `public/media/${category}`;
@@ -35,11 +35,11 @@ class MediaManager {
       const fileName = `${timestamp}-${file.name}`;
       const fileRef = ref(storage, `${uploadPath}/${fileName}`);
 
-      console.log('⬆️ Uploading to path:', `${uploadPath}/${fileName}`);
+  
       await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(fileRef);
       
-      console.log('✅ File uploaded successfully. URL:', downloadURL);
+  
 
       return {
         success: true,
@@ -95,7 +95,7 @@ class MediaManager {
   async listFiles(folder = 'general') {
     try {
       if (this.userId === 'default-user') {
-        console.log('No authenticated user - returning empty file list');
+    
         return { success: true, files: [] };
       }
 
@@ -148,7 +148,7 @@ class MediaManager {
     }
   }
 
-  validateFile(file, maxSize = 10 * 1024 * 1024) {
+  validateFile(file, maxSize = null) {
     const allowedTypes = {
       images: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'],
       videos: ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov'],
@@ -159,6 +159,11 @@ class MediaManager {
         'text/plain'
       ]
     };
+
+    // Determine max size based on file type if not explicitly provided
+    if (maxSize === null) {
+      maxSize = 50 * 1024 * 1024; // 50MB for all files
+    }
 
     if (file.size > maxSize) {
       return {

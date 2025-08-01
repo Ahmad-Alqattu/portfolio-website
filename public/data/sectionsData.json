@@ -22,24 +22,46 @@
     "data": {
       "capabilities": [
         {
-          "title": "Full-Stack Development",
-          "description": "Building complete web applications from frontend to backend with modern technologies and best practices.",
-          "active": true
+          "id": 1,
+          "title": "Build Robust Applications",
+          "description": "I develop stable and efficient services and applications, including JavaFX-based desktop apps and Python apps—scripts for data extraction and classification.",
+          "active": true,
+          "order": 1
         },
         {
-          "title": "Mobile App Development",
-          "description": "Creating cross-platform mobile applications using Flutter and React Native for iOS and Android.",
-          "active": true
+          "id": 2,
+          "title": "Create Web Services & APIs",
+          "description": "I design reliable and scalable RESTful and SOAP-based APIs using frameworks like Spring Boot, Javalin, .NET Core, and PHP.",
+          "active": true,
+          "order": 2
         },
         {
-          "title": "Database Design & Management",
-          "description": "Designing efficient database schemas and managing data flow in various database systems.",
-          "active": true
+          "id": 3,
+          "title": "Develop Mobile Experiences",
+          "description": "I deliver smooth, intuitive, and responsive mobile solutions with Flutter, hands-on React Native, and native Android (Java).",
+          "active": true,
+          "order": 3
         },
         {
-          "title": "API Development & Integration",
-          "description": "Building robust APIs and integrating third-party services for seamless data exchange.",
-          "active": true
+          "id": 4,
+          "title": "Work with Databases & Cloud Services",
+          "description": "I manage and secure data using MySQL, PostgreSQL, Microsoft SQL Server, and Firebase (real-time DB, Firestore, and cloud functions).",
+          "active": true,
+          "order": 4
+        },
+        {
+          "id": 5,
+          "title": "Front-End Development",
+          "description": "I craft clean, responsive, and user-friendly interfaces using HTML5, CSS3, HTMX, JavaScript, React.js, and Bootstrap.",
+          "active": true,
+          "order": 5
+        },
+        {
+          "id": 6,
+          "title": "Optimize with Git & DevOps Tools",
+          "description": "I streamline deployment and collaboration using Git, Docker, Linux environments, and hosting platforms such as IIS on Windows.",
+          "active": true,
+          "order": 6
         }
       ]
     },
@@ -87,7 +109,7 @@
           "name": "رﺣﻠﺗﻲ",
           "description": "A mobile app for Local Tours and Booking",
           "fullDescription": "'رﺣﻠﺗﻲ' – mobile app for Local Tours and Booking Implemented features for tour booking, itinerary planning, and user profile for suggestions, admin panel, group for messages for every tour. using Flutter and firebase firestore, add foreign Api to get weather.",
-          "images": ["projects/Gproject/WhatsApp Image 2025-01-01 at 23.01.07_5573f157.jpg","projects/Gproject/WhatsApp Image 2025-01-01 at 23.01.06_5ac5998d.jpg","projects\\Gproject\\WhatsApp Image 2025-01-01 at 23.01.07_c3657213.jpg"],
+          "images": ["projects/Gproject/Gproject-2.jpg","projects/Gproject/Gproject-1.jpg","projects/Gproject/Gproject-3.jpg"],
           "videos": ["projects\\Gproject\\Media1.mp4"],
           "link": [],
           "active": true,
@@ -179,33 +201,28 @@
     "id": "education",
     "title": "Education",
     "type": "education",
-    "content": "My educational background and qualifications that have shaped my technical foundation.",
+    "content": "My educational background has provided me with a strong foundation in computer science and software engineering.",
     "data": {
-      "educationList": [
+      "educations": [
+        {
+          "id": 2,
+          "title": "Birzeit University",
+          "degree": "BsC in Computer Science",
+          "period": "2019 - 2024",
+          "logo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEVHcEwTXh0TXh0TXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhxEb/v+AAAAE3RSTlMACpBoHcP/9S/hcqGwgdJD6llJTAv5AQAAAOtJREFUeAHV0UWiQjEQRNE8O/EQ2P9ev7vAmDts76pwjyzrdi29H4h7yvsfrSVty4ZYG+l3QcW2EkX00pbv+XJApVVg/CjYBjDEIvdoOzmFr5sWW8zE2MSZI2zD/nE+Nc3ptQKz0FlfF/WaGKtvRLA+51ECtC/Jcuby0p9W5Do5wgDT2MARRwgFqNkcjqOOAzLGwVzCuTTa84rX69acxwDG5e2Jnp43AbawclnBbEd4JaUMGvWsTxBxfisYxEUbO6hPy9b92LP63Y49hAN52UMP/7AihSvUGwUd2vV+WE//FJReTpet9l7CffEIUOALmNNtN44AAAAASUVORK5CYII=",
+          "details": "Specialized in full-stack development with projects in web services and mobile applications. Electives: Data Science, Web Services, Android Development, Human-Computer Interaction, Games and Gamification",
+          "active": true,
+          "order": 2
+        },
         {
           "id": 1,
-          "level": "school",
-          "institution": "High School of Ain Misbah",
-          "degree": "High School Diploma",
-          "major": "Science",
-          "years": "2016 - 2019",
-          "logo": "", 
+          "title": "High School of Ain Misbah",
+          "degree": "High School Diploma, Science",
+          "period": "2016 - 2019",
+          "logo": "",
           "details": "Completed secondary education with focus on science and mathematics.",
           "active": true,
           "order": 1
-        },
-        {
-          "id": 2,
-          "level": "university",
-          "institution": "Birzeit University",
-          "degree": "BsC",
-          "major": "Computer Science",
-          "years": "2019 - 2024",
-          "logo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEVHcEwTXh0TXh0TXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhxEb/v+AAAAE3RSTlMACpBoHcP/9S/hcqGwgdJD6llJTAv5AQAAAOtJREFUeAHV0UWiQjEQRNE8O/EQ2P9ev7vAmDts76pwjyzrdi29H4h7yvsfrSVty4ZYG+l3QcW2EkX00pbv+XJApVVg/CjYBjDEIvdoOzmFr5sWW8zE2MSZI2zD/nE+Nc3ptQKz0FlfF/WaGKtvRLA+51ECtC/Jcuby0p9W5Do5wgDT2MARRwgFqNkcjqOOAzLGwVzCuTTa84rX69acxwDG5e2Jnp43AbawclnBbEd4JaUMGvWsTxBxfisYxEUbO6hPy9b92LP63Y49hAN52UMP/7AihSvUGwUd2vV+WE//FJReTpet9l7CffEIUOALmNNtN44AAAAASUVORK5CYII=", 
-          "electives": ["Data Science", "Web Services", "Android Development", "Human-Computer Interaction","Games and Gamification"],
-          "details": "Specialized in full-stack development with projects in web services and mobile applications.",
-          "active": true,
-          "order": 2
         }
       ]
     },
@@ -214,9 +231,9 @@
   },
   {
     "id": "experience",
-    "title": "My Experience",
+    "title": "Experience",
     "type": "experience",
-    "content": "My professional journey and work experience in software development.",
+    "content": "I have had the opportunity to work in various roles, gaining valuable experience in software development and project management.",
     "data": {
       "experiences": [
         {
@@ -224,12 +241,7 @@
           "title": "Software Developer",
           "company": "Al-Ameen Technology",
           "period": "2023 – Present",
-          "responsibilities": [
-            "development of custom scripts and desktop applications in java and python for varies projects",
-            "Provided technical support and server monitoring ,responsible for deploying wep applications to server and pwa to PayStore",
-            "Contributed to the development and maintenance of the .NET-core based project, implementing new features and optimizing existing functionality",
-            "contact with clients to get requirements and notes and deliver solutions that meet their needs"
-          ],
+          "details": "development of custom scripts and desktop applications in java and python for varies projects; Provided technical support and server monitoring ,responsible for deploying wep applications to server and pwa to PayStore; Contributed to the development and maintenance of the .NET-core based project, implementing new features and optimizing existing functionality; contact with clients to get requirements and notes and deliver solutions that meet their needs",
           "logo": "",
           "active": true,
           "order": 1
@@ -238,12 +250,8 @@
           "id": 2,
           "title": "Full Stack Intern",
           "company": "Equiptal",
-          "period": "June – August 2024",
-          "responsibilities": [
-            "Developed a full-featured Twitter clone utilizing modern development tools and best practices",
-            "Engaged in continuous learning through technical documentation and industry articles",
-            "Collaborated with senior developers to understand and implement industry best practices"
-          ],
+          "period": "June – August 2023",
+          "details": "Developed a full-featured Twitter clone utilizing modern development tools and best practices; Engaged in continuous learning through technical documentation and industry articles; Collaborated with senior developers to understand and implement industry best practices",
           "logo": "",
           "active": true,
           "order": 2

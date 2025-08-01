@@ -20,13 +20,13 @@ const SectionPreview = ({ sectionType, sectionData }) => {
       case 'skills':
         return <SkillsSection {...sectionData} />;
       case 'education':
-        return <EducationSection {...sectionData} educationList={sectionData.data?.educations || sectionData.data?.educationList} />;
+        return <EducationSection {...sectionData} educationList={ sectionData.data?.educationList} />;
       case 'experience':
-        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences || sectionData.experience} />;
+        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences } />;
       case 'projects':
         return <ProjectsSection {...sectionData} projects={sectionData.data?.projects} />;
       case 'capabilities':
-        return <CapabilitiesSection {...sectionData} />;
+        return <CapabilitiesSection {...sectionData} data={sectionData.data} />;
       case 'footerAndLinks':
         return <Footer data={sectionData.data} />;
       default:

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography, Box, Avatar, Divider, Link, useMediaQuery, useTheme } from '@mui/material';
-import Description from '@mui/icons-material/Description';
+import { Typography, Box, Avatar, Divider, Link, useMediaQuery, useTheme, Button } from '@mui/material';
+import { Download } from '@mui/icons-material';
 
 function IntroSection({ id, name, title, content, data }) {
   const { subtitle, highlight, image, cvLink } = data || {};
@@ -115,37 +115,64 @@ function IntroSection({ id, name, title, content, data }) {
           {content}
         </Typography>
 
-        {/* Button to download CV */}
+        {/* Elegant Download CV Button */}
         {cvLink && (
-          <Link
-  href={cvLink}
-  target="_blank"
-  rel="noopener noreferrer"
-  sx={{
-    textDecoration: 'none',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 1, // Spacing between text and icon
-    padding: '8px 16px',
-    borderRadius: '8px',
-    marginTop: 2,
-    fontSize: '16px',
-    fontWeight: 500,
-    backgroundColor: 'primary.main',
-    color: 'text.primary',
-    transition: 'background-color 0.3s ease, transform 0.2s ease',
-    '&:hover': {
-      backgroundColor: 'primary.dark',
-      transform: 'translateY(-2px)',
-    },
-    '&:active': {
-      transform: 'translateY(0)',
-    },
-  }}
->
-  <Description sx={{ fontSize: '20px' }} /> {/* Icon for visual flair */}
-  Download CV
-</Link>
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              component="a"
+              href={cvLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              startIcon={<Download />}
+              sx={{
+                background: 'linear-gradient(135deg, #10b981 0%, primary.main 100%)',
+                color: 'white',
+                px: 4,
+                py: 1.5,
+                borderRadius: '50px',
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                textTransform: 'none',
+                boxShadow: '0 8px 15px rgba(18, 217, 55, 0.4)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                  transition: 'left 0.6s ease',
+                },
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #059669 0%, primary.main 100%)',
+                  transform: 'translateY(-3px) scale(1.02)',
+                  boxShadow: '0 12px 20px rgba(20, 214, 120, 0.68)',
+                  '&::before': {
+                    left: '100%',
+                  },
+                },
+                '&:active': {
+                  transform: 'translateY(-1px) scale(1.01)',
+                },
+                '& .MuiButton-startIcon': {
+                  marginRight: '12px',
+                  transition: 'transform 0.3s ease',
+                },
+                '&:hover .MuiButton-startIcon': {
+                  transform: 'rotate(360deg)',
+                },
+              }}
+            >
+              Download Resume
+            </Button>
+          </Box>
         )}
       </Box>
     </section>

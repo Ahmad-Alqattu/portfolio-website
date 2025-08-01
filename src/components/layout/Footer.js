@@ -37,10 +37,49 @@ const Footer = ({ data = null }) => {
   };
 
   const footerData = getFooterData();
-  const { contactInfo, socialLinks, welcomeMessage, cvLink, copyrightText } = footerData;
+  const { 
+    contactInfo = {
+      phone: '+970 0598-682-679',
+      email: 'ahmadl.qatu@gmail.com',
+      location: 'Ramallah, Palestine'
+    }, 
+    socialLinks = {
+      github: 'https://github.com/Ahmad-Alqattu',
+      linkedin: 'https://www.linkedin.com/in/ahmad-al-qattu-987587201/',
+      facebook: 'https://www.facebook.com/ahmadluay.alqatu.5',
+      email: 'mailto:ahmadl.qatu@gmail.com'
+    }, 
+    welcomeMessage = {
+      title: 'Welcome to My Portfolio',
+      description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
+    }, 
+    cvLink = '/assets/AhmadQattu_resume.pdf', 
+    copyrightText = 'Ahmad AL-Qatu'
+  } = footerData || {};
 
   const handleBackToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Custom smooth scroll with 1.5s duration
+    const startPosition = window.pageYOffset;
+    const startTime = performance.now();
+    const duration = 1500; // 1.5 seconds
+    
+    const easeInOutCubic = (t) => {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    };
+    
+    const animateScroll = (currentTime) => {
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const easedProgress = easeInOutCubic(progress);
+      
+      window.scrollTo(0, startPosition * (1 - easedProgress));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+    
+    requestAnimationFrame(animateScroll);
   };
 
   return (
@@ -76,20 +115,20 @@ const Footer = ({ data = null }) => {
       {/* Desktop Layout */}
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <Grid container spacing={0}>
-          <Grid item md={4}>
+          <Grid size={{ md: 4 }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0 }}>
               Contact Info
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {contactInfo.phone}<br />
-              <Link href={`mailto:${contactInfo.email}`} color="primary.main" underline="hover">
-                {contactInfo.email}
+              {contactInfo?.phone || '+970 0598-682-679'}<br />
+              <Link href={`mailto:${contactInfo?.email || 'ahmadl.qatu@gmail.com'}`} color="primary.main" underline="hover">
+                {contactInfo?.email || 'ahmadl.qatu@gmail.com'}
               </Link><br />
-              {contactInfo.location}
+              {contactInfo?.location || 'Ramallah, Palestine'}
             </Typography>
           </Grid>
 
-          <Grid item md={4} sx={{ textAlign: 'center' }}>
+          <Grid size={{ md: 4 }} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
               {welcomeMessage.title}
             </Typography>
@@ -98,27 +137,39 @@ const Footer = ({ data = null }) => {
             </Typography>
           </Grid>
 
-          <Grid item md={4} sx={{ textAlign: 'right' }}>
+          <Grid size={{ md: 4 }} sx={{ textAlign: 'right' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mr: 4.5 }}>
               Social Links
             </Typography>
-            <Box sx={{ mb: 0 }}>
-              <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'text.primary' }}>
-                <GitHubIcon />
-              </IconButton>
-              <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'text.primary' }}>
-                <LinkedInIcon />
-              </IconButton>
-              <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'text.primary' }}>
-                <FacebookIcon />
-              </IconButton>
-              <IconButton href={socialLinks.email} sx={{ color: 'text.primary' }}>
-                <EmailIcon />
-              </IconButton>
-            </Box>
-            <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 5.5 }} href={cvLink} color="primary.main" >
-              Download CV
-            </Link>
+            {socialLinks?.enabled !== false && (
+              <Box sx={{ mb: 0 ,mr: 4.5}}>
+                {socialLinks?.githubEnabled !== false && socialLinks.github && (
+                  <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'text.primary' }}>
+                    <GitHubIcon />
+                  </IconButton>
+                )}
+                {socialLinks?.linkedinEnabled !== false && socialLinks.linkedin && (
+                  <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'text.primary' }}>
+                    <LinkedInIcon />
+                  </IconButton>
+                )}
+                {socialLinks?.facebookEnabled !== false && socialLinks.facebook && (
+                  <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'text.primary' }}>
+                    <FacebookIcon />
+                  </IconButton>
+                )}
+                {socialLinks?.emailEnabled !== false && socialLinks.email && (
+                  <IconButton href={socialLinks.email} sx={{ color: 'text.primary' }}>
+                    <EmailIcon />
+                  </IconButton>
+                )}
+              </Box>
+            )}
+            {cvLink && (
+              <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 5.5 }} href={cvLink} color="primary.main" >
+                Download CV
+              </Link>
+            )}
           </Grid>
         </Grid>
       </Box>
@@ -151,23 +202,35 @@ const Footer = ({ data = null }) => {
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
             Social Links
           </Typography>
-          <Box sx={{ mb: 1 }}>
-            <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'primary.main' }}>
-              <GitHubIcon />
-            </IconButton>
-            <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'primary.main' }}>
-              <LinkedInIcon />
-            </IconButton>
-            <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'primary.main' }}>
-              <FacebookIcon />
-            </IconButton>
-            <IconButton href={socialLinks.email} sx={{ color: 'primary.main' }}>
-              <EmailIcon />
-            </IconButton>
-          </Box>
-          <Link href={cvLink} color="primary.main" underline="hover">
-            Download CV
-          </Link>
+          {socialLinks?.enabled !== false && (
+            <Box sx={{ mb: 1 }}>
+              {socialLinks?.githubEnabled !== false && socialLinks.github && (
+                <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'primary.main' }}>
+                  <GitHubIcon />
+                </IconButton>
+              )}
+              {socialLinks?.linkedinEnabled !== false && socialLinks.linkedin && (
+                <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'primary.main' }}>
+                  <LinkedInIcon />
+                </IconButton>
+              )}
+              {socialLinks?.facebookEnabled !== false && socialLinks.facebook && (
+                <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'primary.main' }}>
+                  <FacebookIcon />
+                </IconButton>
+              )}
+              {socialLinks?.emailEnabled !== false && socialLinks.email && (
+                <IconButton href={socialLinks.email} sx={{ color: 'primary.main' }}>
+                  <EmailIcon />
+                </IconButton>
+              )}
+            </Box>
+          )}
+          {cvLink && (
+            <Link href={cvLink} color="primary.main" underline="hover">
+              Download CV
+            </Link>
+          )}
         </Box>
       </Box>
 
