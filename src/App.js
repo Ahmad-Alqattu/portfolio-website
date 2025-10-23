@@ -8,6 +8,8 @@ import ResponsiveNavBar from './components/layout/ResponsiveNavBar';
 import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/admin/ProtectedRoute';
+// Import analytics initialization
+import './firebase/analytics';
 
 // Lazy load admin components for better performance
 const Login = lazy(() => import('./components/admin/Login'));
