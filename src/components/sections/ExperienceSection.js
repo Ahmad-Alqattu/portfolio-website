@@ -142,40 +142,39 @@ const ExperienceSection = ({ id, title, experiences = [] }) => {
                       </Typography>
                       <List dense sx={{ pl: 0 }}>
                         {experience.responsibilities.map((responsibility, idx) => (
-                          <ListItem 
-                            key={idx} 
-                            sx={{ 
-                              py: 0.75, 
+                          <ListItem
+                            key={idx}
+                            sx={{
+                              py: 0.75,
                               pl: 0,
                               borderRadius: '8px',
                               mb: 0.5,
                               transition: 'all 0.2s ease',
                               '&:hover': {
                                 backgroundColor: 'rgba(25, 118, 210, 0.04)',
-                                transform: 'translateX(4px)',
                                 '& .MuiListItemText-primary': {
                                   // color: 'primary.main',
-                                  transform: 'scale(1.05)',
+                                  paddingLeft: '8px',
                                   fontWeight: '500'
                                 },
                                 '& .responsibility-bullet': {
                                   color: 'primary.main',
-                                  transform: 'scale(1.2)'
+                                  transform: 'scale(1.3)'
                                 }
                               }
                             }}
                           >
                             <ListItemIcon sx={{ minWidth: 24 }}>
-                              <FiberManualRecordIcon 
+                              <FiberManualRecordIcon
                                 className="responsibility-bullet"
-                                sx={{ 
-                                  fontSize: 8, 
+                                sx={{
+                                  fontSize: 8,
                                   color: 'primary.main',
-                                  transition: 'all 0.2s ease' 
-                                }} 
+                                  transition: 'all 0.2s ease'
+                                }}
                               />
                             </ListItemIcon>
-                            <ListItemText 
+                            <ListItemText
                               primary={responsibility}
                               sx={{
                                 '& .MuiListItemText-primary': {

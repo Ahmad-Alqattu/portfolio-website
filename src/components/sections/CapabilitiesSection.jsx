@@ -62,7 +62,23 @@ function CapabilitiesSection({ id, title, data, content }) {
                   },
                 }}
               >
-                <CardContent>
+                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                  {/* Icon/Image */}
+                  {capability.icon && (
+                    <Box
+                      component="img"
+                      src={capability.icon.startsWith('http') ? capability.icon : `/${capability.icon}`}
+                      alt={capability.title}
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        objectFit: 'contain',
+                        mb: 2,
+                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                      }}
+                    />
+                  )}
+
                   <Typography
                     variant="h6"
                     sx={{ mb: 1, fontWeight: 'bold', color: 'text.primary' }}

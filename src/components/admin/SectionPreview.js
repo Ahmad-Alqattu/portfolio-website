@@ -4,7 +4,8 @@ import SkillsSection from '../sections/SkillsSection';
 import EducationSection from '../sections/EducationSection';
 import ExperienceSection from '../sections/ExperienceSection';
 import ProjectsSection from '../sections/ProjectsSection';
-import CapabilitiesSection from '../sections/CapabilitiesSection';
+import CapabilitiesSection from '../sections/CapabilitiesSection.jsx';
+import CertificatesSection from '../sections/CertificatesSection';
 import Footer from '../layout/Footer';
 
 const SectionPreview = ({ sectionType, sectionData }) => {
@@ -27,6 +28,8 @@ const SectionPreview = ({ sectionType, sectionData }) => {
         return <ProjectsSection {...sectionData} projects={sectionData.data?.projects} />;
       case 'capabilities':
         return <CapabilitiesSection {...sectionData} data={sectionData.data} />;
+      case 'certificates':
+        return <CertificatesSection {...sectionData} data={sectionData.data} />;
       case 'footerAndLinks':
         return <Footer data={sectionData.data} />;
       default:

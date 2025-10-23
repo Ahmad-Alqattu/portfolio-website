@@ -5,10 +5,11 @@ import { useData } from '../../contexts/DataContext';
 import { mediaManager } from '../../firebase/mediaManager';
 import { updateSection } from '../../firebase/firestore';
 import { migrateLocalDataToFirebase } from '../../utils/dataMigration';
-import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Upload, Save, Eye, User, Image as ImageIcon, FileText, Link, Download, Plus, Trash2, Edit3, Settings, GripVertical, EyeOff, ToggleLeft, ToggleRight, FolderOpen } from 'lucide-react';
 import SectionPreview from './SectionPreview';
 import FileUpload from './FileUpload';
 import SectionOrderManager from './SectionOrderManager';
+import StorageBrowser from './StorageBrowser';
 
 const UniversalEditor = () => {
   const { currentUser } = useAuth();
@@ -19,6 +20,10 @@ const UniversalEditor = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [storageBrowserOpen, setStorageBrowserOpen] = useState(false);
+  const [storageBrowserCallback, setStorageBrowserCallback] = useState(null);
+  const [storageBrowserFileType, setStorageBrowserFileType] = useState('all');
+  const [storageBrowserMultiSelect, setStorageBrowserMultiSelect] = useState(false);
 
   // Get all available sections
   const availableSections = [
@@ -271,7 +276,62 @@ const UniversalEditor = () => {
     setSaving(false);
   };
 
+  const handleBackupData = () => {
+    try {
+      // Create backup file with current Firebase data
+      const backupData = {
+        timestamp: new Date().toISOString(),
+        sections: sections
+      };
+
+      const dataStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `portfolio-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setMessage('✅ Backup downloaded successfully!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      setMessage('❌ Backup failed: ' + error.message);
+      console.error('❌ Backup error:', error);
+    }
+  };
+
+  const openStorageBrowser = (callback, fileType = 'all', multiSelect = false) => {
+    setStorageBrowserCallback(() => callback);
+    setStorageBrowserFileType(fileType);
+    setStorageBrowserMultiSelect(multiSelect);
+    setStorageBrowserOpen(true);
+  };
+
+  const handleStorageSelect = (url, fileInfo) => {
+    if (storageBrowserCallback) {
+      storageBrowserCallback(url, fileInfo);
+    }
+    setStorageBrowserOpen(false);
+    setStorageBrowserCallback(null);
+  };
+
   const handleMigrateData = async () => {
+    // Confirm before migrating to prevent accidental overwrites
+    const confirmed = window.confirm(
+      '⚠️ WARNING: This will OVERWRITE all your current Firebase data with data from sectionsData.json!\n\n' +
+      '✅ Recommendation: Download a backup first!\n\n' +
+      'Do you want to continue?'
+    );
+
+    if (!confirmed) {
+      setMessage('Migration cancelled');
+      setTimeout(() => setMessage(''), 2000);
+      return;
+    }
+
     setMessage('🔄 Migrating data...');
     try {
       const result = await migrateLocalDataToFirebase();
@@ -330,19 +390,19 @@ const UniversalEditor = () => {
       case 'manage':
         return <SectionOrderManager sections={sections} onSectionOrderChange={handleSectionOrderChange} onSave={handleSectionOrderSave} />;
       case 'intro':
-        return <IntroEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
+        return <IntroEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
       case 'skills':
         return <SkillsEditor data={editingData} onChange={handleChange} />;
       case 'projects':
-        return <ProjectsEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
+        return <ProjectsEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
       case 'capabilities':
-        return <CapabilitiesEditor data={editingData} onChange={handleChange} />;
+        return <CapabilitiesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
       case 'experience':
-        return <ExperienceEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
+        return <ExperienceEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
       case 'education':
-        return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
+        return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
       case 'certificates':
-        return <CertificatesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} />;
+        return <CertificatesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
       case 'footerAndLinks':
         return <FooterAndLinksEditor data={editingData} onChange={handleChange} />;
       default:
@@ -373,8 +433,17 @@ const UniversalEditor = () => {
             </div>
             <div className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:w-auto mt-4 md:mt-0">
               <button
+                onClick={handleBackupData}
+                className="flex items-center gap-2 px-4 py-2 text-green-600 border border-green-300 rounded-lg hover:bg-green-50 w-full md:w-auto"
+                title="Download backup of current Firebase data"
+              >
+                <Download size={16} />
+                Backup Data
+              </button>
+              <button
                 onClick={handleMigrateData}
-                className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 w-full md:w-auto"
+                className="flex items-center gap-2 px-4 py-2 text-orange-600 border border-orange-300 rounded-lg hover:bg-orange-50 w-full md:w-auto"
+                title="⚠️ WARNING: Overwrites Firebase with JSON file!"
               >
                 <FileText size={16} />
                 Import JSON
@@ -382,8 +451,8 @@ const UniversalEditor = () => {
               <button
                 onClick={() => setShowPreview(!showPreview)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg w-full md:w-auto ${
-                  showPreview 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                  showPreview
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'text-gray-600 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -460,12 +529,21 @@ const UniversalEditor = () => {
           </div>
         )}
       </div>
+
+      {/* Storage Browser Dialog */}
+      <StorageBrowser
+        isOpen={storageBrowserOpen}
+        onClose={() => setStorageBrowserOpen(false)}
+        onSelect={handleStorageSelect}
+        fileType={storageBrowserFileType}
+        multiSelect={storageBrowserMultiSelect}
+      />
     </div>
   );
 };
 
 // Intro Section Editor
-const IntroEditor = ({ data, onChange, onImageUpload, uploading }) => {
+const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
   const handleImageUpload = async (file) => {
     if (onImageUpload) {
       const result = await onImageUpload(file, 'profile');
@@ -478,7 +556,7 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <h3 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h3>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Image Upload */}
         <div className="space-y-4">
@@ -493,7 +571,15 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading }) => {
             label="Upload Profile Picture"
             preview={true}
           />
-          
+
+          <button
+            onClick={() => onBrowseStorage && onBrowseStorage((url) => onChange('data.image', url), 'image')}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+          >
+            <FolderOpen size={16} />
+            Browse Storage
+          </button>
+
           <input
             type="url"
             value={data.data?.image || ''}
@@ -539,7 +625,7 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">CV/Resume</label>
           <div className="space-y-3">
             {/* File Upload */}
-            <div>
+            <div className="flex gap-2">
               <input
                 type="file"
                 accept=".pdf,.doc,.docx"
@@ -562,6 +648,14 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading }) => {
                 <FileText size={16} />
                 {uploading ? 'Uploading CV...' : 'Upload CV/Resume'}
               </label>
+              <button
+                type="button"
+                onClick={() => onBrowseStorage && onBrowseStorage((url) => onChange('data.cvLink', url), 'document')}
+                className="inline-flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+              >
+                <FolderOpen size={16} />
+                Browse Storage
+              </button>
             </div>
             
             {/* URL Option */}
@@ -691,7 +785,7 @@ const SkillsEditor = ({ data, onChange }) => {
 };
 
 // Projects Section Editor
-const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
+const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
   const projects = data.data?.projects || [];
   const [expandedProject, setExpandedProject] = useState(0);
   
@@ -769,6 +863,18 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
       }
     } catch (error) {
       console.error('Image upload failed:', error);
+    }
+  };
+
+  const handleVideoUpload = async (file, projectIdx) => {
+    try {
+      const result = await onImageUpload(file, 'projects');
+      if (result?.success) {
+        const currentVideos = projects[projectIdx]?.videos || [];
+        onChange(`data.projects.${projectIdx}.videos`, [...currentVideos, result.file.url]);
+      }
+    } catch (error) {
+      console.error('Video upload failed:', error);
     }
   };
 
@@ -944,7 +1050,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Project Images</label>
                   <div className="space-y-3">
                     {/* Upload Button */}
-                    <div>
+                    <div className="flex gap-2">
                       <input
                         type="file"
                         accept="image/*"
@@ -964,8 +1070,21 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
                         <Upload size={16} />
                         {uploading ? 'Uploading...' : 'Upload Images'}
                       </label>
-                      <p className="text-xs text-gray-500 mt-1">JPG, PNG, WebP up to 5MB each</p>
+                      <button
+                        type="button"
+                        onClick={() => onBrowseStorage && onBrowseStorage((urls) => {
+                          const currentImages = projects[idx]?.images || [];
+                          // urls can be an array (multi-select) or single string
+                          const newUrls = Array.isArray(urls) ? urls : [urls];
+                          onChange(`data.projects.${idx}.images`, [...currentImages, ...newUrls]);
+                        }, 'image', true)}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                      >
+                        <FolderOpen size={16} />
+                        Browse Storage
+                      </button>
                     </div>
+                    <p className="text-xs text-gray-500">JPG, PNG, WebP up to 5MB each</p>
                     
                     {/* Image Preview Grid */}
                     {project.images?.length > 0 && (
@@ -981,6 +1100,120 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
                               onClick={() => {
                                 const newImages = project.images.filter((_, i) => i !== imgIdx);
                                 onChange(`data.projects.${idx}.images`, newImages);
+                              }}
+                              className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Video Upload and Links */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Project Videos</label>
+                  <div className="space-y-3">
+                    {/* Upload Button */}
+                    <div className="flex gap-2 flex-wrap">
+                      <input
+                        type="file"
+                        accept="video/*"
+                        multiple
+                        onChange={(e) => {
+                          Array.from(e.target.files).forEach(file => {
+                            handleVideoUpload(file, idx);
+                          });
+                        }}
+                        className="hidden"
+                        id={`project-videos-${idx}`}
+                      />
+                      <label
+                        htmlFor={`project-videos-${idx}`}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg cursor-pointer hover:bg-purple-200 border border-purple-300"
+                      >
+                        <Upload size={16} />
+                        {uploading ? 'Uploading...' : 'Upload Videos'}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => onBrowseStorage && onBrowseStorage((urls) => {
+                          const currentVideos = projects[idx]?.videos || [];
+                          // urls can be an array (multi-select) or single string
+                          const newUrls = Array.isArray(urls) ? urls : [urls];
+                          onChange(`data.projects.${idx}.videos`, [...currentVideos, ...newUrls]);
+                        }, 'video', true)}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                      >
+                        <FolderOpen size={16} />
+                        Browse Storage
+                      </button>
+                      <p className="text-xs text-gray-500 w-full mt-1">MP4, WebM, MOV up to 50MB each</p>
+                    </div>
+                    
+                    {/* Video Link Input */}
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        placeholder="Enter video URL (YouTube, Vimeo, etc.)"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && e.target.value.trim()) {
+                            const currentVideos = project.videos || [];
+                            const newVideos = [...currentVideos, e.target.value.trim()];
+                            onChange(`data.projects.${idx}.videos`, newVideos);
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={(e) => {
+                          const input = e.target.previousElementSibling;
+                          if (input.value.trim()) {
+                            const currentVideos = project.videos || [];
+                            const newVideos = [...currentVideos, input.value.trim()];
+                            onChange(`data.projects.${idx}.videos`, newVideos);
+                            input.value = '';
+                          }
+                        }}
+                        className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 border border-blue-300 flex items-center gap-2"
+                      >
+                        <Link size={16} />
+                        Add Link
+                      </button>
+                    </div>
+                    
+                    {/* Video Preview Grid */}
+                    {project.videos?.length > 0 && (
+                      <div className="grid grid-cols-2 gap-3 mt-3">
+                        {project.videos.map((video, videoIdx) => (
+                          <div key={videoIdx} className="relative group">
+                            {video.startsWith('http') && (video.includes('youtube.com') || video.includes('youtu.be') || video.includes('vimeo.com')) ? (
+                              <div className="w-full h-32 bg-gray-100 rounded border shadow-sm flex items-center justify-center">
+                                <div className="text-center">
+                                  <Link size={24} className="mx-auto mb-2 text-gray-400" />
+                                  <p className="text-xs text-gray-600 truncate px-2">
+                                    {video.includes('youtube.com') ? 'YouTube' : video.includes('vimeo.com') ? 'Vimeo' : 'Video Link'}
+                                  </p>
+                                  <a href={video} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
+                                    View Video
+                                  </a>
+                                </div>
+                              </div>
+                            ) : (
+                              <video 
+                                src={video.startsWith('http') ? video : `/${video}`} 
+                                className="w-full h-32 object-cover rounded border shadow-sm"
+                                controls
+                                preload="metadata"
+                              />
+                            )}
+                            <button
+                              onClick={() => {
+                                const newVideos = project.videos.filter((_, i) => i !== videoIdx);
+                                onChange(`data.projects.${idx}.videos`, newVideos);
                               }}
                               className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                             >
@@ -1009,18 +1242,30 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading }) => {
 };
 
 // Capabilities Section Editor
-const CapabilitiesEditor = ({ data, onChange }) => {
+const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
   const capabilities = data.data?.capabilities || [];
-  
+
   const addCapability = () => {
     const newCapability = {
       id: Date.now(),
       title: 'New Capability',
       description: 'Describe this capability...',
+      icon: '', // Add icon field
       active: true,
       order: capabilities.length + 1
     };
     onChange('data.capabilities', [...capabilities, newCapability]);
+  };
+
+  const handleIconUpload = async (file, capIdx) => {
+    try {
+      const result = await onImageUpload(file, 'capabilities');
+      if (result?.success) {
+        updateCapability(capIdx, 'icon', result.file.url);
+      }
+    } catch (error) {
+      console.error('Icon upload failed:', error);
+    }
   };
 
   const updateCapability = (index, field, value) => {
@@ -1169,6 +1414,57 @@ const CapabilitiesEditor = ({ data, onChange }) => {
                               placeholder="Describe this capability in detail..."
                             />
                           </div>
+
+                          {/* Icon/Image Upload */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Icon/Image (Optional)</label>
+                            <div className="flex items-center gap-4">
+                              {capabilityObj.icon && (
+                                <div className="relative">
+                                  <img
+                                    src={capabilityObj.icon.startsWith('http') ? capabilityObj.icon : `/${capabilityObj.icon}`}
+                                    alt={`${capabilityObj.title} icon`}
+                                    className="w-16 h-16 object-contain rounded border"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => updateCapability(idx, 'icon', '')}
+                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs hover:bg-red-600 flex items-center justify-center"
+                                    title="Remove icon"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              )}
+                              <div className="flex gap-2">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) handleIconUpload(file, idx);
+                                  }}
+                                  className="hidden"
+                                  id={`cap-icon-${idx}`}
+                                />
+                                <label
+                                  htmlFor={`cap-icon-${idx}`}
+                                  className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200"
+                                >
+                                  <Upload size={14} />
+                                  {uploading ? 'Uploading...' : 'Upload Icon'}
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => onBrowseStorage && onBrowseStorage((url) => updateCapability(idx, 'icon', url), 'image')}
+                                  className="inline-flex items-center gap-2 px-3 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                                >
+                                  <FolderOpen size={14} />
+                                  Browse
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1185,7 +1481,7 @@ const CapabilitiesEditor = ({ data, onChange }) => {
 };
 
 // Experience Section Editor
-const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
+const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
   const experiences = data.data?.experiences || [];
   
   const addExperience = () => {
@@ -1320,7 +1616,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
                     className="w-16 h-16 object-contain rounded border"
                   />
                 )}
-                <div>
+                <div className="flex gap-2">
                   <input
                     type="file"
                     accept="image/*"
@@ -1338,6 +1634,14 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
                     <Upload size={14} />
                     {uploading ? 'Uploading...' : 'Upload Logo'}
                   </label>
+                  <button
+                    type="button"
+                    onClick={() => onBrowseStorage && onBrowseStorage((url) => onChange(`data.experiences.${idx}.logo`, url), 'image')}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                  >
+                    <FolderOpen size={14} />
+                    Browse
+                  </button>
                 </div>
               </div>
             </div>
@@ -1459,7 +1763,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading }) => {
 };
 
 // Education Section Editor
-const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
+const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
   const educations = data.data?.educationList || [];
   
   const addEducation = () => {
@@ -1594,7 +1898,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                     className="w-16 h-16 object-contain rounded border"
                   />
                 )}
-                <div>
+                <div className="flex gap-2">
                   <input
                     type="file"
                     accept="image/*"
@@ -1612,6 +1916,14 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading }) => {
                     <Upload size={14} />
                     {uploading ? 'Uploading...' : 'Upload Logo'}
                   </label>
+                  <button
+                    type="button"
+                    onClick={() => onBrowseStorage && onBrowseStorage((url) => onChange(`data.educationList.${idx}.logo`, url), 'image')}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                  >
+                    <FolderOpen size={14} />
+                    Browse
+                  </button>
                 </div>
               </div>
             </div>
@@ -1959,15 +2271,17 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
 };
 
 // Certificates Section Editor
-const CertificatesEditor = ({ data, onChange, onImageUpload, uploading }) => {
-  const certificates = data.data?.certificates || [];
+const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+  const rawCertificates = data.data?.certificates || [];
+  // Sort certificates by order property
+  const certificates = [...rawCertificates].sort((a, b) => (a.order || 999) - (b.order || 999));
   const [expandedCertificate, setExpandedCertificate] = useState(0);
-  
+
   // Initialize order values for certificates that don't have them
   useEffect(() => {
-    const needsOrder = certificates.some(cert => cert.order === undefined);
+    const needsOrder = rawCertificates.some(cert => cert.order === undefined);
     if (needsOrder) {
-      const certificatesWithOrder = certificates.map((cert, index) => ({
+      const certificatesWithOrder = rawCertificates.map((cert, index) => ({
         ...cert,
         order: cert.order !== undefined ? cert.order : index + 1
       }));
@@ -2187,7 +2501,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading }) => {
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Certificate Image</label>
                                 <div className="space-y-3">
-                                  <div>
+                                  <div className="flex gap-2">
                                     <input
                                       type="file"
                                       accept="image/*"
@@ -2207,6 +2521,16 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading }) => {
                                       <ImageIcon size={16} />
                                       {uploading ? 'Uploading...' : 'Upload Image'}
                                     </label>
+                                    <button
+                                      type="button"
+                                      onClick={() => onBrowseStorage && onBrowseStorage((url) => {
+                                        onChange(`data.certificates.${idx}.image`, url);
+                                      }, 'image')}
+                                      className="inline-flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                                    >
+                                      <FolderOpen size={16} />
+                                      Browse Storage
+                                    </button>
                                   </div>
                                   
                                   {certificate.image && (
@@ -2231,7 +2555,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading }) => {
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Certificate PDF</label>
                                 <div className="space-y-3">
-                                  <div>
+                                  <div className="flex gap-2">
                                     <input
                                       type="file"
                                       accept=".pdf"
@@ -2251,6 +2575,16 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading }) => {
                                       <FileText size={16} />
                                       {uploading ? 'Uploading...' : 'Upload PDF'}
                                     </label>
+                                    <button
+                                      type="button"
+                                      onClick={() => onBrowseStorage && onBrowseStorage((url) => {
+                                        onChange(`data.certificates.${idx}.pdf`, url);
+                                      }, 'document')}
+                                      className="inline-flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50"
+                                    >
+                                      <FolderOpen size={16} />
+                                      Browse Storage
+                                    </button>
                                   </div>
                                   
                                   {certificate.pdf && (

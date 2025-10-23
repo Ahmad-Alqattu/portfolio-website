@@ -22,6 +22,15 @@
             "value": "public, max-age=86400"
           }
         ]
+      },
+      {
+        "source": "**/*.@(mp4|webm|mov|avi|mkv)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
+        ]
       }
     ],
     "ignore": [
@@ -31,7 +40,7 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "!/@(projects|assets)/**",
         "destination": "/index.html"
       }
     ]

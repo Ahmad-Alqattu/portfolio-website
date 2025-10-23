@@ -72,6 +72,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
       <Grid container spacing={4}>
         {activeCertificates.map((certificate, index) => (
           <Grid size={{ xs: 12, sm: 6}} key={certificate.id || index}>
+          
             <Paper 
               elevation={4} 
               sx={{ 
@@ -97,6 +98,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
             >
               <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {/* Certificate Image */}
+                
                 {certificate.image && (
                   <CardMedia
                     component="img"
@@ -110,31 +112,29 @@ const CertificatesSection = ({ id, title, content, data }) => {
                       borderBottom: '1px solid rgba(0,0,0,0.1)'
                     }}
                   />
-                )}
-
-                <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  {/* Certificate Header */}
-                  <Box sx={{ position: 'relative', mb: 2 }}>
-                    {/* Verification Status - Fixed Position */}
-                    {certificate.link && (
+                  
+                )}{certificate.link && (
                       <Chip
                         label="✓ Verified"
                         color="success"
                         size="small"
                         sx={{ 
                           position: 'absolute',
-                          top: 0,
-                          right: 0,
+                          top: 6,
+                          left: 2,
                           zIndex: 1
                         }}
                       />
                     )}
+
+                <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                  {/* Certificate Header */}
+                  <Box sx={{ position: 'relative', mb: 2 }}>
+                    {/* Verification Status - Fixed Position */}
+                    
                     
                     {/* Certificate Info - Compact Layout */}
-                    <Box sx={{ 
-                      pr: certificate.link ? 6 : 0, // Space for verification badge
-                      flex: 1
-                    }}>
+               
                       {/* Certificate Name */}
                       <Typography 
                         variant="h6" 
@@ -182,7 +182,6 @@ const CertificatesSection = ({ id, title, content, data }) => {
                         )}
                       </Box>
                     </Box>
-                  </Box>
 
                   {/* Description */}
                   {certificate.description && (
