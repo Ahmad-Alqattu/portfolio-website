@@ -1,6 +1,7 @@
 {
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "runtime": "nodejs20"
   },
   "hosting": {
     "public": "build",
@@ -39,6 +40,10 @@
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/sitemap.xml",
+        "function": "sitemap"
+      },
       {
         "source": "!/@(projects|assets)/**",
         "destination": "/index.html"

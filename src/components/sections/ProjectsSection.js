@@ -666,6 +666,7 @@ function ProjectsSection({ id, title, content, projects }) {
                   fontSize: '1.125rem',
                   color: 'text.secondary',
                   lineHeight: 1.6,
+                  whiteSpace: 'pre-line',
                 }}
               >
                 {selectedProject.fullDescription || selectedProject.description}

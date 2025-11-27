@@ -93,6 +93,7 @@ function App() {
               <div className="App">
                 <Routes>
                   <Route path="/" element={<MainComponent />} />
+                  <Route path="/:sectionId" element={<MainComponent />} />
                   <Route path="/login" element={
                     <Suspense fallback={<PageLoader />}>
                       <Login />

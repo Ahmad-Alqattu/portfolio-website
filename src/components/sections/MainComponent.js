@@ -34,6 +34,7 @@ const EducationSection = React.lazy(() => import('./EducationSection'));
 const ExperienceSection = React.lazy(() => import('./ExperienceSection'));
 const CertificatesSection = React.lazy(() => import('./CertificatesSection'));
 import { EnhancedPageSkeleton } from '../ui/EnhancedPageSkeleton';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // Custom Scrollbar Styles
 const CustomScrollbarStyles = () => {
@@ -333,11 +334,26 @@ function MainComponent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const { sectionId } = useParams();
+
+  const routeAliasToSectionId = (alias) => {
+    const a = (alias || '').toLowerCase();
+    if (a === 'about' || a === 'home') {
+      const intro = sections.find((s) => (s.type || '').toLowerCase() === 'intro');
+      return intro ? intro.id : alias;
+    }
+    return alias;
+  };
+
+  const displayPathForSection = (section) => {
+    if ((section.type || '').toLowerCase() === 'intro') return '/about';
+    return `/${section.id}`;
+  };
 
   // Initial section detection on mount
   useEffect(() => {
     if (sections.length > 0 && !activeSection) {
-      // Set initial active section immediately since lazy loading is removed
       const firstSection = sections[0];
       if (firstSection) {
         setActiveSection(firstSection.id);
@@ -345,6 +361,26 @@ function MainComponent() {
     }
   }, [sections, activeSection]);
 
+  // Helper: try scrolling after content mounts
+  const scrollToSectionWhenReady = (targetId, attempts = 0) => {
+    const el = document.getElementById(targetId);
+    if (el) {
+      scrollToSection(targetId);
+      return;
+    }
+    if (attempts < 30) {
+      setTimeout(() => scrollToSectionWhenReady(targetId, attempts + 1), 100);
+    }
+  };
+
+  // When routed to /:sectionId, scroll into view once sections render
+  useEffect(() => {
+    if (!sectionId) return;
+    const targetId = routeAliasToSectionId(sectionId);
+    const exists = sections.some((s) => s.id === targetId);
+    if (!exists) return;
+    scrollToSectionWhenReady(targetId);
+  }, [sectionId, sections]);
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     
@@ -479,7 +515,7 @@ function MainComponent() {
                 return (
                   <NavItem
                     key={section.id}
-                    onClick={() => scrollToSection(section.id)}
+                    onClick={() => navigate(displayPathForSection(section))}
                   >
                     <IndicatorLine isActive={isActive} />
                     <NavButton
@@ -558,7 +594,7 @@ function MainComponent() {
                       <ListItem
                         key={section.id} 
                         onClick={() => {
-                          scrollToSection(section.id);
+                          navigate(displayPathForSection(section));
                           setMobileMenuOpen(false);
                         }}
                         sx={{
