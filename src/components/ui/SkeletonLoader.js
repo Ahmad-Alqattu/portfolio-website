@@ -2,7 +2,7 @@ import React from 'react';
 
 // Base skeleton component
 export const Skeleton = ({ className = '', width = 'w-full', height = 'h-4' }) => (
-  <div className={`${width} ${height} bg-gray-200 rounded animate-pulse ${className}`}></div>
+  <div className={`${width} ${height} bg-gray-200 rounded-sm animate-pulse ${className}`}></div>
 );
 
 // Profile skeleton for intro section
@@ -62,7 +62,7 @@ export const ExperienceSkeleton = () => (
   <div className="space-y-8 p-8">
     {[...Array(3)].map((_, i) => (
       <div key={i} className="flex gap-6">
-        <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse flex-shrink-0"></div>
+        <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse shrink-0"></div>
         <div className="flex-1 space-y-3">
           <Skeleton width="w-1/2" height="h-6" />
           <Skeleton width="w-1/3" height="h-5" />
@@ -83,7 +83,7 @@ export const EducationSkeleton = () => (
   <div className="space-y-6 p-8">
     {[...Array(2)].map((_, i) => (
       <div key={i} className="flex gap-6">
-        <div className="w-16 h-16 bg-gray-200 rounded-lg animate-pulse flex-shrink-0"></div>
+        <div className="w-16 h-16 bg-gray-200 rounded-lg animate-pulse shrink-0"></div>
         <div className="flex-1 space-y-3">
           <Skeleton width="w-2/3" height="h-6" />
           <Skeleton width="w-1/2" height="h-5" />
@@ -118,7 +118,7 @@ export const SectionSkeleton = ({ title = true, items = 3 }) => (
 export const PageSkeleton = () => (
   <div className="min-h-screen bg-gray-50">
     {/* Header skeleton */}
-    <div className="bg-white shadow-sm p-4">
+    <div className="bg-white shadow-xs p-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Skeleton width="w-32" height="h-8" />
         <div className="flex gap-4">

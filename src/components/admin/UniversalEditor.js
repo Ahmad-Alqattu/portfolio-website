@@ -424,7 +424,7 @@ const UniversalEditor = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-xs border-b">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
@@ -554,7 +554,7 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <h3 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -723,7 +723,7 @@ const SkillsEditor = ({ data, onChange }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">Skills</h3>
         <button
@@ -879,7 +879,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">Projects</h3>
         <button
@@ -1094,7 +1094,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                             <img 
                               src={img.startsWith('http') ? img : `/${img}`} 
                               alt={`${project.name} image ${imgIdx + 1}`}
-                              className="w-full h-20 object-cover rounded border shadow-sm"
+                              className="w-full h-20 object-cover rounded-sm border shadow-xs"
                             />
                             <button
                               onClick={() => {
@@ -1191,7 +1191,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                         {project.videos.map((video, videoIdx) => (
                           <div key={videoIdx} className="relative group">
                             {video.startsWith('http') && (video.includes('youtube.com') || video.includes('youtu.be') || video.includes('vimeo.com')) ? (
-                              <div className="w-full h-32 bg-gray-100 rounded border shadow-sm flex items-center justify-center">
+                              <div className="w-full h-32 bg-gray-100 rounded-sm border shadow-xs flex items-center justify-center">
                                 <div className="text-center">
                                   <Link size={24} className="mx-auto mb-2 text-gray-400" />
                                   <p className="text-xs text-gray-600 truncate px-2">
@@ -1205,7 +1205,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                             ) : (
                               <video 
                                 src={video.startsWith('http') ? video : `/${video}`} 
-                                className="w-full h-32 object-cover rounded border shadow-sm"
+                                className="w-full h-32 object-cover rounded-sm border shadow-xs"
                                 controls
                                 preload="metadata"
                               />
@@ -1309,7 +1309,7 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">Capabilities</h3>
         <button
@@ -1424,7 +1424,7 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                                   <img
                                     src={capabilityObj.icon.startsWith('http') ? capabilityObj.icon : `/${capabilityObj.icon}`}
                                     alt={`${capabilityObj.title} icon`}
-                                    className="w-16 h-16 object-contain rounded border"
+                                    className="w-16 h-16 object-contain rounded-sm border"
                                   />
                                   <button
                                     type="button"
@@ -1534,7 +1534,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">Experience</h3>
         <button
@@ -1613,7 +1613,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
                   <img
                     src={exp.logo.startsWith('http') ? exp.logo : `/${exp.logo}`}
                     alt="Company logo"
-                    className="w-16 h-16 object-contain rounded border"
+                    className="w-16 h-16 object-contain rounded-sm border"
                   />
                 )}
                 <div className="flex gap-2">
@@ -1816,7 +1816,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">Education</h3>
         <button
@@ -1895,7 +1895,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
                   <img
                     src={edu.logo.startsWith('http') ? edu.logo : `/${edu.logo}`}
                     alt="Institution logo"
-                    className="w-16 h-16 object-contain rounded border"
+                    className="w-16 h-16 object-contain rounded-sm border"
                   />
                 )}
                 <div className="flex gap-2">
@@ -2000,7 +2000,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
 
 // Basic Editor for other sections
 const BasicEditor = ({ data, onChange }) => (
-  <div className="bg-white rounded-lg shadow-sm border p-6">
+  <div className="bg-white rounded-lg shadow-xs border p-6">
     <h3 className="text-lg font-medium text-gray-900 mb-6">{data.title}</h3>
     
     <div className="space-y-4">
@@ -2044,7 +2044,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <h3 className="text-lg font-medium text-gray-900 mb-6">Footer & Links</h3>
       
       <div className="space-y-6">
@@ -2121,7 +2121,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
                 type="checkbox"
                 checked={data.data?.socialLinks?.enabled !== false}
                 onChange={(e) => onChange('data.socialLinks.enabled', e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-gray-700">Show Social Links</span>
             </label>
@@ -2136,7 +2136,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
                     type="checkbox"
                     checked={data.data?.socialLinks?.githubEnabled !== false}
                     onChange={(e) => onChange('data.socialLinks.githubEnabled', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                    className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
                   />
                   <span className="text-gray-600">Enable</span>
                 </label>
@@ -2158,7 +2158,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
                     type="checkbox"
                     checked={data.data?.socialLinks?.linkedinEnabled !== false}
                     onChange={(e) => onChange('data.socialLinks.linkedinEnabled', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                    className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
                   />
                   <span className="text-gray-600">Enable</span>
                 </label>
@@ -2180,7 +2180,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
                     type="checkbox"
                     checked={data.data?.socialLinks?.facebookEnabled !== false}
                     onChange={(e) => onChange('data.socialLinks.facebookEnabled', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                    className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
                   />
                   <span className="text-gray-600">Enable</span>
                 </label>
@@ -2202,7 +2202,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
                     type="checkbox"
                     checked={data.data?.socialLinks?.emailEnabled !== false}
                     onChange={(e) => onChange('data.socialLinks.emailEnabled', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
+                    className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 scale-75"
                   />
                   <span className="text-gray-600">Enable</span>
                 </label>
@@ -2231,7 +2231,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
                 </div>
                 <button
                   onClick={handleSyncCvLink}
-                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded-sm hover:bg-blue-700 transition-colors"
                 >
                   Sync from Profile
                 </button>
@@ -2344,7 +2344,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">Certificates</h3>
         <button
@@ -2378,7 +2378,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        className={`border rounded-lg overflow-hidden bg-gradient-to-r from-purple-50 to-blue-50 ${
+                        className={`border rounded-lg overflow-hidden bg-linear-to-r from-purple-50 to-blue-50 ${
                           snapshot.isDragging ? 'shadow-lg' : ''
                         }`}
                       >
@@ -2538,7 +2538,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                                       <img 
                                         src={certificate.image.startsWith('http') ? certificate.image : `/${certificate.image}`} 
                                         alt={`${certificate.name} certificate`}
-                                        className="w-full h-32 object-cover rounded border shadow-sm"
+                                        className="w-full h-32 object-cover rounded-sm border shadow-xs"
                                       />
                                       <button
                                         onClick={() => onChange(`data.certificates.${idx}.image`, '')}

@@ -213,7 +213,7 @@ const FileUpload = ({
               }}
             />
           ) : (
-            <div className="flex items-center gap-3 p-3 bg-white rounded border">
+            <div className="flex items-center gap-3 p-3 bg-white rounded-sm border">
               {getFileIcon()}
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">File ready</p>

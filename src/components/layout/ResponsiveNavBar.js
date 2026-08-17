@@ -8,13 +8,15 @@ import {
   IconButton,
   Stack,
   CssBaseline,
-  FormControlLabel,
+  Tooltip,
+  useScrollTrigger,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../../contexts/AuthContext';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import EditIcon from '@mui/icons-material/Edit';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 
 const pages = [
   { title: 'Home', path: '/' },
@@ -24,6 +26,8 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const theme = useTheme();
   const { currentUser } = useAuth();
+  const isDark = theme.palette.mode === 'dark';
+  const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 8 });
 
   const onPageClick = (path) => {
     navigate(path);
@@ -42,10 +46,27 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
       <CssBaseline />
       <AppBar
         position="fixed"
-        // Use theme background colors instead of fixed color
+        elevation={0}
+        // Glassmorphism header: translucent + blur, matching the glass style
+        // used by the mobile bottom nav and back-to-top button
         sx={{
-          backgroundColor: theme.palette.background.paper,
+          // Keep the tint opaque enough (and saturation low) so colored content
+          // scrolling underneath does not bloom into visible color blobs
+          backgroundColor: isDark
+            ? `rgba(20, 20, 20, ${scrolled ? 0.78 : 0.62})`
+            : `rgba(255, 255, 255, ${scrolled ? 0.82 : 0.68})`,
+          backdropFilter: 'blur(18px) saturate(115%)',
+          WebkitBackdropFilter: 'blur(18px) saturate(115%)',
+          borderBottom: isDark
+            ? '1px solid rgba(255, 255, 255, 0.12)'
+            : '1px solid rgba(255, 255, 255, 0.35)',
+          boxShadow: scrolled
+            ? isDark
+              ? '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4)'
+            : 'none',
           color: theme.palette.text.primary,
+          transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
         }}
       >
         <Container maxWidth="xl">
@@ -90,31 +111,36 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
             {/* Right side: GitHub and Dark Mode Toggle */}
             <Stack direction="row" spacing={1} alignItems="center">
               {/* GitHub Icon */}
-              <IconButton
-                onClick={handleGitHubClick}
-                aria-label="GitHub Profile"
-                sx={{ color: theme.palette.text.primary }}
-              >
-                <GitHubIcon />
-              </IconButton>
+              <Tooltip title="GitHub Profile">
+                <IconButton
+                  onClick={handleGitHubClick}
+                  aria-label="GitHub Profile"
+                  sx={{ color: theme.palette.text.primary }}
+                >
+                  <GitHubIcon />
+                </IconButton>
+              </Tooltip>
 
-              <FormControlLabel
-  control={
-    <Stack direction="row" alignItems="center" spacing={1}>
-      <Typography 
-        onClick={toggleDarkMode} 
-        style={{
-          cursor: 'pointer',
-          transition: 'transform 0.7s ease-out',
-          transform: darkMode ? 'rotate(360deg)' : 'rotate(0deg)'
-        }}
-        aria-label="Toggle dark mode"
-      >
-        {darkMode ? '🌙' : '☀️'}
-      </Typography>
-    </Stack>
-  }
-/>
+              {/* Dark / Light mode toggle */}
+              <Tooltip title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
+                <IconButton
+                  onClick={toggleDarkMode}
+                  aria-label="Toggle dark mode"
+                  sx={{
+                    color: theme.palette.text.primary,
+                    transition: 'transform 0.7s ease-out, color 0.3s ease',
+                    transform: darkMode ? 'rotate(360deg)' : 'rotate(0deg)',
+                    '&:hover': {
+                      color: theme.palette.primary.main,
+                      backgroundColor: isDark
+                        ? 'rgba(255, 255, 255, 0.08)'
+                        : 'rgba(0, 0, 0, 0.04)',
+                    },
+                  }}
+                >
+                  {darkMode ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
+                </IconButton>
+              </Tooltip>
                       {/* Mobile Menu Icon - only shows on small screens */}
               {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                 <IconButton

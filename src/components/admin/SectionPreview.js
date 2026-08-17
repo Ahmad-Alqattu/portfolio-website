@@ -43,7 +43,7 @@ const SectionPreview = ({ sectionType, sectionData }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
+    <div className="bg-white rounded-lg shadow-xs border">
       <div className="p-4 border-b bg-gray-50">
         <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide">
           Live Preview

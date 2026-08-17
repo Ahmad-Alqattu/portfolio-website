@@ -7,11 +7,11 @@ export const IntroPreview = ({ section }) => {
   const data = section.data || {};
   
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+    <div className="bg-linear-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
           {/* Profile Picture */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             {data.profilePicture ? (
               <img 
                 src={data.profilePicture} 
@@ -269,7 +269,7 @@ export const ExperiencePreview = ({ section }) => {
               
               <div className="flex items-start space-x-6">
                 {/* Timeline Dot */}
-                <div className="flex-shrink-0 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
+                <div className="shrink-0 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
                   {exp.company ? exp.company.charAt(0) : '💼'}
                 </div>
 
@@ -353,7 +353,7 @@ export const EducationPreview = ({ section }) => {
             <div key={edu.id} className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
               <div className="flex items-start space-x-4">
                 {/* Icon */}
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <div className="shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                   <span className="text-2xl">🎓</span>
                 </div>
 

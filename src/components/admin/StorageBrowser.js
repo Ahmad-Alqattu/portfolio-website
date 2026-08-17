@@ -278,7 +278,7 @@ const StorageBrowser = ({ isOpen, onClose, onSelect, fileType = 'all', multiSele
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         {getFileIcon(file)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -287,7 +287,7 @@ const StorageBrowser = ({ isOpen, onClose, onSelect, fileType = 'all', multiSele
                             {file.name}
                           </p>
                           {isSelected && (
-                            <div className="flex-shrink-0 ml-2">
+                            <div className="shrink-0 ml-2">
                               <div className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center">
                                 <Check size={14} />
                               </div>
@@ -315,7 +315,7 @@ const StorageBrowser = ({ isOpen, onClose, onSelect, fileType = 'all', multiSele
                               <img
                                 src={file.url}
                                 alt={file.name}
-                                className="w-full h-32 object-cover rounded border"
+                                className="w-full h-32 object-cover rounded-sm border"
                                 onError={(e) => {
                                   e.target.style.display = 'none';
                                 }}
@@ -326,13 +326,13 @@ const StorageBrowser = ({ isOpen, onClose, onSelect, fileType = 'all', multiSele
                             <div className="mt-2">
                               <video
                                 src={file.url}
-                                className="w-full h-32 object-cover rounded border"
+                                className="w-full h-32 object-cover rounded-sm border"
                                 controls={false}
                               />
                             </div>
                           )}
                           {file.type === 'document' && (
-                            <div className="mt-2 p-3 bg-red-50 rounded border border-red-200 flex items-center justify-center">
+                            <div className="mt-2 p-3 bg-red-50 rounded-sm border border-red-200 flex items-center justify-center">
                               <FileText size={32} className="text-red-600" />
                             </div>
                           )}
