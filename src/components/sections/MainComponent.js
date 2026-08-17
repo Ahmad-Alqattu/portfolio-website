@@ -26,6 +26,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import LazyLoad from 'react-lazyload';
+import { motion } from 'framer-motion';
 const IntroSection = React.lazy(() => import('./IntroSection'));
 const SkillsSection = React.lazy(() => import('./SkillsSection'));
 const ProjectsSection = React.lazy(() => import('./ProjectsSection'));
@@ -269,6 +270,8 @@ const MobileNavIconButton = styled(IconButton, {
 
 // BackToTop Component
 const BackToTopButton = ({ show }) => {
+  const theme = useTheme();
+
   const scrollToTop = () => {
     // Use custom smooth scroll with 1.5s duration
     const startPosition = window.pageYOffset;
@@ -296,26 +299,58 @@ const BackToTopButton = ({ show }) => {
 
   return (
     <Zoom in={show}>
-      <Fab
-        onClick={scrollToTop}
-        size="medium"
-        aria-label="back to top"
+      <Box
         sx={{
           position: 'fixed',
           bottom: 24,
           right: 24,
           zIndex: 1000,
-          backgroundColor: 'primary.main',
-          '&:hover': {
-            backgroundColor: 'primary.dark',
-            transform: 'scale(1.1)',
-          },
-          transition: 'all 1.8s ease-in-out',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          width: 40,
+          height: 40,
         }}
       >
-        <KeyboardArrowUpIcon />
-      </Fab>
+        <Box
+          component={motion.div}
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          sx={{
+            position: 'absolute',
+            inset: '-8px',
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
+            filter: 'blur(18px)',
+            opacity: theme.palette.mode === 'dark' ? 0.3 : 0.35,
+            zIndex: -1,
+          }}
+        />
+        <Fab
+          onClick={scrollToTop}
+          size="medium"
+          aria-label="back to top"
+          sx={{
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(20, 20, 20, 0.3)' : 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(15px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(15px) saturate(180%)',
+            border: theme.palette.mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: theme.palette.mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)' : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+            color: theme.palette.mode === 'dark' ? '#ffffff' : theme.palette.text.primary,
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 30, 30, 0.4)' : 'rgba(255, 255, 255, 0.3)',
+              transform: 'scale(1.1)',
+            },
+          }}
+        >
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </Box>
     </Zoom>
   );
 };
@@ -548,14 +583,55 @@ function MainComponent() {
       {/* Mobile Bottom Navigation */}
       {isMobile && (
         <>
-          <Fab
-            color="primary"
-            aria-label="menu"
-            sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}
-            onClick={() => setMobileMenuOpen(true)}
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: 16,
+              right: 16,
+              zIndex: 1000,
+              width: 56,
+              height: 56,
+            }}
           >
-            <MenuIcon />
-          </Fab>
+            <Box
+              component={motion.div}
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 90, 0],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              sx={{
+                position: 'absolute',
+                inset: '-8px',
+                borderRadius: '50%',
+                background: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
+                filter: 'blur(18px)',
+                opacity: theme.palette.mode === 'dark' ? 0.3 : 0.35,
+                zIndex: -1,
+              }}
+            />
+            <Fab
+              aria-label="menu"
+              onClick={() => setMobileMenuOpen(true)}
+              sx={{
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(20, 20, 20, 0.3)' : 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(15px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(15px) saturate(180%)',
+                border: theme.palette.mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: theme.palette.mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)' : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                color: theme.palette.mode === 'dark' ? '#ffffff' : theme.palette.text.primary,
+                '&:hover': {
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 30, 30, 0.4)' : 'rgba(255, 255, 255, 0.3)',
+                },
+              }}
+            >
+              <MenuIcon />
+            </Fab>
+          </Box>
           <Modal
             open={mobileMenuOpen}
             onClose={() => setMobileMenuOpen(false)}
