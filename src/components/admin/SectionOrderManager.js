@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { GripVertical, Eye, EyeOff, Save } from 'lucide-react';
+import { localize } from '../../utils/localize';
 
 const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibilityChange, onSave }) => {
   const [orderedSections, setOrderedSections] = useState([]);
@@ -120,7 +121,7 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-gray-900">
-                            {section.title || section.name || section.type}
+                            {localize(section.title, 'en') || localize(section.name, 'en') || section.type}
                           </span>
                           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-sm">
                             {section.type}

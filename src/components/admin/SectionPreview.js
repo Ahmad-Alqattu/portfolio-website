@@ -7,6 +7,7 @@ import ProjectsSection from '../sections/ProjectsSection';
 import CapabilitiesSection from '../sections/CapabilitiesSection.jsx';
 import CertificatesSection from '../sections/CertificatesSection';
 import Footer from '../layout/Footer';
+import { localize } from '../../utils/localize';
 
 const SectionPreview = ({ sectionType, sectionData }) => {
   // Create a mock sections object with just this section for preview
@@ -35,8 +36,8 @@ const SectionPreview = ({ sectionType, sectionData }) => {
       default:
         return (
           <div className="p-8 text-center text-gray-500">
-            <h3 className="text-lg font-medium mb-2">{sectionData.title}</h3>
-            <p className="whitespace-pre-wrap">{sectionData.content}</p>
+            <h3 className="text-lg font-medium mb-2">{localize(sectionData.title, 'en')}</h3>
+            <p className="whitespace-pre-wrap">{localize(sectionData.content, 'en')}</p>
           </div>
         );
     }

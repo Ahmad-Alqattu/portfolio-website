@@ -45,19 +45,25 @@ function SkillsSection({ id, title, content }) {
               {category}
             </h3>
             <ul className="flex flex-wrap justify-center gap-2">
-              {skillsList[category].map((skill, idx) => (
-                <motion.li
-                  key={idx}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.35, delay: Math.min(idx * 0.04, 0.3), ease: [0.22, 1, 0.36, 1] }}
-                  className="glass motion-safe:hover:-translate-y-[3px] flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium text-ink transition-[transform,box-shadow,border-color] duration-250 hover:border-brand/40 hover:shadow-[0_8px_20px_rgba(20,60,30,0.12)]"
-                >
-                  <SkillIcon name={skill} />
-                  {skill}
-                </motion.li>
-              ))}
+              {skillsList[category].map((skill, idx) => {
+                // A skill may be a plain string or a { en, ar } object; the
+                // icon always matches on the English name so the logo stays
+                // right regardless of the display language.
+                const label = localize(skill, language);
+                return (
+                  <motion.li
+                    key={idx}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.35, delay: Math.min(idx * 0.04, 0.3), ease: [0.22, 1, 0.36, 1] }}
+                    className="glass motion-safe:hover:-translate-y-[3px] flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium text-ink transition-[transform,box-shadow,border-color] duration-250 hover:border-brand/40 hover:shadow-[0_8px_20px_rgba(20,60,30,0.12)]"
+                  >
+                    <SkillIcon name={localize(skill, 'en')} />
+                    {label}
+                  </motion.li>
+                );
+              })}
             </ul>
           </div>
         ))}

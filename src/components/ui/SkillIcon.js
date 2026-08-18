@@ -69,8 +69,10 @@ const iconMap = {
   iis: FiServer,
 };
 
-const normalise = (name = '') =>
-  name
+// Defensive: skills come from user-edited data and may arrive as a bilingual
+// object rather than a string, which would throw on .toLowerCase().
+const normalise = (name) =>
+  String(name ?? '')
     .toLowerCase()
     .replace(/\(.*?\)/g, '')
     .replace(/[\s._-]/g, '');

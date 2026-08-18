@@ -10,6 +10,9 @@ import SectionPreview from './SectionPreview';
 import FileUpload from './FileUpload';
 import SectionOrderManager from './SectionOrderManager';
 import StorageBrowser from './StorageBrowser';
+import { translateObjectDeep } from '../../utils/autoTranslate';
+import { Languages } from 'lucide-react';
+import { localize } from '../../utils/localize';
 
 // Bilingual field helpers: a text field may be a plain string (English-only,
 // legacy/simple case) or a { en, ar } object once an Arabic translation is
@@ -261,6 +264,26 @@ const UniversalEditor = () => {
     });
   };
 
+  const [translating, setTranslating] = useState(false);
+
+  const handleAutoTranslate = async (targetLang) => {
+    if (!editingData || activeTab === 'manage') return;
+    const sourceLang = targetLang === 'ar' ? 'en' : 'ar';
+    setTranslating(true);
+    setMessage(`🌐 Translating to ${targetLang === 'ar' ? 'Arabic' : 'English'}...`);
+    try {
+      const translated = await translateObjectDeep(editingData, sourceLang, targetLang);
+      setEditingData(translated);
+      setMessage('✅ Translated! Review the text, then click Save.');
+      setTimeout(() => setMessage(''), 4000);
+    } catch (error) {
+      console.error('Auto-translate failed:', error);
+      setMessage('❌ Translation failed: ' + error.message);
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   const handleImageUpload = async (file, targetField = 'data.image') => {
     setUploading(true);
     try {
@@ -474,6 +497,17 @@ const UniversalEditor = () => {
                   AR
                 </button>
               </div>
+              {activeTab !== 'manage' && (
+                <button
+                  onClick={() => handleAutoTranslate(editLanguage === 'ar' ? 'ar' : 'en')}
+                  disabled={translating}
+                  title="Auto-translate this section's text from the other language (free, machine translation — review before saving)"
+                  className="flex items-center gap-2 px-4 py-2 text-purple-600 border border-purple-300 rounded-lg hover:bg-purple-50 disabled:opacity-50 w-full md:w-auto"
+                >
+                  <Languages size={16} />
+                  {translating ? 'Translating...' : `Auto-translate to ${editLanguage === 'ar' ? 'Arabic' : 'English'}`}
+                </button>
+              )}
               <button
                 onClick={handleBackupData}
                 className="flex items-center gap-2 px-4 py-2 text-green-600 border border-green-300 rounded-lg hover:bg-green-50 w-full md:w-auto"
@@ -536,7 +570,7 @@ const UniversalEditor = () => {
                 }`}
               >
                 <span>{section.icon}</span>
-                {section.name}
+                {localize(section.name, 'en')}
               </button>
             ))}
           </div>
@@ -666,6 +700,18 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage
           />
         </div>
         
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <input
+              type="checkbox"
+              checked={data.data?.available !== false}
+              onChange={(e) => onChange('data.available', e.target.checked)}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            Show &quot;Available for work&quot; badge on photo
+          </label>
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">CV/Resume</label>
           <div className="space-y-3">
@@ -811,7 +857,7 @@ const SkillsEditor = ({ data, onChange, editLanguage = 'en' }) => {
                   key={idx}
                   className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
                 >
-                  {skill}
+                  {localize(skill, editLanguage)}
                   <button
                     onClick={() => {
                       const newSkills = skills.filter((_, i) => i !== idx);
@@ -983,7 +1029,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                               <div className={`w-3 h-3 rounded-full ${idx % 6 === 0 ? 'bg-blue-500' : idx % 6 === 1 ? 'bg-green-500' : idx % 6 === 2 ? 'bg-purple-500' : idx % 6 === 3 ? 'bg-orange-500' : idx % 6 === 4 ? 'bg-pink-500' : 'bg-indigo-500'}`}></div>
                               <div>
                                 <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                                  {project.name || `Project #${idx + 1}`}
+                                  {localize(project.name, 'en') || `Project #${idx + 1}`}
                                   {/* Active/Inactive Toggle */}
                                   <button
                                     onClick={(e) => {
@@ -1000,7 +1046,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                                   </button>
                                 </h4>
                                 <p className="text-sm text-gray-600">
-                                  {project.description || 'No description'}
+                                  {localize(project.description, 'en') || 'No description'}
                                 </p>
                               </div>
                             </div>
@@ -2052,7 +2098,7 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
 // Basic Editor for other sections
 const BasicEditor = ({ data, onChange, editLanguage = 'en' }) => (
   <div className="bg-white rounded-lg shadow-xs border p-6">
-    <h3 className="text-lg font-medium text-gray-900 mb-6">{data.title}</h3>
+    <h3 className="text-lg font-medium text-gray-900 mb-6">{localize(data.title, 'en')}</h3>
     
     <div className="space-y-4">
       <div>
@@ -2455,7 +2501,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                               <div className="w-3 h-3 rounded-full bg-purple-500"></div>
                               <div>
                                 <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                                  📜 {certificate.name || `Certificate #${idx + 1}`}
+                                  📜 {localize(certificate.name, 'en') || `Certificate #${idx + 1}`}
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -2471,7 +2517,7 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                                   </button>
                                 </h4>
                                 <p className="text-sm text-gray-600">
-                                  {certificate.issuer || 'No issuer'} • {certificate.issueDate || 'No date'}
+                                  {localize(certificate.issuer, 'en') || 'No issuer'} • {certificate.issueDate || 'No date'}
                                 </p>
                               </div>
                             </div>

@@ -1,6 +1,7 @@
 // Live Preview Components for Split-Screen Interface
 import React from 'react';
 import { ExternalLink, Github, Download, Mail, Linkedin, Twitter } from 'lucide-react';
+import { localize } from '../../utils/localize';
 
 // Intro Section Preview
 export const IntroPreview = ({ section }) => {
@@ -30,16 +31,16 @@ export const IntroPreview = ({ section }) => {
           {/* Content */}
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-              {data.name || 'Your Name'}
+              {localize(data.name, 'en') || 'Your Name'}
             </h1>
             <h2 className="text-xl md:text-2xl text-blue-600 font-semibold mb-2">
-              {data.title || 'Your Title'}
+              {localize(data.title, 'en') || 'Your Title'}
             </h2>
             <p className="text-lg text-gray-600 mb-4">
-              {data.subtitle || 'Your Subtitle'}
+              {localize(data.subtitle, 'en') || 'Your Subtitle'}
             </p>
             <p className="text-gray-700 leading-relaxed mb-6">
-              {data.description || 'Tell the world about yourself...'}
+              {localize(data.description, 'en') || 'Tell the world about yourself...'}
             </p>
 
             {/* Action Buttons */}
@@ -106,7 +107,7 @@ export const SkillsPreview = ({ section }) => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Skills & Expertise</h2>
-          <p className="text-lg text-gray-600">{section.content || 'My technical skills and expertise'}</p>
+          <p className="text-lg text-gray-600">{localize(section.content, 'en') || 'My technical skills and expertise'}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -151,7 +152,7 @@ export const ProjectsPreview = ({ section }) => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Projects</h2>
-          <p className="text-lg text-gray-600">{section.content || 'Featured projects and work'}</p>
+          <p className="text-lg text-gray-600">{localize(section.content, 'en') || 'Featured projects and work'}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -179,8 +180,8 @@ export const ProjectsPreview = ({ section }) => {
 
               {/* Project Content */}
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{project.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{project.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{localize(project.title, 'en')}</h3>
+                <p className="text-gray-600 mb-4 line-clamp-3">{localize(project.description, 'en')}</p>
 
                 {/* Technologies */}
                 {project.technologies && project.technologies.length > 0 && (
@@ -256,7 +257,7 @@ export const ExperiencePreview = ({ section }) => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Work Experience</h2>
-          <p className="text-lg text-gray-600">{section.content || 'Professional experience'}</p>
+          <p className="text-lg text-gray-600">{localize(section.content, 'en') || 'Professional experience'}</p>
         </div>
 
         <div className="space-y-8">
@@ -277,9 +278,9 @@ export const ExperiencePreview = ({ section }) => {
                 <div className="flex-1 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
-                      <p className="text-lg text-blue-600 font-medium">{exp.company}</p>
-                      <p className="text-gray-600">{exp.location}</p>
+                      <h3 className="text-xl font-semibold text-gray-900">{localize(exp.title, 'en')}</h3>
+                      <p className="text-lg text-blue-600 font-medium">{localize(exp.company, 'en')}</p>
+                      <p className="text-gray-600">{localize(exp.location, 'en')}</p>
                     </div>
                     <div className="mt-2 md:mt-0 text-sm text-gray-500 md:text-right">
                       <div className="flex items-center space-x-2">
@@ -302,7 +303,7 @@ export const ExperiencePreview = ({ section }) => {
                     </div>
                   </div>
                   
-                  <p className="text-gray-700 leading-relaxed">{exp.description}</p>
+                  <p className="text-gray-700 leading-relaxed">{localize(exp.description, 'en')}</p>
                   
                   {exp.responsibilities && exp.responsibilities.length > 0 && (
                     <div className="mt-4">
@@ -345,7 +346,7 @@ export const EducationPreview = ({ section }) => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Education</h2>
-          <p className="text-lg text-gray-600">{section.content || 'Educational background'}</p>
+          <p className="text-lg text-gray-600">{localize(section.content, 'en') || 'Educational background'}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -359,10 +360,10 @@ export const EducationPreview = ({ section }) => {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{edu.degree}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{localize(edu.degree, 'en')}</h3>
                   <p className="text-blue-600 font-medium mb-1">{edu.field}</p>
-                  <p className="text-gray-700 font-medium mb-2">{edu.institution}</p>
-                  <p className="text-gray-600 text-sm mb-2">{edu.location}</p>
+                  <p className="text-gray-700 font-medium mb-2">{localize(edu.institution, 'en')}</p>
+                  <p className="text-gray-600 text-sm mb-2">{localize(edu.location, 'en')}</p>
                   
                   <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                     <span>
@@ -378,7 +379,7 @@ export const EducationPreview = ({ section }) => {
                   </div>
 
                   {edu.description && (
-                    <p className="text-gray-700 text-sm leading-relaxed">{edu.description}</p>
+                    <p className="text-gray-700 text-sm leading-relaxed">{localize(edu.description, 'en')}</p>
                   )}
                 </div>
               </div>
