@@ -92,6 +92,9 @@ function ProjectMediaCarousel({ videos, images }) {
           <button type="button" onClick={handleNext} aria-label="Next" className={`${arrowClass} right-2`}>
             <FiChevronRight aria-hidden className="size-5" />
           </button>
+          <span className="absolute right-3 top-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium tabular-nums text-white backdrop-blur-md">
+            {currentIndex + 1} / {media.length}
+          </span>
           <CarouselDots count={media.length} current={currentIndex} onSelect={setCurrentIndex} />
         </>
       )}
@@ -320,12 +323,15 @@ function ProjectsSection({ id, title, content, projects }) {
           // Clicking the backdrop (the dialog element itself, outside its box)
           if (e.target === dialogRef.current) handleCloseModal();
         }}
-        className="w-[min(100%-2rem,48rem)] overflow-hidden rounded-[28px] border border-white/15 bg-surface-raised/60 p-0 text-ink shadow-2xl backdrop-blur-[32px] backdrop-saturate-150 backdrop:bg-black/60 backdrop:backdrop-blur-[10px]"
+        className="m-auto w-[min(100%-2rem,48rem)] overflow-hidden rounded-[28px] border border-white/15 bg-surface-raised/60 p-0 text-ink shadow-2xl backdrop-blur-[32px] backdrop-saturate-150 backdrop:bg-black/25 backdrop:backdrop-blur-[2px]"
       >
         {selectedProject && (
           <>
-            <div className="flex items-start justify-between gap-4 p-5 sm:p-6">
-              <h2 className="text-2xl font-bold leading-tight text-ink">
+            {/* Sheen across the top of the glass, same recipe as the navbar */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-linear-to-b from-white/30 to-transparent dark:from-white/10" />
+
+            <div className="relative flex items-start justify-between gap-4 border-b border-ink/10 p-5 sm:p-6">
+              <h2 className="text-2xl font-bold leading-tight tracking-tight text-ink">
                 {localize(selectedProject.name, language)}
               </h2>
               <div className="flex shrink-0 gap-2">
@@ -334,7 +340,7 @@ function ProjectsSection({ id, title, content, projects }) {
                     href={getPrimaryLink(selectedProject)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-brand-dark"
+                    className="flex items-center gap-1 rounded-full bg-linear-to-r from-brand to-brand-dark px-4 py-1.5 text-xs font-semibold text-white shadow-lg shadow-brand/25 transition-all duration-200 motion-safe:hover:scale-105 hover:shadow-brand/40"
                   >
                     {t('projects.view')}
                     {getLinkType(getPrimaryLink(selectedProject)) === 'github' ? (
@@ -348,22 +354,22 @@ function ProjectsSection({ id, title, content, projects }) {
                   type="button"
                   onClick={handleCloseModal}
                   aria-label={t('projects.close')}
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink/10 text-ink transition-colors duration-200 hover:bg-ink/20"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink/10 text-ink transition-all duration-200 motion-safe:hover:scale-105 hover:bg-ink/20"
                 >
                   <FiX aria-hidden className="size-4.5" />
                 </button>
               </div>
             </div>
 
-            <div className="max-h-[65vh] overflow-y-auto px-5 pb-6 sm:px-8 sm:pb-8">
+            <div className="relative max-h-[65vh] overflow-y-auto px-5 pb-6 sm:px-8 sm:pb-8">
               <ProjectMediaCarousel videos={selectedProject.videos} images={selectedProject.images} />
 
-              <p className="whitespace-pre-line text-[1.0625rem] leading-relaxed text-ink-muted">
+              <p className="max-w-prose whitespace-pre-line text-[1.0625rem] leading-relaxed text-ink">
                 {localize(selectedProject.fullDescription, language) || localize(selectedProject.description, language)}
               </p>
             </div>
 
-            <div className="px-6 pb-6 text-end sm:px-8 sm:pb-8">
+            <div className="relative border-t border-ink/10 px-6 py-4 text-end sm:px-8">
               <button
                 type="button"
                 onClick={handleCloseModal}

@@ -146,18 +146,24 @@ code {
     monospace;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+/* Layered (not global) so Tailwind text-color utilities — which live in the
+   higher-priority `utilities` layer — can still override these defaults.
+   An unlayered rule here would beat any `text-*` class regardless of
+   specificity, silently forcing every link back to the inherited color. */
+@layer base {
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
-button {
-  cursor: pointer;
-}
+  button {
+    cursor: pointer;
+  }
 
-.active {
-  font-weight: bold;
-  border-bottom: 2px solid #2196f3;
+  .active {
+    font-weight: bold;
+    border-bottom: 2px solid #2196f3;
+  }
 }
 
 html {
