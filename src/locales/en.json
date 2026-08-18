@@ -1,0 +1,58 @@
+{
+  "intro": {
+    "available": "Available",
+    "ctaLine": "Ready to build something together?",
+    "downloadResume": "Download Resume"
+  },
+  "projects": {
+    "moreInfo": "More Info",
+    "view": "View",
+    "seeMore": "See More",
+    "more": "more",
+    "seeLess": "See Less",
+    "images": "Project Images",
+    "videos": "Project Videos",
+    "close": "Close",
+    "noProjects": "No projects available.",
+    "noMedia": "No media available",
+    "moreCount": "+{count} more"
+  },
+  "education": {
+    "electiveSubjects": "Elective Subjects for Major:"
+  },
+  "certificates": {
+    "verified": "Verified"
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send Message"
+  },
+  "footer": {
+    "welcomeTitle": "Welcome to My Portfolio",
+    "welcomeDescription": "Thanks for visiting. Feel free to reach out.",
+    "contactInfo": "Contact Info",
+    "socialLinks": "Social Links",
+    "downloadCV": "Download CV",
+    "backToTop": "Back to Top"
+  },
+  "main": {
+    "available": "Available",
+    "menu": "menu",
+    "backToTop": "back to top",
+    "edit": "Edit",
+    "errorLoading": "Error loading portfolio data: "
+  },
+  "nav": {
+    "githubProfile": "GitHub Profile",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode",
+    "switchLanguage": "Switch language"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for doesn't exist or has been moved.",
+    "goHome": "Go Back Home"
+  }
+}

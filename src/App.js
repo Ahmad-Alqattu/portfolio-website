@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react
 import { createMyTheme } from './theme';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
+import { ActiveSectionProvider } from './contexts/ActiveSectionContext';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import ResponsiveNavBar from './components/layout/ResponsiveNavBar';
 import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
@@ -22,38 +24,41 @@ import EnhancedPageSkeleton from './components/ui/EnhancedPageSkeleton';
 const PageLoader = () => <EnhancedPageSkeleton />;
 
 // 404 Error Page Component
-const NotFoundPage = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      textAlign: 'center',
-      px: 2
-    }}
-  >
-    <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'primary.main' }}>
-      404
-    </Typography>
-    <Typography variant="h4" sx={{ mb: 2 }}>
-      Page Not Found
-    </Typography>
-    <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
-      The page you are looking for doesn't exist or has been moved.
-    </Typography>
-    <Button
-      component={Link}
-      to="/"
-      variant="contained"
-      size="large"
-      sx={{ textTransform: 'none' }}
+const NotFoundPage = () => {
+  const { t } = useLanguage();
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center',
+        px: 2
+      }}
     >
-      Go Back Home
-    </Button>
-  </Box>
-);
+      <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'primary.main' }}>
+        404
+      </Typography>
+      <Typography variant="h4" sx={{ mb: 2 }}>
+        {t('notFound.title')}
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
+        {t('notFound.description')}
+      </Typography>
+      <Button
+        component={Link}
+        to="/"
+        variant="contained"
+        size="large"
+        sx={{ textTransform: 'none' }}
+      >
+        {t('notFound.goHome')}
+      </Button>
+    </Box>
+  );
+};
 
 // Component to conditionally render nav and footer
 const ConditionalLayout = ({ darkMode, setDarkMode, children }) => {
@@ -69,51 +74,62 @@ const ConditionalLayout = ({ darkMode, setDarkMode, children }) => {
   );
 };
 
-function App() {
+function AppContent() {
   const [darkMode, setDarkMode] = useState(false);
+  const { isRTL } = useLanguage();
   useEffect(() => {
     document.title = "Ahmad's Portfolio";
 
 
   }, []);
-  const theme = createMyTheme(darkMode ? 'dark' : 'light');
+  const theme = createMyTheme(darkMode ? 'dark' : 'light', isRTL ? 'rtl' : 'ltr');
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
         <DataProvider>
-          <Router 
-            future={{
-              v7_startTransition: true,
-              v7_relativeSplatPath: true
-            }}
-          >
-            <ConditionalLayout darkMode={darkMode} setDarkMode={setDarkMode}>
-              <div className="App">
-                <Routes>
-                  <Route path="/" element={<MainComponent />} />
-                  <Route path="/:sectionId" element={<MainComponent />} />
-                  <Route path="/login" element={
-                    <Suspense fallback={<PageLoader />}>
-                      <Login />
-                    </Suspense>
-                  } />
-                  <Route path="/admin" element={
-                    <ProtectedRoute>
+          <ActiveSectionProvider>
+            <Router
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true
+              }}
+            >
+              <ConditionalLayout darkMode={darkMode} setDarkMode={setDarkMode}>
+                <div className="App">
+                  <Routes>
+                    <Route path="/" element={<MainComponent />} />
+                    <Route path="/:sectionId" element={<MainComponent />} />
+                    <Route path="/login" element={
                       <Suspense fallback={<PageLoader />}>
-                        <UniversalEditor />
+                        <Login />
                       </Suspense>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="*" element={<NotFoundPage />} />
-                </Routes>
-              </div>
-            </ConditionalLayout>
-          </Router>
+                    } />
+                    <Route path="/admin" element={
+                      <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                          <UniversalEditor />
+                        </Suspense>
+                      </ProtectedRoute>
+                    } />
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Routes>
+                </div>
+              </ConditionalLayout>
+            </Router>
+          </ActiveSectionProvider>
         </DataProvider>
       </AuthProvider>
     </ThemeProvider>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

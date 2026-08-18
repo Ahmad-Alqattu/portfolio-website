@@ -11,10 +11,38 @@ import FileUpload from './FileUpload';
 import SectionOrderManager from './SectionOrderManager';
 import StorageBrowser from './StorageBrowser';
 
+// Bilingual field helpers: a text field may be a plain string (English-only,
+// legacy/simple case) or a { en, ar } object once an Arabic translation is
+// added. These keep both shapes working through the same dot-path onChange.
+const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
+
+const getLocalizedFieldValue = (data, path, lang) => {
+  const raw = getPath(data, path);
+  if (raw == null) return '';
+  if (typeof raw === 'string') return lang === 'en' ? raw : '';
+  if (typeof raw === 'object') return raw[lang] || '';
+  return '';
+};
+
+const setLocalizedFieldValue = (onChange, data, path, lang, newText) => {
+  const raw = getPath(data, path);
+  if (lang === 'en') {
+    if (raw && typeof raw === 'object') {
+      onChange(path, { ...raw, en: newText });
+    } else {
+      onChange(path, newText);
+    }
+    return;
+  }
+  const enValue = typeof raw === 'string' ? raw : (raw?.en || '');
+  onChange(path, { en: enValue, ar: newText });
+};
+
 const UniversalEditor = () => {
   const { currentUser } = useAuth();
   const { sections, useFirestore, refreshData } = useData();
   const [activeTab, setActiveTab] = useState('manage');
+  const [editLanguage, setEditLanguage] = useState('en');
   const [editingData, setEditingData] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -390,23 +418,23 @@ const UniversalEditor = () => {
       case 'manage':
         return <SectionOrderManager sections={sections} onSectionOrderChange={handleSectionOrderChange} onSave={handleSectionOrderSave} />;
       case 'intro':
-        return <IntroEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
+        return <IntroEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} editLanguage={editLanguage} />;
       case 'skills':
-        return <SkillsEditor data={editingData} onChange={handleChange} />;
+        return <SkillsEditor data={editingData} onChange={handleChange} editLanguage={editLanguage} />;
       case 'projects':
-        return <ProjectsEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
+        return <ProjectsEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} editLanguage={editLanguage} />;
       case 'capabilities':
-        return <CapabilitiesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
+        return <CapabilitiesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} editLanguage={editLanguage} />;
       case 'experience':
-        return <ExperienceEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
+        return <ExperienceEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} editLanguage={editLanguage} />;
       case 'education':
-        return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
+        return <EducationEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} editLanguage={editLanguage} />;
       case 'certificates':
-        return <CertificatesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} />;
+        return <CertificatesEditor data={editingData} onChange={handleChange} onImageUpload={handleImageUpload} uploading={uploading} onBrowseStorage={openStorageBrowser} editLanguage={editLanguage} />;
       case 'footerAndLinks':
-        return <FooterAndLinksEditor data={editingData} onChange={handleChange} />;
+        return <FooterAndLinksEditor data={editingData} onChange={handleChange} editLanguage={editLanguage} />;
       default:
-        return <BasicEditor data={editingData} onChange={handleChange} />;
+        return <BasicEditor data={editingData} onChange={handleChange} editLanguage={editLanguage} />;
     }
   };
 
@@ -432,6 +460,20 @@ const UniversalEditor = () => {
               <p className="text-gray-600">Edit all sections of your portfolio</p>
             </div>
             <div className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:w-auto mt-4 md:mt-0">
+              <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
+                <button
+                  onClick={() => setEditLanguage('en')}
+                  className={`px-3 py-1 text-sm rounded-md ${editLanguage === 'en' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setEditLanguage('ar')}
+                  className={`px-3 py-1 text-sm rounded-md ${editLanguage === 'ar' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                >
+                  AR
+                </button>
+              </div>
               <button
                 onClick={handleBackupData}
                 className="flex items-center gap-2 px-4 py-2 text-green-600 border border-green-300 rounded-lg hover:bg-green-50 w-full md:w-auto"
@@ -543,7 +585,7 @@ const UniversalEditor = () => {
 };
 
 // Intro Section Editor
-const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage, editLanguage = 'en' }) => {
   const handleImageUpload = async (file) => {
     if (onImageUpload) {
       const result = await onImageUpload(file, 'profile');
@@ -592,31 +634,34 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage
         {/* Basic Fields */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name {editLanguage === 'ar' && '(العربية)'}</label>
             <input
               type="text"
-              value={data.name || ''}
-            onChange={(e) => onChange('name', e.target.value)}
+              dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+              value={getLocalizedFieldValue(data, 'name', editLanguage)}
+            onChange={(e) => setLocalizedFieldValue(onChange, data, 'name', editLanguage, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Professional Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Professional Title {editLanguage === 'ar' && '(العربية)'}</label>
           <input
             type="text"
-            value={data.data?.subtitle || ''}
-            onChange={(e) => onChange('data.subtitle', e.target.value)}
+            dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+            value={getLocalizedFieldValue(data.data, 'subtitle', editLanguage)}
+            onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.${path}`, value), data.data, 'subtitle', editLanguage, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tagline</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tagline {editLanguage === 'ar' && '(العربية)'}</label>
           <input
             type="text"
-            value={data.data?.highlight || ''}
-            onChange={(e) => onChange('data.highlight', e.target.value)}
+            dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+            value={getLocalizedFieldValue(data.data, 'highlight', editLanguage)}
+            onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.${path}`, value), data.data, 'highlight', editLanguage, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -690,10 +735,11 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage
     </div>
     
     <div className="mt-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">About Me</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">About Me {editLanguage === 'ar' && '(العربية)'}</label>
       <textarea
-        value={data.content || ''}
-        onChange={(e) => onChange('content', e.target.value)}
+        dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+        value={getLocalizedFieldValue(data, 'content', editLanguage)}
+        onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
         rows={4}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         placeholder="Tell people about yourself..."
@@ -704,7 +750,7 @@ const IntroEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage
 };
 
 // Skills Section Editor
-const SkillsEditor = ({ data, onChange }) => {
+const SkillsEditor = ({ data, onChange, editLanguage = 'en' }) => {
   const skillCategories = data.data?.skillsList || {};
   
   const addSkillCategory = () => {
@@ -738,8 +784,9 @@ const SkillsEditor = ({ data, onChange }) => {
       <div className="space-y-4 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Describe your skills..."
@@ -785,7 +832,7 @@ const SkillsEditor = ({ data, onChange }) => {
 };
 
 // Projects Section Editor
-const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage, editLanguage = 'en' }) => {
   const projects = data.data?.projects || [];
   const [expandedProject, setExpandedProject] = useState(0);
   
@@ -894,8 +941,9 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
       <div className="space-y-4 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={2}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Describe your projects section..."
@@ -1242,7 +1290,7 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
 };
 
 // Capabilities Section Editor
-const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage, editLanguage = 'en' }) => {
   const capabilities = data.data?.capabilities || [];
 
   const addCapability = () => {
@@ -1324,8 +1372,9 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
       <div className="space-y-4 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Describe what you can do..."
@@ -1481,7 +1530,7 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
 };
 
 // Experience Section Editor
-const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage, editLanguage = 'en' }) => {
   const experiences = data.data?.experiences || [];
   
   const addExperience = () => {
@@ -1549,8 +1598,9 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
       <div className="space-y-4 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Describe your professional experience..."
@@ -1763,7 +1813,7 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
 };
 
 // Education Section Editor
-const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage, editLanguage = 'en' }) => {
   const educations = data.data?.educationList || [];
   
   const addEducation = () => {
@@ -1831,8 +1881,9 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
       <div className="space-y-4 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Describe your educational background..."
@@ -1999,17 +2050,18 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
 };
 
 // Basic Editor for other sections
-const BasicEditor = ({ data, onChange }) => (
+const BasicEditor = ({ data, onChange, editLanguage = 'en' }) => (
   <div className="bg-white rounded-lg shadow-xs border p-6">
     <h3 className="text-lg font-medium text-gray-900 mb-6">{data.title}</h3>
     
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Section Title {editLanguage === 'ar' && '(العربية)'}</label>
         <input
           type="text"
-          value={data.title || ''}
-          onChange={(e) => onChange('title', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'title', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'title', editLanguage, e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
@@ -2017,8 +2069,9 @@ const BasicEditor = ({ data, onChange }) => (
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={6}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter content for this section..."
@@ -2030,7 +2083,7 @@ const BasicEditor = ({ data, onChange }) => (
 
 // Footer and Links Editor
 // FooterAndLinksEditor Component
-const FooterAndLinksEditor = ({ data, onChange }) => {
+const FooterAndLinksEditor = ({ data, onChange, editLanguage = 'en' }) => {
   // Get intro section data for CV link sync
   const { sections } = useData();
   const introSection = sections.find(s => s.type === 'intro');
@@ -2053,20 +2106,22 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
           <h4 className="font-medium text-gray-900 mb-3">Welcome Message</h4>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Title {editLanguage === 'ar' && '(العربية)'}</label>
               <input
                 type="text"
-                value={data.data?.welcomeMessage?.title || ''}
-                onChange={(e) => onChange('data.welcomeMessage.title', e.target.value)}
+                dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+                value={getLocalizedFieldValue(data.data?.welcomeMessage, 'title', editLanguage)}
+                onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.welcomeMessage.${path}`, value), data.data?.welcomeMessage, 'title', editLanguage, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Welcome to My Portfolio"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description {editLanguage === 'ar' && '(العربية)'}</label>
               <textarea
-                value={data.data?.welcomeMessage?.description || ''}
-                onChange={(e) => onChange('data.welcomeMessage.description', e.target.value)}
+                dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+                value={getLocalizedFieldValue(data.data?.welcomeMessage, 'description', editLanguage)}
+                onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.welcomeMessage.${path}`, value), data.data?.welcomeMessage, 'description', editLanguage, e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Thank you for visiting..."
@@ -2271,7 +2326,7 @@ const FooterAndLinksEditor = ({ data, onChange }) => {
 };
 
 // Certificates Section Editor
-const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage }) => {
+const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStorage, editLanguage = 'en' }) => {
   const rawCertificates = data.data?.certificates || [];
   // Sort certificates by order property
   const certificates = [...rawCertificates].sort((a, b) => (a.order || 999) - (b.order || 999));
@@ -2359,8 +2414,9 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
       <div className="space-y-4 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
         <textarea
-          value={data.content || ''}
-          onChange={(e) => onChange('content', e.target.value)}
+          dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+          value={getLocalizedFieldValue(data, 'content', editLanguage)}
+          onChange={(e) => setLocalizedFieldValue(onChange, data, 'content', editLanguage, e.target.value)}
           rows={2}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Describe your certificates section..."

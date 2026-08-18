@@ -19,10 +19,60 @@ import {
   OpenInNew
 } from '@mui/icons-material';
 import PropTypes from 'prop-types';
+import SectionHeading from '../ui/SectionHeading';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
+
+// Liquid-glass action buttons, matching the floating nav and FABs. `primary`
+// gets a tinted fill so the two actions still read as primary/secondary
+// without falling back to an unrelated hard-coded blue.
+const glassIconButtonSx = (theme, primary) => {
+  const isDark = theme.palette.mode === 'dark';
+  return {
+    width: 48,
+    height: 48,
+    color: 'primary.main',
+    bgcolor: primary
+      ? isDark
+        ? 'rgba(129,199,132,0.18)'
+        : 'rgba(76,175,80,0.14)'
+      : isDark
+        ? 'rgba(255,255,255,0.06)'
+        : 'rgba(255,255,255,0.5)',
+    backdropFilter: 'blur(14px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(14px) saturate(180%)',
+    border: `1px solid ${isDark ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.75)'}`,
+    boxShadow: isDark
+      ? '0 6px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12)'
+      : '0 6px 18px rgba(20,60,30,0.12), inset 0 1px 0 rgba(255,255,255,0.7)',
+    transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s ease, background-color 0.3s ease',
+    '&:hover': {
+      bgcolor: isDark ? 'rgba(129,199,132,0.28)' : 'rgba(76,175,80,0.22)',
+      transform: 'translateY(-3px) scale(1.06)',
+      boxShadow: isDark
+        ? `0 12px 26px rgba(0,0,0,0.45), 0 0 18px ${theme.palette.primary.main}55`
+        : `0 12px 26px rgba(20,60,30,0.18), 0 0 18px ${theme.palette.primary.main}44`,
+    },
+    '&:active': {
+      transform: 'translateY(-1px) scale(1.02)',
+    },
+    '& .MuiSvgIcon-root': {
+      transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)',
+    },
+    '&:hover .MuiSvgIcon-root': {
+      transform: primary ? 'scale(1.15)' : 'translateY(2px)',
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+      transition: 'none',
+      '&:hover': { transform: 'none' },
+    },
+  };
+};
 
 const CertificatesSection = ({ id, title, content, data }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { language, t } = useLanguage();
   const certificates = data?.certificates || [];
 
   // Filter active certificates and sort by order
@@ -37,24 +87,12 @@ const CertificatesSection = ({ id, title, content, data }) => {
   return (
     <Box id={id} sx={{ maxWidth: isMobile ? '95%' : '83%', margin: 'auto', py: 6, px: 2 }}>
       {/* Section Title */}
-      <Typography 
-        variant="h2" 
-        component="h2" 
-        sx={{           
-          textAlign: 'center', 
-          fontSize: '2.5rem', 
-          fontWeight: 'bold', 
-          mb: 2, 
-          color: 'primary.main' 
-        }}
-      >
-        {title}
-      </Typography>
+      <SectionHeading sectionId={id} sx={{ mb: 2 }}>{localize(title, language)}</SectionHeading>
 
       {/* Section Description */}
       {content && (
-        <Typography 
-          variant="body1" 
+        <Typography
+          variant="body1"
           sx={{
             textAlign: 'center',
             mb: 4,
@@ -64,7 +102,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
             mx: 'auto'
           }}
         >
-          {content}
+          {localize(content, language)}
         </Typography>
       )}
 
@@ -79,14 +117,17 @@ const CertificatesSection = ({ id, title, content, data }) => {
                 borderRadius: '16px',
                 overflow: 'hidden',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-                border: '1px solid rgba(0,0,0,0.05)',
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 '&:hover': {
                   transform: 'translateY(-8px) scale(1.02)',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? '0 20px 40px rgba(0,0,0,0.5)'
+                    : '0 20px 40px rgba(0,0,0,0.12)',
                   '& .cert-image': {
                     transform: 'scale(1.05)',
                   },
@@ -96,7 +137,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
                 }
               }}
             >
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Card sx={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {/* Certificate Image */}
                 
                 {certificate.image && (
@@ -104,7 +145,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
                     component="img"
                     height="200"
                     image={certificate.image.startsWith('http') ? certificate.image : `/${certificate.image}`}
-                    alt={`${certificate.name} certificate`}
+                    alt={`${localize(certificate.name, language)} certificate`}
                     className="cert-image"
                     sx={{
                       objectFit: 'cover',
@@ -112,10 +153,10 @@ const CertificatesSection = ({ id, title, content, data }) => {
                       borderBottom: '1px solid rgba(0,0,0,0.1)'
                     }}
                   />
-                  
+
                 )}{certificate.link && (
                       <Chip
-                        label="✓ Verified"
+                        label={`✓ ${t('certificates.verified')}`}
                         color="success"
                         size="small"
                         sx={{ 
@@ -148,7 +189,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
                           lineHeight: 1.3
                         }}
                       >
-                        📜 {certificate.name}
+                        📜 {localize(certificate.name, language)}
                       </Typography>
                       
                       {/* Certificate Details - Compact Row */}
@@ -166,13 +207,13 @@ const CertificatesSection = ({ id, title, content, data }) => {
                             fontSize: '0.875rem',
                             fontWeight: 500
                           }}>
-                            🏢 {certificate.issuer}
+                            🏢 {localize(certificate.issuer, language)}
                           </Typography>
                         )}
-                        
+
                         {/* Issue Date */}
                         {certificate.issueDate && (
-                          <Typography variant="body2" sx={{ 
+                          <Typography variant="body2" sx={{
                             color: 'text.secondary',
                             fontSize: '0.875rem',
                             fontWeight: 500
@@ -185,16 +226,16 @@ const CertificatesSection = ({ id, title, content, data }) => {
 
                   {/* Description */}
                   {certificate.description && (
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
+                    <Typography
+                      variant="body2"
+                      sx={{
                         mb: 3,
                         color: 'text.secondary',
                         lineHeight: 1.6,
                         flexGrow: 1
                       }}
                     >
-                      {certificate.description}
+                      {localize(certificate.description, language)}
                     </Typography>
                   )}
 
@@ -211,18 +252,8 @@ const CertificatesSection = ({ id, title, content, data }) => {
                         href={certificate.link || certificate.pdf}
                         target="_blank"
                         rel="noopener noreferrer"
-                        sx={{
-                          width: 48,
-                          height: 48,
-                          background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-                          color: 'white',
-                          '&:hover': {
-                            background: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
-                            transform: 'translateY(-2px) scale(1.05)',
-                          },
-                          transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)'
-                        }}
+                        aria-label="View certificate"
+                        sx={glassIconButtonSx(theme, true)}
                       >
                         <Visibility />
                       </IconButton>
@@ -234,19 +265,8 @@ const CertificatesSection = ({ id, title, content, data }) => {
                         href={certificate.pdf}
                         target="_blank"
                         rel="noopener noreferrer"
-                        sx={{
-                          width: 48,
-                          height: 48,
-                          border: '2px solid',
-                          borderColor: 'primary.main',
-                          color: 'primary.main',
-                          '&:hover': {
-                            backgroundColor: 'primary.main',
-                            color: 'white',
-                            transform: 'translateY(-2px) scale(1.05)',
-                          },
-                          transition: 'all 0.3s ease'
-                        }}
+                        aria-label="Download certificate"
+                        sx={glassIconButtonSx(theme, false)}
                       >
                         <Download />
                       </IconButton>

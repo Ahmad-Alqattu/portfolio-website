@@ -1,202 +1,138 @@
 import React from 'react';
-import { 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent,
+import {
+  Typography,
   Box,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Paper,
   useMediaQuery,
   useTheme,
   Avatar
 } from '@mui/material';
+import { motion } from 'framer-motion';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import PropTypes from 'prop-types';
+import SectionHeading from '../ui/SectionHeading';
+import { glassCardSx } from '../ui/glassStyles';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
 const ExperienceSection = ({ id, title, experiences = [] }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const { language } = useLanguage();
+
   return (
-    <Box id={id} sx={{ maxWidth: isMobile ? '100%' : '75%', margin: 'auto', py: 6 }}>
+    <Box id={id} sx={{ maxWidth: isMobile ? '100%' : '860px', mx: 'auto', py: 6 }}>
       {/* Section Title */}
-      <Typography 
-        variant="h2" 
-        component="h2" 
-        sx={{           
-          textAlign: 'center', 
-          fontSize: '2.5rem', 
-          fontWeight: 'bold', 
-          mb: 4, 
-          color: 'primary.main' 
-        }}
-      >
-        {title}
-      </Typography>
+      <SectionHeading sectionId={id}>{localize(title, language)}</SectionHeading>
 
       {/* Experiences List */}
-      <Grid container spacing={4}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {experiences
           .filter(experience => experience.active !== false)
           .sort((a, b) => (a.order || 999) - (b.order || 999))
           .map((experience, index) => (
-          <Grid size={{ xs: 12 }} key={experience.id || index}>
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                borderRadius: '16px',
-                overflow: 'hidden',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-                border: '1px solid rgba(0,0,0,0.05)',
-                '&:hover': {
-                  transform: 'translateY(-0px) scale(1.006)',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.08)',
-                  '& .company-title': {
-                    // color: 'primary.main',
-                    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                  },
-                  '& .job-title': {
-                    // color: 'secondary.main'
-                  }
-                }
-              }}
+            <Box
+              key={experience.id || index}
+              component={prefersReducedMotion ? 'div' : motion.div}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
+              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.3), ease: [0.22, 1, 0.36, 1] }}
+              sx={{ ...glassCardSx(theme), p: { xs: 2.5, md: 3.5 } }}
             >
-              <Card sx={{ height: '100%' }}>
-                <CardContent sx={{ p: 3 }}>
                   {/* Company Header */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2.5, mb: 2 }}>
                     {experience.logo && (
                       <Avatar
                         src={experience.logo}
-                        alt={`${experience.company} logo`}
-                        sx={{ width: 50, height: 50, mr: 2 }}
+                        alt={`${localize(experience.company, language)} logo`}
+                        sx={{ width: 56, height: 56, flexShrink: 0 }}
                         variant="rounded"
                       />
                     )}
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography 
-                        variant="h5" 
+                    <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                      <Typography
                         component="h3"
-                        className="company-title"
-                        sx={{ 
-                          fontWeight: 'bold',
+                        sx={{
+                          fontWeight: 700,
+                          fontSize: { xs: '1.1rem', md: '1.35rem' },
+                          lineHeight: 1.3,
                           color: 'text.primary',
-                          mb: 0.5,
-                          textShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                          transition: 'all 0.3s ease'
                         }}
                       >
-                        {experience.company}
+                        {localize(experience.company, language)}
                       </Typography>
-                      <Typography 
-                        variant="h6"
-                        className="job-title" 
-                        sx={{ 
+                      <Typography
+                        sx={{
                           color: 'primary.main',
-                          mb: 0.5,
-                          fontWeight: '600',
-                          textShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                          transition: 'all 0.3s ease'
+                          fontWeight: 600,
+                          fontSize: '0.95rem',
+                          mt: 0.25,
                         }}
                       >
-                        {experience.title}
+                        {localize(experience.title, language)}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {experience.period || experience.duration}
-                        {experience.location && ` • ${experience.location}`}
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                        {localize(experience.period, language) || localize(experience.duration, language)}
+                        {experience.location && ` • ${localize(experience.location, language)}`}
                       </Typography>
                     </Box>
                   </Box>
 
-                  {/* Description */}
-                  {experience.description && (
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
-                        mb: 2,
-                        color: 'text.secondary',
-                        lineHeight: 1.6
-                      }}
-                    >
-                      {experience.description}
-                    </Typography>
-                  )}
-
-                  {/* Responsibilities */}
-                  {experience.responsibilities && experience.responsibilities.length > 0 && (
-                    <Box>
-                      <Typography 
-                        variant="subtitle1" 
-                        sx={{ 
-                          fontWeight: '600',
+                  {/* Body text lines up with the company name rather than the
+                      card edge, so each entry reads as one text column */}
+                  <Box sx={{ ml: { xs: 0, md: experience.logo ? '76px' : 0 } }}>
+                    {experience.description && (
+                      <Typography
+                        variant="body1"
+                        sx={{
                           mb: 1.5,
-                          color: 'text.primary',
-                          textShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                          color: 'text.secondary',
+                          lineHeight: 1.7
                         }}
                       >
+                        {localize(experience.description, language)}
                       </Typography>
-                      <List dense sx={{ pl: 0 }}>
+                    )}
+
+                    {/* Responsibilities */}
+                    {experience.responsibilities && experience.responsibilities.length > 0 && (
+                      <List dense disablePadding sx={{ pl: 0 }}>
                         {experience.responsibilities.map((responsibility, idx) => (
                           <ListItem
                             key={idx}
-                            sx={{
-                              py: 0.75,
-                              pl: 0,
-                              borderRadius: '8px',
-                              mb: 0.5,
-                              transition: 'all 0.2s ease',
-                              '&:hover': {
-                                backgroundColor: 'rgba(25, 118, 210, 0.04)',
-                                '& .MuiListItemText-primary': {
-                                  // color: 'primary.main',
-                                  paddingLeft: '8px',
-                                  fontWeight: '500'
-                                },
-                                '& .responsibility-bullet': {
-                                  color: 'primary.main',
-                                  transform: 'scale(1.3)'
-                                }
-                              }
-                            }}
+                            disableGutters
+                            sx={{ py: 0.5, alignItems: 'flex-start' }}
                           >
-                            <ListItemIcon sx={{ minWidth: 24 }}>
+                            <ListItemIcon sx={{ minWidth: 22, mt: '9px' }}>
                               <FiberManualRecordIcon
-                                className="responsibility-bullet"
-                                sx={{
-                                  fontSize: 8,
-                                  color: 'primary.main',
-                                  transition: 'all 0.2s ease'
-                                }}
+                                sx={{ fontSize: 7, color: 'primary.main' }}
                               />
                             </ListItemIcon>
                             <ListItemText
-                              primary={responsibility}
+                              primary={localize(responsibility, language)}
                               sx={{
+                                m: 0,
                                 '& .MuiListItemText-primary': {
                                   fontSize: '0.9rem',
                                   color: 'text.secondary',
-                                  lineHeight: 1.5,
-                                  transition: 'all 0.2s ease'
-                                }
+                                  lineHeight: 1.65,
+                                },
                               }}
                             />
                           </ListItem>
                         ))}
                       </List>
-                    </Box>
-                  )}
-                </CardContent>
-              </Card>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>  
+                    )}
+                  </Box>
+            </Box>
+          ))}
+      </Box>
+    </Box>
   );
 };
 

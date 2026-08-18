@@ -119,9 +119,9 @@ export const updateSection = async (sectionId, sectionData, userId = 'default-us
 };
 
 // Create a new section
-export const createSection = async (sectionData) => {
+export const createSection = async (sectionData, userId = 'default-user') => {
   try {
-    const sectionRef = doc(collection(db, SECTIONS_COLLECTION));
+    const sectionRef = doc(collection(db, getUserSectionsCollection(userId)));
     
     const newSectionData = {
       ...sectionData,
@@ -139,9 +139,9 @@ export const createSection = async (sectionData) => {
 };
 
 // Delete a section
-export const deleteSection = async (sectionId) => {
+export const deleteSection = async (sectionId, userId = 'default-user') => {
   try {
-    const sectionRef = doc(db, SECTIONS_COLLECTION, sectionId);
+    const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
     await deleteDoc(sectionRef);
     
     return { success: true };
@@ -152,9 +152,9 @@ export const deleteSection = async (sectionId) => {
 };
 
 // Upload section data (used by migration tool)
-export const uploadSectionData = async (sectionId, sectionData) => {
+export const uploadSectionData = async (sectionId, sectionData, userId = 'default-user') => {
   try {
-    const sectionRef = doc(db, SECTIONS_COLLECTION, sectionId);
+    const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
     
     const uploadData = {
       ...sectionData,
@@ -172,9 +172,9 @@ export const uploadSectionData = async (sectionId, sectionData) => {
 };
 
 // Get sections count for dashboard stats
-export const getSectionsCount = async () => {
+export const getSectionsCount = async (userId = 'default-user') => {
   try {
-    const sectionsRef = collection(db, SECTIONS_COLLECTION);
+    const sectionsRef = collection(db, getUserSectionsCollection(userId));
     const snapshot = await getDocs(sectionsRef);
     return snapshot.size;
   } catch (error) {

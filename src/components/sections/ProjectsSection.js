@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import LazyLoad from 'react-lazyload';
 import {
   Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
   Button,
   Box,
   Dialog,
@@ -20,7 +16,11 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import PropTypes from 'prop-types';
+import SectionHeading from '../ui/SectionHeading';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
 function useProjectsState() {
   const [visibleCount, setVisibleCount] = useState(6);
@@ -284,6 +284,9 @@ function ProjectsSection({ id, title, content, projects }) {
   const { visibleCount, setVisibleCount, selectedProject, setSelectedProject, showAll, setShowAll } = useProjectsState();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { language, t } = useLanguage();
+  const localizedTitle = localize(title, language);
+  const localizedContent = localize(content, language);
 
   // Helper function to get primary link from project
   const getPrimaryLink = (project) => {
@@ -304,12 +307,12 @@ function ProjectsSection({ id, title, content, projects }) {
     return (
       <section id={id} className="py-16">
         <Typography variant="h1" component="h1" sx={{ fontSize: '2rem', fontWeight: 'bold', mb: 3, color: 'text.primary' }}>
-          {title}
+          {localizedTitle}
         </Typography>
         <Typography variant="body1" sx={{ fontSize: '1.25rem', color: 'text.secondary' }}>
-          {content}
+          {localizedContent}
         </Typography>
-        <Typography color="error">No projects available.</Typography>
+        <Typography color="error">{t('projects.noProjects')}</Typography>
       </section>
     );
   }
@@ -341,20 +344,8 @@ function ProjectsSection({ id, title, content, projects }) {
 
   return (
     <section id={id} className="py-16">
-      <Typography
-        variant="h2"
-        component="h2"
-        sx={{
-          fontSize: { xs: '2rem', md: '2.5rem' },
-          fontWeight: 'bold',
-          mb: 3,
-          color: 'primary.main',
-          textAlign: 'center',
-        }}
-      >
-        {title}
-      </Typography>
-      
+      <SectionHeading sectionId={id} sx={{ mb: 3 }}>{localizedTitle}</SectionHeading>
+
       <Typography
         variant="body1"
         sx={{
@@ -366,41 +357,32 @@ function ProjectsSection({ id, title, content, projects }) {
           textAlign: 'center',
         }}
       >
-        {content}
+        {localizedContent}
       </Typography>
-      <Grid container  justifyContent="space-between" sx={{ maxWidth: { xs: '95%', md: '84%' }, margin: 'auto' }}>
-        {visibleProjects.map((project) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.id}>
-            <LazyLoad height={370} offset={100} once>
-            <Card
-              sx={{
-                height: '370px', // Fixed height to ensure uniform cards
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: '16px',
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                boxShadow: 1,
-                m: { xs: 1, md: 2 },
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 4,
-                },
-                cursor: 'pointer',
-              }}
-              onClick={() => handleOpenModal(project)}
-            >
-              {/* Reserved space for the image or a placeholder box */}
-              {project.images && project.images.length > 0 ? (
-                <Box sx={{ height: 180, overflow: 'hidden', borderTopLeftRadius: '16px', borderTopRightRadius: '16px', position: 'relative' }}>
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 md:gap-7 lg:grid-cols-3">
+        {visibleProjects.map((project) => {
+          const primaryLink = getPrimaryLink(project);
+          const linkType = getLinkType(primaryLink);
+          const hasImage = project.images && project.images.length > 0;
+          const hasVideo = project.videos && project.videos.length > 0;
+
+          return (
+            <LazyLoad key={project.id} height={340} offset={100} once>
+              <div
+                className="group relative isolate aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[28px] bg-neutral-900 shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/20 hover:ring-emerald-400/60 sm:aspect-[4/4.5]"
+                onClick={() => handleOpenModal(project)}
+              >
+                {/* Media background */}
+                {hasImage ? (
                   <picture>
-                    <source 
-                      srcSet={project.images[0].startsWith('http') ? project.images[0] : `/${project.images[0]}`} 
-                      type="image/webp" 
+                    <source
+                      srcSet={project.images[0].startsWith('http') ? project.images[0] : `/${project.images[0]}`}
+                      type="image/webp"
                     />
                     <img
                       src={project.images[0].startsWith('http') ? project.images[0] : `/${project.images[0]}`}
-                      alt={`${project.name} thumbnail`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      alt={`${localize(project.name, language)} thumbnail`}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                       loading="lazy"
                       decoding="async"
                       onError={(e) => {
@@ -411,184 +393,100 @@ function ProjectsSection({ id, title, content, projects }) {
                       }}
                     />
                   </picture>
-                  {project.images.length > 1 && (
-                    <Box sx={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      backgroundColor: 'rgba(21, 21, 21, 0.6)',
-                      color: 'white',
-                      fontSize: '0.75rem',
-                      px: 1,
-                      py: 0.3,
-                      borderRadius: 2
-                    }}>
-                      +{project.images.length - 1} more
-                    </Box>
-                  )}
-                  {project.videos && project.videos.length > 0 && (
-                    <Box sx={{
-                      position: 'absolute',
-                      bottom: 8,
-                      left: 8,
-                      backgroundColor: 'rgba(114, 114, 114, 0.8)',
-                      color: 'white',
-                      fontSize: '1rem',
-                      width: 28,
-                      height: 28,
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      ▶
-                    </Box>
-                  )}
-                </Box>
-              ) : project.videos && project.videos.length > 0 ? (
-                <Box sx={{ height: 180, overflow: 'hidden', borderTopLeftRadius: '16px', borderTopRightRadius: '16px', position: 'relative' }}>
+                ) : hasVideo ? (
                   <video
                     src={project.videos[0].startsWith('http') ? project.videos[0] : `/${project.videos[0]}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     muted
                     playsInline
                   />
-                  <Box sx={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    opacity: 0,
-                    transition: 'opacity 0.3s',
-                    '&:hover': { opacity: 1 }
-                  }}>
-                    <Box sx={{ fontSize: '3rem', color: 'white' }}>▶</Box>
-                  </Box>
-                  {project.videos.length > 1 && (
-                    <Box sx={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                      color: 'white',
-                      fontSize: '0.75rem',
-                      px: 1,
-                      py: 0.5,
-                      borderRadius: 4
-                    }}>
-                      +{project.videos.length - 1} more
-                    </Box>
-                  )}
-                </Box>
-              ) : (
-                // Placeholder box if no image is available to maintain the same card height
-                <Box sx={{ 
-                  height: 180, 
-                  background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)', 
-                  borderTopLeftRadius: '16px', 
-                  borderTopRightRadius: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Box sx={{ textAlign: 'center', color: 'text.disabled' }}>
-                    <Box sx={{ fontSize: '3rem', mb: 1, opacity: 0.5 }}>📄</Box>
-                    <Typography variant="caption">No media available</Typography>
-                  </Box>
-                </Box>
-              )}
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Typography variant="h5" component="div" sx={{ mb: 2, fontWeight: '600' }}>
-                  {project.name}
-                </Typography>
-                <Typography 
-                  variant="body2" 
-                  color="text.secondary"
-                  sx={{ 
-                    flexGrow: 1,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 4,
-                    WebkitBoxOrient: 'vertical'
-                  }}
-                >
-                  {project.fullDescription || project.description}
-                </Typography>
-              </CardContent>
-              <CardActions sx={{ justifyContent: 'space-between', p: 2 }}>
-                <Button
-                  size="medium"
-                  variant="outlined"
-                  sx={{
-                    borderRadius: '50px',
-                    textTransform: 'none',
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOpenModal(project);
-                  }}
-                >
-                  More Info
-                </Button>
-                {getPrimaryLink(project) && (
-                  <Link href={getPrimaryLink(project)} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button
-                      size="medium"
-                      variant="outlined"
-                      sx={{
-                        borderRadius: '50px',
-                        textTransform: 'none',
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View
-                      {getLinkType(getPrimaryLink(project)) === 'github' ? <GitHubIcon sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}
-                    </Button>
-                  </Link>
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-emerald-700 to-neutral-900 transition-transform duration-700 ease-out group-hover:scale-110" />
                 )}
-              </CardActions>
-            </Card>
+
+                {/* Legibility gradient, always on */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/0" />
+                {/* Extra darken on hover so the CTA row pops */}
+                <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25" />
+
+                {/* Top badges */}
+                <div className="absolute top-3 right-3 flex gap-2">
+                  {hasImage && project.images.length > 1 && (
+                    <span className="rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
+                      {t('projects.moreCount', { count: project.images.length - 1 })}
+                    </span>
+                  )}
+                  {hasVideo && (
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-sm text-white backdrop-blur-md">
+                      ▶
+                    </span>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <h3 className="text-lg font-bold leading-snug text-white drop-shadow-sm">
+                    {localize(project.name, language)}
+                  </h3>
+                  <p className="mt-1.5 line-clamp-2 text-sm text-white/75">
+                    {localize(project.fullDescription, language) || localize(project.description, language)}
+                  </p>
+
+                  <div className="mt-4 flex translate-y-3 gap-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                    <button
+                      type="button"
+                      className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 transition-colors duration-200 hover:bg-emerald-400"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenModal(project);
+                      }}
+                    >
+                      {t('projects.moreInfo')}
+                    </button>
+                    {primaryLink && (
+                      <a
+                        href={primaryLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 rounded-full border border-white/50 px-4 py-1.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-white/15"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {t('projects.view')}
+                        {linkType === 'github' ? (
+                          <GitHubIcon sx={{ fontSize: 14 }} />
+                        ) : (
+                          <ArrowOutwardIcon sx={{ fontSize: 14 }} />
+                        )}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
             </LazyLoad>
-          </Grid>
-        ))}
-      </Grid>
+          );
+        })}
+      </div>
 
       {/* See More / See Less Button */}
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Box sx={{ textAlign: 'center', mt: 5 }}>
         {!showAll && visibleCount < activeProjects.length && (
-          <Button
-            variant="outlined"
+          <button
+            type="button"
             onClick={handleLoadMore}
-            sx={{
-              borderRadius: '60px',
-              textTransform: 'none',
-              fontSize: '1rem',
-              px: 3,
-              py: 1,
-              mr: 2,
-            }}
+            className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/40"
           >
-            See More ({activeProjects.length - visibleCount} more)
-          </Button>
+            {t('projects.seeMore')} ({activeProjects.length - visibleCount} {t('projects.more')})
+          </button>
         )}
-        
+
         {showAll && activeProjects.length > 6 && (
-          <Button
-            variant="outlined"
+          <button
+            type="button"
             onClick={handleShowLess}
-            sx={{
-              borderRadius: '60px',
-              textTransform: 'none',
-              fontSize: '1rem',
-              px: 3,
-              py: 1,
-            }}
+            className="ml-3 rounded-full border border-black/15 px-6 py-2.5 text-sm font-semibold text-current transition-all duration-300 hover:scale-105 hover:bg-black/5"
           >
-            See Less
-          </Button>
+            {t('projects.seeLess')}
+          </button>
         )}
       </Box>
 
@@ -598,9 +496,12 @@ function ProjectsSection({ id, title, content, projects }) {
         onClose={handleCloseModal}
         maxWidth={isMobile ? 'xs' : 'md'}
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: '16px',
+        slotProps={{
+          paper: {
+            sx: { borderRadius: '20px' },
+          },
+          backdrop: {
+            sx: { backdropFilter: 'blur(4px)' },
           },
         }}
       >
@@ -615,10 +516,10 @@ function ProjectsSection({ id, title, content, projects }) {
               }}
             >
               <Typography variant="h5" sx={{ fontWeight: '600', color: 'primary.main' }}>
-                {selectedProject.name}
+                {localize(selectedProject.name, language)}
               </Typography>
               {getPrimaryLink(selectedProject) && (<Link href={getPrimaryLink(selectedProject)} target="_blank" rel="noopener noreferrer" sx={{ mr: 2 }}>
-                <Button 
+                <Button
                   size="medium"
                   variant="outlined"
                   sx={{
@@ -626,7 +527,7 @@ function ProjectsSection({ id, title, content, projects }) {
                     textTransform: 'none',
                   }}
                 >
-                  View
+                  {t('projects.view')}
                   {getLinkType(getPrimaryLink(selectedProject)) === 'github' ? <GitHubIcon sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}
                 </Button>
               </Link>)}
@@ -639,7 +540,7 @@ function ProjectsSection({ id, title, content, projects }) {
               {selectedProject.images && selectedProject.images.length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" sx={{ mb: 2, fontWeight: '600', color: 'text.primary' }}>
-                    Project Images
+                    {t('projects.images')}
                   </Typography>
                   <LazyLoad height={400} offset={100} once>
                     <ImageCarousel images={selectedProject.images} isMobile={isMobile} />
@@ -651,7 +552,7 @@ function ProjectsSection({ id, title, content, projects }) {
               {selectedProject.videos && selectedProject.videos.length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" sx={{ mb: 2, fontWeight: '600', color: 'text.primary' }}>
-                    Project Videos
+                    {t('projects.videos')}
                   </Typography>
                   <LazyLoad height={400} offset={100} once>
                     <VideoCarousel videos={selectedProject.videos} isMobile={isMobile} />
@@ -669,7 +570,7 @@ function ProjectsSection({ id, title, content, projects }) {
                   whiteSpace: 'pre-line',
                 }}
               >
-                {selectedProject.fullDescription || selectedProject.description}
+                {localize(selectedProject.fullDescription, language) || localize(selectedProject.description, language)}
               </Typography>
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
@@ -678,7 +579,7 @@ function ProjectsSection({ id, title, content, projects }) {
                 variant="outlined"
                 sx={{ color: 'secondary.main', borderColor: 'secondary.light', borderRadius: '50px', textTransform: 'none' }}
               >
-                Close
+                {t('projects.close')}
               </Button>
             </DialogActions>
           </>

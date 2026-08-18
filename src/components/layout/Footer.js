@@ -6,9 +6,12 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import EmailIcon from '@mui/icons-material/Email';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useData } from '../../contexts/DataContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
 const Footer = ({ data = null }) => {
   const { sections } = useData();
+  const { language, t } = useLanguage();
 
   // Get footer data from props or from Firebase sections
   const getFooterData = () => {
@@ -93,7 +96,7 @@ const Footer = ({ data = null }) => {
         mt: 'auto'
       }}
     >
-      <Tooltip title="Back to Top">
+      <Tooltip title={t('footer.backToTop')}>
         <IconButton 
           onClick={handleBackToTop} 
           sx={{
@@ -117,29 +120,29 @@ const Footer = ({ data = null }) => {
         <Grid container spacing={0}>
           <Grid size={{ md: 4 }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0 }}>
-              Contact Info
+              {t('footer.contactInfo')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {contactInfo?.phone || '+970 0598-682-679'}<br />
               <Link href={`mailto:${contactInfo?.email || 'ahmadl.qatu@gmail.com'}`} color="primary.main" underline="hover">
                 {contactInfo?.email || 'ahmadl.qatu@gmail.com'}
               </Link><br />
-              {contactInfo?.location || 'Ramallah, Palestine'}
+              {localize(contactInfo?.location, language) || 'Ramallah, Palestine'}
             </Typography>
           </Grid>
 
           <Grid size={{ md: 4 }} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-              {welcomeMessage.title}
+              {localize(welcomeMessage.title, language)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {welcomeMessage.description}
+              {localize(welcomeMessage.description, language)}
             </Typography>
           </Grid>
 
           <Grid size={{ md: 4 }} sx={{ textAlign: 'right' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mr: 4.5 }}>
-              Social Links
+              {t('footer.socialLinks')}
             </Typography>
             {socialLinks?.enabled !== false && (
               <Box sx={{ mb: 0 ,mr: 4.5}}>
@@ -167,7 +170,7 @@ const Footer = ({ data = null }) => {
             )}
             {cvLink && (
               <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 5.5 }} href={cvLink} color="primary.main" >
-                Download CV
+                {t('footer.downloadCV')}
               </Link>
             )}
           </Grid>
@@ -178,29 +181,29 @@ const Footer = ({ data = null }) => {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 4, alignItems: 'center' }}>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-            {welcomeMessage.title}
+            {localize(welcomeMessage.title, language)}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {welcomeMessage.description}
+            {localize(welcomeMessage.description, language)}
           </Typography>
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-            Contact Info
+            {t('footer.contactInfo')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {contactInfo.phone}<br />
             <Link href={`mailto:${contactInfo.email}`} color="primary.main" underline="hover">
               {contactInfo.email}
             </Link><br />
-            {contactInfo.location}
+            {localize(contactInfo.location, language)}
           </Typography>
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
-            Social Links
+            {t('footer.socialLinks')}
           </Typography>
           {socialLinks?.enabled !== false && (
             <Box sx={{ mb: 1 }}>
@@ -228,7 +231,7 @@ const Footer = ({ data = null }) => {
           )}
           {cvLink && (
             <Link href={cvLink} color="primary.main" underline="hover">
-              Download CV
+              {t('footer.downloadCV')}
             </Link>
           )}
         </Box>

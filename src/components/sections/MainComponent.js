@@ -25,6 +25,9 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useActiveSection } from '../../contexts/ActiveSectionContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 import LazyLoad from 'react-lazyload';
 import { motion } from 'framer-motion';
 const IntroSection = React.lazy(() => import('./IntroSection'));
@@ -168,8 +171,9 @@ const MainContent = styled(Box)(({ theme }) => ({
     paddingBottom: theme.spacing(12),
   },
   [theme.breakpoints.up('md')]: {
-    width: '80%',
-    marginLeft: '12%',
+    width: '100%',
+    maxWidth: '1200px',
+    margin: '0 auto',
     marginTop: 0,
     paddingBottom: theme.spacing(4), // Normal padding on desktop
   }
@@ -271,6 +275,7 @@ const MobileNavIconButton = styled(IconButton, {
 // BackToTop Component
 const BackToTopButton = ({ show }) => {
   const theme = useTheme();
+  const { t } = useLanguage();
 
   const scrollToTop = () => {
     // Use custom smooth scroll with 1.5s duration
@@ -333,7 +338,7 @@ const BackToTopButton = ({ show }) => {
         <Fab
           onClick={scrollToTop}
           size="medium"
-          aria-label="back to top"
+          aria-label={t('main.backToTop')}
           sx={{
             bgcolor: theme.palette.mode === 'dark' ? 'rgba(20, 20, 20, 0.3)' : 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(15px) saturate(180%)',
@@ -361,7 +366,8 @@ const BackToTopButton = ({ show }) => {
 function MainComponent() {
   const { sections, loading, error } = useData();
   const { currentUser, isAdmin } = useAuth();
-  const [activeSection, setActiveSection] = useState('');
+  const { activeSection, setActiveSection } = useActiveSection();
+  const { language, t } = useLanguage();
   const [showMobileBottomNav, setShowMobileBottomNav] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -445,31 +451,35 @@ function MainComponent() {
       setLastScrollY(currentScrollY);
     }
     
-    // Handle active section detection - improved logic
-    let newActiveSection = activeSection;
-    let closestSection = null;
-    let closestDistance = Infinity;
-    
+    // Active section = whichever section's bounds currently contain a fixed
+    // "you are here" line near the top of the viewport. Unlike comparing
+    // section centers, this stays correct no matter how tall a section is —
+    // a long section stays active for its entire scroll, not just near its
+    // midpoint.
+    const triggerLine = 140;
+    let newActiveSection = null;
+
     for (let section of sections) {
       const element = document.getElementById(section.id);
       if (element) {
         const rect = element.getBoundingClientRect();
-        const centerY = window.innerHeight / 2;
-        const sectionCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(sectionCenter - centerY);
-        
-        // Check if section is in viewport
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestSection = section.id;
-          }
+        if (rect.top <= triggerLine && rect.bottom > triggerLine) {
+          newActiveSection = section.id;
+          break;
         }
       }
     }
-    
-    if (closestSection && closestSection !== activeSection) {
-      setActiveSection(closestSection);
+
+    if (!newActiveSection) {
+      const scrolledToBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (scrolledToBottom && sections.length > 0) {
+        newActiveSection = sections[sections.length - 1].id;
+      }
+    }
+
+    if (newActiveSection && newActiveSection !== activeSection) {
+      setActiveSection(newActiveSection);
     }
 
     setShowBackToTop(currentScrollY > 400);
@@ -495,7 +505,7 @@ function MainComponent() {
   if (error) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-        Error loading portfolio data: {error}
+        {t('main.errorLoading')}{error}
       </Box>
     );
   }
@@ -541,44 +551,8 @@ function MainComponent() {
       <CustomScrollbarStyles />
       
       <MainContainer>
-      {!isMobile && (
-        <DesktopNav>
-          <NavContainer>
-            <NavItemsContainer>
-              {sortedSections.map((section) => {
-                const isActive = activeSection === section.id;
-                return (
-                  <NavItem
-                    key={section.id}
-                    onClick={() => navigate(displayPathForSection(section))}
-                  >
-                    <IndicatorLine isActive={isActive} />
-                    <NavButton
-                      isActive={isActive}
-                      disableRipple
-                    >
-                      <Box component="span" sx={{ zIndex: 10, position: 'relative' }}>
-                        {section.title}
-                      </Box>
-                      {isActive && (
-                        <Box
-                          sx={{
-                            position: 'absolute',
-                            bottom: 5,
-                            inset: 0,
-                            borderRadius: 3 ,
-                            bgcolor: 'action.hover'
-                          }}
-                        />
-                      )}
-                    </NavButton>
-                  </NavItem>
-                );
-              })}
-            </NavItemsContainer>
-          </NavContainer>
-        </DesktopNav>
-      )}
+      {/* Desktop section nav now lives in the floating header capsule
+          (ResponsiveNavBar), so the old fixed sidebar is gone. */}
 
       {/* Mobile Bottom Navigation */}
       {isMobile && (
@@ -615,7 +589,7 @@ function MainComponent() {
               }}
             />
             <Fab
-              aria-label="menu"
+              aria-label={t('main.menu')}
               onClick={() => setMobileMenuOpen(true)}
               sx={{
                 bgcolor: theme.palette.mode === 'dark' ? 'rgba(20, 20, 20, 0.3)' : 'rgba(255, 255, 255, 0.2)',
@@ -686,8 +660,8 @@ function MainComponent() {
                             transition: 'all 0.2s ease'
                           }}
                       >
-                        <ListItemText 
-                           primary={section.title} 
+                        <ListItemText
+                           primary={localize(section.title, language)}
                            sx={{
                              '& .MuiListItemText-primary': {
                                fontSize: '0.9rem',
@@ -822,7 +796,7 @@ function MainComponent() {
               e.target.style.transform = 'translateY(0)';
             }}
           >
-            ✏️ Edit
+            ✏️ {t('main.edit')}
           </a>
         </div>
       )}

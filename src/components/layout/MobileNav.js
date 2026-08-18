@@ -2,9 +2,12 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Button, Typography } from '@mui/material';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
 function MobileNav({ sections, activeSection, scrollToSection }) {
   const theme = useTheme();
+  const { language } = useLanguage();
 
   return (
     <nav
@@ -32,7 +35,7 @@ function MobileNav({ sections, activeSection, scrollToSection }) {
                 },
               }}
             >
-              <Typography variant="body1">{section.title}</Typography>
+              <Typography variant="body1">{localize(section.title, language)}</Typography>
               {isActive && (
                 <Box
                   sx={{
