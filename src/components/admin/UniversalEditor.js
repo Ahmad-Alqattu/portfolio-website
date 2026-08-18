@@ -346,6 +346,71 @@ const UniversalEditor = () => {
     setSaving(false);
   };
 
+  // Restore from a backup file the user downloaded and edited. Distinct from
+  // handleMigrateData, which reloads the bundled sectionsData.json and would
+  // therefore discard every translation.
+  const handleRestoreFile = async (file) => {
+    if (!file) return;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(await file.text());
+    } catch (error) {
+      setMessage('❌ Not valid JSON: ' + error.message);
+      return;
+    }
+
+    // Accept either a backup file ({ timestamp, sections: [...] }) or a bare
+    // array of sections.
+    const incoming = Array.isArray(parsed) ? parsed : parsed.sections;
+    if (!Array.isArray(incoming) || incoming.length === 0) {
+      setMessage('❌ No sections found in that file');
+      return;
+    }
+
+    const missingId = incoming.filter((s) => !s || (!s.id && !s.type)).length;
+    if (missingId > 0) {
+      setMessage(`❌ ${missingId} section(s) have no id or type — not restoring`);
+      return;
+    }
+
+    const translated = incoming.filter((s) => typeof s.title === 'object').length;
+    const confirmed = window.confirm(
+      `Restore ${incoming.length} section(s) from "${file.name}"?\n\n` +
+      `${translated} of them carry translations.\n\n` +
+      'This OVERWRITES the matching sections in Firebase. ' +
+      'Sections not present in the file are left untouched.'
+    );
+    if (!confirmed) {
+      setMessage('Restore cancelled');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
+    setSaving(true);
+    setMessage('🔄 Restoring…');
+    try {
+      const failures = [];
+      for (const section of incoming) {
+        const result = await updateSection(section.id || section.type, section, 'default-user');
+        if (!result?.success) {
+          failures.push(`${section.id || section.type}: ${result?.error || 'unknown error'}`);
+        }
+      }
+
+      if (failures.length === 0) {
+        setMessage(`✅ Restored ${incoming.length} section(s)`);
+        setTimeout(() => window.location.reload(), 1200);
+      } else {
+        setMessage(`⚠️ Restored ${incoming.length - failures.length}/${incoming.length}. Failed: ${failures.join('; ')}`);
+      }
+    } catch (error) {
+      setMessage('❌ Restore failed: ' + error.message);
+      console.error('❌ Restore error:', error);
+    }
+    setSaving(false);
+  };
+
   const handleBackupData = () => {
     try {
       // Create backup file with current Firebase data
@@ -391,8 +456,10 @@ const UniversalEditor = () => {
   const handleMigrateData = async () => {
     // Confirm before migrating to prevent accidental overwrites
     const confirmed = window.confirm(
-      '⚠️ WARNING: This will OVERWRITE all your current Firebase data with data from sectionsData.json!\n\n' +
-      '✅ Recommendation: Download a backup first!\n\n' +
+      '⚠️ WARNING: This OVERWRITES all your Firebase data with the built-in sectionsData.json.\n\n' +
+      'That file is English-only, so EVERY ARABIC TRANSLATION WILL BE LOST.\n\n' +
+      'To load your own edited file instead, use "Restore from File".\n\n' +
+      '✅ Download a backup first!\n\n' +
       'Do you want to continue?'
     );
 
@@ -535,13 +602,32 @@ const UniversalEditor = () => {
                 <Download size={16} />
                 Backup Data
               </button>
+              <input
+                type="file"
+                accept="application/json,.json"
+                id="restore-backup-file"
+                className="hidden"
+                onChange={(e) => {
+                  handleRestoreFile(e.target.files?.[0]);
+                  // Reset so picking the same file again still fires onChange
+                  e.target.value = '';
+                }}
+              />
+              <label
+                htmlFor="restore-backup-file"
+                className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 w-full md:w-auto cursor-pointer"
+                title="Upload a backup file you downloaded and edited"
+              >
+                <Upload size={16} />
+                Restore from File
+              </label>
               <button
                 onClick={handleMigrateData}
                 className="flex items-center gap-2 px-4 py-2 text-orange-600 border border-orange-300 rounded-lg hover:bg-orange-50 w-full md:w-auto"
-                title="⚠️ WARNING: Overwrites Firebase with JSON file!"
+                title="⚠️ Resets to the built-in sectionsData.json — this file has no translations, so all Arabic content is lost"
               >
                 <FileText size={16} />
-                Import JSON
+                Reset to Defaults
               </button>
               <button
                 onClick={() => setShowPreview(!showPreview)}
