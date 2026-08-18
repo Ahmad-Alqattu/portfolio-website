@@ -82,6 +82,13 @@ function AppContent() {
 
 
   }, []);
+
+  // Mirror the MUI mode onto <html> so Tailwind's `dark:` variant (defined in
+  // index.css against the .dark class) tracks the same state.
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+  }, [darkMode]);
+
   const theme = createMyTheme(darkMode ? 'dark' : 'light', isRTL ? 'rtl' : 'ltr');
 
   return (

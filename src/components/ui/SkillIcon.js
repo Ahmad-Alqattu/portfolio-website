@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import {
   SiReact,
   SiHtml5,
@@ -23,9 +22,7 @@ import {
   SiDocker,
   SiLinux,
 } from 'react-icons/si';
-import StorageIcon from '@mui/icons-material/Storage';
-import DnsIcon from '@mui/icons-material/Dns';
-import CodeIcon from '@mui/icons-material/Code';
+import { FiDatabase, FiServer, FiCode } from 'react-icons/fi';
 
 // Normalised skill name -> brand icon. Keys are lower-cased and stripped of
 // spaces, dots and dashes so "React.js", "react js" and "reactjs" all match.
@@ -66,10 +63,10 @@ const iconMap = {
   linux: SiLinux,
   // No official brand glyph in the set — use a descriptive generic instead of
   // silently rendering nothing.
-  mssql: StorageIcon,
-  microsoftsqlserver: StorageIcon,
-  sqlserver: StorageIcon,
-  iis: DnsIcon,
+  mssql: FiDatabase,
+  microsoftsqlserver: FiDatabase,
+  sqlserver: FiDatabase,
+  iis: FiServer,
 };
 
 const normalise = (name = '') =>
@@ -80,20 +77,13 @@ const normalise = (name = '') =>
 
 function SkillIcon({ name, size = 16 }) {
   const key = normalise(name);
-  const Icon = iconMap[key] || CodeIcon;
+  const Icon = iconMap[key] || FiCode;
 
   return (
-    <Box
-      component={Icon}
+    <Icon
       aria-hidden
-      sx={{
-        fontSize: size,
-        width: size,
-        height: size,
-        flexShrink: 0,
-        color: 'primary.main',
-        fill: 'currentColor',
-      }}
+      className="shrink-0 fill-current text-brand"
+      style={{ width: size, height: size, fontSize: size }}
     />
   );
 }

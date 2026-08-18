@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from '@mui/material';
 
 // Stroke-based 24px icons drawn inline so they inherit the theme color and
 // need no uploads or extra network requests.
@@ -82,24 +81,16 @@ function CapabilityIcon({ title, description, size = 28 }) {
   const paths = icons[pickIcon(title, description)];
 
   return (
-    <Box
-      component="svg"
+    <svg
       aria-hidden
       focusable="false"
       viewBox="0 0 24 24"
-      sx={{
-        width: size,
-        height: size,
-        color: 'primary.main',
-        fill: 'none',
-        stroke: 'currentColor',
-        strokeWidth: 1.7,
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-      }}
+      width={size}
+      height={size}
+      className="fill-none stroke-current stroke-[1.7] text-brand [stroke-linecap:round] [stroke-linejoin:round]"
     >
       {paths}
-    </Box>
+    </svg>
   );
 }
 

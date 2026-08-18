@@ -1,26 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LazyLoad from 'react-lazyload';
-import {
-  Typography,
-  Button,
-  Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
-  Link,
-  useMediaQuery,
-  useTheme
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import { FiGithub, FiArrowUpRight, FiX, FiChevronLeft, FiChevronRight, FiPlay } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import SectionHeading from '../ui/SectionHeading';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
+import localizedText from '../../utils/localizedText';
 
 function useProjectsState() {
   const [visibleCount, setVisibleCount] = useState(6);
@@ -29,264 +14,114 @@ function useProjectsState() {
   return { visibleCount, setVisibleCount, selectedProject, setSelectedProject, showAll, setShowAll };
 }
 
-// Separate Image and Video carousels
-function ImageCarousel({ images, isMobile }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const arrowClass =
+  'absolute top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-colors duration-200 hover:bg-black/70';
 
-  if (!images || images.length === 0) {
-    return null;
-  }
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
+function CarouselDots({ count, current, onSelect }) {
   return (
-    <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4" style={{ maxHeight: isMobile ? '50vh' : '70vh' }}>
-      <div className="flex items-center justify-center" style={{ maxHeight: isMobile ? '50vh' : '70vh' }}>
-        <picture>
-          <source 
-            srcSet={images[currentIndex].startsWith('http') ? images[currentIndex] : `/${images[currentIndex]}`} 
-            type="image/webp" 
-          />
-          <img
-            src={images[currentIndex].startsWith('http') ? images[currentIndex] : `/${images[currentIndex]}`}
-            alt={`Project image ${currentIndex + 1}`}
-            className="max-w-full max-h-full object-contain"
-            style={{ maxHeight: isMobile ? '50vh' : '70vh' }}
-            onError={(e) => {
-              // Fallback for GitHub images
-              if (e.target.src.includes('github.com')) {
-                e.target.src = e.target.src.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
-              }
-            }}
-          />
-        </picture>
-      </div>
-      
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={handlePrev}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
-          >
-            ‹
-          </button>
-          <button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
-          >
-            ›
-          </button>
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full ${
-                  index === currentIndex ? 'bg-white' : 'bg-white bg-opacity-50'
-                }`}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function VideoCarousel({ videos, isMobile }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  if (!videos || videos.length === 0) {
-    return null;
-  }
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % videos.length);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
-  };
-
-  return (
-    <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4" style={{ maxHeight: isMobile ? '50vh' : '70vh' }}>
-      <div className="flex items-center justify-center" style={{ maxHeight: isMobile ? '50vh' : '70vh' }}>
-        <video
-          src={videos[currentIndex].startsWith('http') ? videos[currentIndex] : `/${videos[currentIndex]}`}
-          controls
-          className="max-w-full max-h-full object-contain"
-          style={{ maxHeight: isMobile ? '50vh' : '70vh' }}
-          onError={(e) => {
-            console.error('Video failed to load:', e.target.src);
-          }}
+    <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
+      {Array.from({ length: count }, (_, index) => (
+        <button
+          key={index}
+          type="button"
+          aria-label={`Go to item ${index + 1}`}
+          onClick={() => onSelect(index)}
+          className={`size-2 rounded-full transition-colors duration-200 ${
+            index === current ? 'bg-white' : 'bg-white/50'
+          }`}
         />
-      </div>
-      
-      {videos.length > 1 && (
-        <>
-          <button
-            onClick={handlePrev}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
-          >
-            ‹
-          </button>
-          <button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
-          >
-            ›
-          </button>
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-            {videos.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full ${
-                  index === currentIndex ? 'bg-white' : 'bg-white bg-opacity-50'
-                }`}
-              />
-            ))}
-          </div>
-        </>
-      )}
+      ))}
     </div>
   );
 }
 
-ImageCarousel.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.string),
-};
-
-VideoCarousel.propTypes = {
-  videos: PropTypes.arrayOf(PropTypes.string),
-};
-
-function MediaCarousel({ media }) {
+// Videos first, then images, all in one strip — a project's media is one
+// story, not two separate galleries.
+function ProjectMediaCarousel({ videos, images }) {
+  const media = [
+    ...(videos || []).map((src) => ({ type: 'video', src })),
+    ...(images || []).map((src) => ({ type: 'image', src })),
+  ];
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (!media || media.length === 0) {
+  if (media.length === 0) {
     return null;
   }
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % media.length);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
-  };
+  const resolve = (src) => (src.startsWith('http') ? src : `/${src}`);
+  const handleNext = () => setCurrentIndex((prev) => (prev + 1) % media.length);
+  const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
+  const current = media[currentIndex];
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        textAlign: 'center',
-        mb: 2,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <picture>
-        {media[currentIndex].endsWith('.mp4') || media[currentIndex].endsWith('.webm') ? (
+    <div className="relative mb-6 overflow-hidden rounded-2xl bg-black/5 dark:bg-white/5">
+      <div className="flex max-h-[45vh] items-center justify-center sm:max-h-[55vh]">
+        {current.type === 'video' ? (
           <video
-            src={media[currentIndex]}
+            key={current.src}
+            src={resolve(current.src)}
             controls
-            style={{ maxHeight: '65vh', maxWidth: '100%', height: 'auto', borderRadius: '8px', margin: '0 auto' }}
-          />
-        ) : media[currentIndex].startsWith('http') ? (
-          <img
-            src={media[currentIndex]}
-            alt={`Project ${currentIndex + 1}`}
-            style={{ maxHeight: '65vh', maxWidth: '100%', height: 'auto', borderRadius: '8px', margin: '0 auto' }}
-            loading="lazy"
-            decoding="async"
+            className="max-h-[45vh] max-w-full object-contain sm:max-h-[55vh]"
+            onError={(e) => {
+              console.error('Video failed to load:', e.target.src);
+            }}
           />
         ) : (
-          <>
-            <source
-              srcSet={`${media[currentIndex].replace(/\\/g, '/').replace(/\.(png|jpg|jpeg)$/, '.webp')}`}
-              type="image/webp"
-            />
+          <picture>
+            <source srcSet={resolve(current.src)} type="image/webp" />
             <img
-              src={media[currentIndex].replace(/\\/g, '/')}
-              alt={`Project ${currentIndex + 1}`}
-              style={{ maxHeight: '65vh', maxWidth: '100%', height: 'auto', borderRadius: '8px', margin: '0 auto' }}
-              loading="lazy"
-              decoding="async"
+              src={resolve(current.src)}
+              alt={`Project media ${currentIndex + 1}`}
+              className="max-h-[45vh] max-w-full object-contain sm:max-h-[55vh]"
+              onError={(e) => {
+                // Fallback for GitHub images
+                if (e.target.src.includes('github.com')) {
+                  e.target.src = e.target.src.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+                }
+              }}
             />
-          </>
+          </picture>
         )}
-      </picture>
+      </div>
+
       {media.length > 1 && (
         <>
-          <Button
-            onClick={handlePrev}
-            variant="contained"
-            size="small"
-            sx={{
-              position: 'absolute',
-              left: 16,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              minWidth: '40px',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              padding: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              '&:hover': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              },
-            }}
-          >
-            ‹
-          </Button>
-          <Button
-            onClick={handleNext}
-            variant="contained"
-            size="small"
-            sx={{
-              position: 'absolute',
-              right: 16,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              minWidth: '40px',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              padding: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              '&:hover': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              },
-            }}
-          >
-            ›
-          </Button>
+          <button type="button" onClick={handlePrev} aria-label="Previous" className={`${arrowClass} left-2`}>
+            <FiChevronLeft aria-hidden className="size-5" />
+          </button>
+          <button type="button" onClick={handleNext} aria-label="Next" className={`${arrowClass} right-2`}>
+            <FiChevronRight aria-hidden className="size-5" />
+          </button>
+          <CarouselDots count={media.length} current={currentIndex} onSelect={setCurrentIndex} />
         </>
       )}
-    </Box>
+    </div>
   );
 }
 
-MediaCarousel.propTypes = {
-  media: PropTypes.arrayOf(PropTypes.string),
+ProjectMediaCarousel.propTypes = {
+  videos: PropTypes.arrayOf(PropTypes.string),
+  images: PropTypes.arrayOf(PropTypes.string),
 };
 
 function ProjectsSection({ id, title, content, projects }) {
   const { visibleCount, setVisibleCount, selectedProject, setSelectedProject, showAll, setShowAll } = useProjectsState();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { language, t } = useLanguage();
   const localizedTitle = localize(title, language);
   const localizedContent = localize(content, language);
+  const dialogRef = useRef(null);
+
+  // Native <dialog> gives focus trapping, Escape-to-close and inert background
+  // for free — behaviour a hand-rolled modal has to reimplement.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (selectedProject && !dialog.open) {
+      dialog.showModal();
+    } else if (!selectedProject && dialog.open) {
+      dialog.close();
+    }
+  }, [selectedProject]);
 
   // Helper function to get primary link from project
   const getPrimaryLink = (project) => {
@@ -306,13 +141,9 @@ function ProjectsSection({ id, title, content, projects }) {
   if (!Array.isArray(projects)) {
     return (
       <section id={id} className="py-16">
-        <Typography variant="h1" component="h1" sx={{ fontSize: '2rem', fontWeight: 'bold', mb: 3, color: 'text.primary' }}>
-          {localizedTitle}
-        </Typography>
-        <Typography variant="body1" sx={{ fontSize: '1.25rem', color: 'text.secondary' }}>
-          {localizedContent}
-        </Typography>
-        <Typography color="error">{t('projects.noProjects')}</Typography>
+        <SectionHeading sectionId={id} className="mb-6">{localizedTitle}</SectionHeading>
+        <p className="text-center text-lg text-ink-muted">{localizedContent}</p>
+        <p className="mt-2 text-center text-red-600 dark:text-red-400">{t('projects.noProjects')}</p>
       </section>
     );
   }
@@ -344,21 +175,12 @@ function ProjectsSection({ id, title, content, projects }) {
 
   return (
     <section id={id} className="py-16">
-      <SectionHeading sectionId={id} sx={{ mb: 3 }}>{localizedTitle}</SectionHeading>
+      <SectionHeading sectionId={id} className="mb-6">{localizedTitle}</SectionHeading>
 
-      <Typography
-        variant="body1"
-        sx={{
-          fontSize: { xs: '1.125rem', md: '1.25rem' },
-          color: 'text.secondary',
-          mb: 4,
-          maxWidth: '80%',
-          margin: 'auto',
-          textAlign: 'center',
-        }}
-      >
+      <p className="mx-auto mb-10 max-w-3xl text-center text-lg leading-relaxed text-ink-muted md:text-xl">
         {localizedContent}
-      </Typography>
+      </p>
+
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 md:gap-7 lg:grid-cols-3">
         {visibleProjects.map((project) => {
           const primaryLink = getPrimaryLink(project);
@@ -369,7 +191,7 @@ function ProjectsSection({ id, title, content, projects }) {
           return (
             <LazyLoad key={project.id} height={340} offset={100} once>
               <div
-                className="group relative isolate aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[28px] bg-neutral-900 shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/20 hover:ring-emerald-400/60 sm:aspect-[4/4.5]"
+                className="group relative isolate aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[28px] bg-neutral-900 shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out motion-safe:hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand/20 hover:ring-brand/60 sm:aspect-[4/4.5]"
                 onClick={() => handleOpenModal(project)}
               >
                 {/* Media background */}
@@ -382,7 +204,7 @@ function ProjectsSection({ id, title, content, projects }) {
                     <img
                       src={project.images[0].startsWith('http') ? project.images[0] : `/${project.images[0]}`}
                       alt={`${localize(project.name, language)} thumbnail`}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-110"
                       loading="lazy"
                       decoding="async"
                       onError={(e) => {
@@ -396,29 +218,29 @@ function ProjectsSection({ id, title, content, projects }) {
                 ) : hasVideo ? (
                   <video
                     src={project.videos[0].startsWith('http') ? project.videos[0] : `/${project.videos[0]}`}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-110"
                     muted
                     playsInline
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-emerald-700 to-neutral-900 transition-transform duration-700 ease-out group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-linear-to-br from-brand via-brand-dark to-neutral-900 transition-transform duration-700 ease-out motion-safe:group-hover:scale-110" />
                 )}
 
                 {/* Legibility gradient, always on */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/0" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/95 via-black/35 to-black/0" />
                 {/* Extra darken on hover so the CTA row pops */}
                 <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25" />
 
                 {/* Top badges */}
-                <div className="absolute top-3 right-3 flex gap-2">
+                <div className="absolute right-3 top-3 flex gap-2">
                   {hasImage && project.images.length > 1 && (
                     <span className="rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
                       {t('projects.moreCount', { count: project.images.length - 1 })}
                     </span>
                   )}
                   {hasVideo && (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-sm text-white backdrop-blur-md">
-                      ▶
+                    <span className="flex size-7 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md">
+                      <FiPlay aria-hidden className="size-3.5" />
                     </span>
                   )}
                 </div>
@@ -432,10 +254,10 @@ function ProjectsSection({ id, title, content, projects }) {
                     {localize(project.fullDescription, language) || localize(project.description, language)}
                   </p>
 
-                  <div className="mt-4 flex translate-y-3 gap-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="mt-4 flex translate-y-3 gap-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:opacity-100">
                     <button
                       type="button"
-                      className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 transition-colors duration-200 hover:bg-emerald-400"
+                      className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-neutral-900 transition-colors duration-200 hover:bg-brand-light"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleOpenModal(project);
@@ -453,9 +275,9 @@ function ProjectsSection({ id, title, content, projects }) {
                       >
                         {t('projects.view')}
                         {linkType === 'github' ? (
-                          <GitHubIcon sx={{ fontSize: 14 }} />
+                          <FiGithub aria-hidden className="size-3.5" />
                         ) : (
-                          <ArrowOutwardIcon sx={{ fontSize: 14 }} />
+                          <FiArrowUpRight aria-hidden className="size-3.5" />
                         )}
                       </a>
                     )}
@@ -468,12 +290,12 @@ function ProjectsSection({ id, title, content, projects }) {
       </div>
 
       {/* See More / See Less Button */}
-      <Box sx={{ textAlign: 'center', mt: 5 }}>
+      <div className="mt-10 text-center">
         {!showAll && visibleCount < activeProjects.length && (
           <button
             type="button"
             onClick={handleLoadMore}
-            className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/40"
+            className="rounded-full bg-linear-to-r from-brand to-brand-dark px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition-all duration-300 motion-safe:hover:scale-105 hover:shadow-brand/40"
           >
             {t('projects.seeMore')} ({activeProjects.length - visibleCount} {t('projects.more')})
           </button>
@@ -483,127 +305,98 @@ function ProjectsSection({ id, title, content, projects }) {
           <button
             type="button"
             onClick={handleShowLess}
-            className="ml-3 rounded-full border border-black/15 px-6 py-2.5 text-sm font-semibold text-current transition-all duration-300 hover:scale-105 hover:bg-black/5"
+            className="ml-3 rounded-full border border-ink/15 px-6 py-2.5 text-sm font-semibold text-ink transition-all duration-300 motion-safe:hover:scale-105 hover:bg-ink/5"
           >
             {t('projects.seeLess')}
           </button>
         )}
-      </Box>
+      </div>
 
-      {/* Modal Dialog for Full Project Details */}
-      <Dialog
-        open={Boolean(selectedProject)}
+      {/* Full project details */}
+      <dialog
+        ref={dialogRef}
         onClose={handleCloseModal}
-        maxWidth={isMobile ? 'xs' : 'md'}
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: { borderRadius: '20px' },
-          },
-          backdrop: {
-            sx: { backdropFilter: 'blur(4px)' },
-          },
+        onClick={(e) => {
+          // Clicking the backdrop (the dialog element itself, outside its box)
+          if (e.target === dialogRef.current) handleCloseModal();
         }}
+        className="w-[min(100%-2rem,48rem)] overflow-hidden rounded-[28px] border border-white/15 bg-surface-raised/60 p-0 text-ink shadow-2xl backdrop-blur-[32px] backdrop-saturate-150 backdrop:bg-black/60 backdrop:backdrop-blur-[10px]"
       >
         {selectedProject && (
           <>
-            <DialogTitle
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                pb: 1,
-              }}
-            >
-              <Typography variant="h5" sx={{ fontWeight: '600', color: 'primary.main' }}>
+            <div className="flex items-start justify-between gap-4 p-5 sm:p-6">
+              <h2 className="text-2xl font-bold leading-tight text-ink">
                 {localize(selectedProject.name, language)}
-              </Typography>
-              {getPrimaryLink(selectedProject) && (<Link href={getPrimaryLink(selectedProject)} target="_blank" rel="noopener noreferrer" sx={{ mr: 2 }}>
-                <Button
-                  size="medium"
-                  variant="outlined"
-                  sx={{
-                    borderRadius: '50px',
-                    textTransform: 'none',
-                  }}
+              </h2>
+              <div className="flex shrink-0 gap-2">
+                {getPrimaryLink(selectedProject) && (
+                  <a
+                    href={getPrimaryLink(selectedProject)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-brand-dark"
+                  >
+                    {t('projects.view')}
+                    {getLinkType(getPrimaryLink(selectedProject)) === 'github' ? (
+                      <FiGithub aria-hidden className="size-3.5" />
+                    ) : (
+                      <FiArrowUpRight aria-hidden className="size-3.5" />
+                    )}
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  aria-label={t('projects.close')}
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink/10 text-ink transition-colors duration-200 hover:bg-ink/20"
                 >
-                  {t('projects.view')}
-                  {getLinkType(getPrimaryLink(selectedProject)) === 'github' ? <GitHubIcon sx={{ ml: 1 }} /> : <VisibilityIcon sx={{ ml: 1 }} />}
-                </Button>
-              </Link>)}
-              <IconButton onClick={handleCloseModal}>
-                <CloseIcon />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent dividers>
-              {/* Images Section */}
-              {selectedProject.images && selectedProject.images.length > 0 && (
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" sx={{ mb: 2, fontWeight: '600', color: 'text.primary' }}>
-                    {t('projects.images')}
-                  </Typography>
-                  <LazyLoad height={400} offset={100} once>
-                    <ImageCarousel images={selectedProject.images} isMobile={isMobile} />
-                  </LazyLoad>
-                </Box>
-              )}
-              
-              {/* Videos Section */}
-              {selectedProject.videos && selectedProject.videos.length > 0 && (
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" sx={{ mb: 2, fontWeight: '600', color: 'text.primary' }}>
-                    {t('projects.videos')}
-                  </Typography>
-                  <LazyLoad height={400} offset={100} once>
-                    <VideoCarousel videos={selectedProject.videos} isMobile={isMobile} />
-                  </LazyLoad>
-                </Box>
-              )}
-              
-              <Typography
-                variant="body1"
-                sx={{
-                  mb: 3,
-                  fontSize: '1.125rem',
-                  color: 'text.secondary',
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-line',
-                }}
-              >
+                  <FiX aria-hidden className="size-4.5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[65vh] overflow-y-auto px-5 pb-6 sm:px-8 sm:pb-8">
+              <ProjectMediaCarousel videos={selectedProject.videos} images={selectedProject.images} />
+
+              <p className="whitespace-pre-line text-[1.0625rem] leading-relaxed text-ink-muted">
                 {localize(selectedProject.fullDescription, language) || localize(selectedProject.description, language)}
-              </Typography>
-            </DialogContent>
-            <DialogActions sx={{ p: 2 }}>
-              <Button
+              </p>
+            </div>
+
+            <div className="px-6 pb-6 text-end sm:px-8 sm:pb-8">
+              <button
+                type="button"
                 onClick={handleCloseModal}
-                variant="outlined"
-                sx={{ color: 'secondary.main', borderColor: 'secondary.light', borderRadius: '50px', textTransform: 'none' }}
+                className="rounded-full border border-ink/15 px-5 py-2 text-sm font-semibold text-ink transition-all duration-200 motion-safe:hover:scale-105 hover:bg-ink/5"
               >
                 {t('projects.close')}
-              </Button>
-            </DialogActions>
+              </button>
+            </div>
           </>
         )}
-      </Dialog>
+      </dialog>
     </section>
   );
 }
 
 ProjectsSection.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
+  title: localizedText.isRequired,
+  content: localizedText.isRequired,
   projects: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      fullDescription: PropTypes.string,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: localizedText.isRequired,
+      description: localizedText,
+      fullDescription: localizedText,
       images: PropTypes.arrayOf(PropTypes.string),
+      videos: PropTypes.arrayOf(PropTypes.string),
       link: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.arrayOf(PropTypes.string)
       ]),
+      active: PropTypes.bool,
+      order: PropTypes.number,
     })
   ).isRequired,
 };

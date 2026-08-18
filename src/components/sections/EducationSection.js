@@ -1,151 +1,115 @@
 // src/components/sections/EducationSection.jsx
 import React from 'react';
-import { Typography, Box, Avatar, Chip, useMediaQuery, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import SectionHeading from '../ui/SectionHeading';
-import { glassCardSx, glassChipSx } from '../ui/glassStyles';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
+import localizedText from '../../utils/localizedText';
 
 function EducationSection({ id, title, content, educationList = [] }) {
   // Use educationList as the primary data source
   const validEducationList = Array.isArray(educationList) ? educationList : [];
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const { language, t } = useLanguage();
 
   return (
     <section id={id} className="py-16">
-      {/* Section Title */}
       <SectionHeading sectionId={id}>{localize(title, language)}</SectionHeading>
 
-      {/* Introductory Content */}
       {content && (
-        <Typography
-          variant="body1"
-          sx={{
-            fontSize: { xs: '1.125rem', md: '1.25rem' },
-            color: 'text.secondary',
-            mb: 6,
-            maxWidth: '800px',
-            margin: 'auto',
-            textAlign: 'center',
-          }}
-        >
+        <p className="mx-auto mb-12 max-w-3xl text-center text-lg leading-relaxed text-ink-muted md:text-xl">
           {localize(content, language)}
-        </Typography>
+        </p>
       )}
 
-      {/* Education List */}
-      <Box sx={{ maxWidth: isMobile ? '100%' : '860px', mx: 'auto', display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <div className="mx-auto flex max-w-[860px] flex-col gap-6">
         {validEducationList
           .filter(education => education.active !== false) // Show only active education items
           .sort((a, b) => (a.order || 999) - (b.order || 999)) // Sort by order
           .map((education, index) => (
-            <Box
+            <motion.article
               key={education.id || index}
-              component={prefersReducedMotion ? 'div' : motion.div}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.3), ease: [0.22, 1, 0.36, 1] }}
-              sx={{ ...glassCardSx(theme), p: { xs: 2.5, md: 3.5 } }}
+              className="glass motion-safe:hover:-translate-y-1 p-6 transition-[transform,box-shadow,border-color] duration-300 hover:border-brand/40 md:p-8"
             >
-              <Box sx={{ display: 'flex', gap: 2.5, alignItems: 'flex-start' }}>
+              <div className="flex items-start gap-5">
                 {education.logo && (
-                  <Avatar
+                  <img
                     src={education.logo}
                     alt={`${localize(education.institution, language)} logo`}
-                    sx={{ width: 56, height: 56, flexShrink: 0 }}
-                    variant="rounded"
+                    className="size-14 shrink-0 rounded-xl object-contain"
                   />
                 )}
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography
-                    component="h3"
-                    sx={{
-                      fontWeight: 700,
-                      fontSize: { xs: '1.1rem', md: '1.35rem' },
-                      lineHeight: 1.3,
-                      color: 'text.primary',
-                    }}
-                  >
+                <div className="min-w-0">
+                  <h3 className="text-lg font-bold leading-snug text-ink md:text-[1.35rem]">
                     {localize(education.institution, language)}
-                  </Typography>
-                  <Typography sx={{ color: 'primary.main', fontWeight: 600, fontSize: '0.95rem', mt: 0.25 }}>
-                    {localize(education.degree, language)} {education.major && `in ${localize(education.major, language)}`}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                  </h3>
+                  <p className="mt-0.5 text-[0.95rem] font-semibold text-brand">
+                    {localize(education.degree, language)}
+                    {education.major && ` in ${localize(education.major, language)}`}
+                  </p>
+                  <p className="mt-1 text-sm text-ink-muted">
                     {localize(education.duration, language) || localize(education.years, language)}
                     {education.location && ` • ${localize(education.location, language)}`}
-                  </Typography>
-                </Box>
-              </Box>
+                  </p>
+                </div>
+              </div>
 
               {/* Body text lines up with the institution name rather than the
                   card edge, so each entry reads as one text column */}
-              <Box sx={{ ml: { xs: 0, md: education.logo ? '76px' : 0 } }}>
+              <div className={education.logo ? 'md:ml-[76px]' : ''}>
                 {(education.description || education.details) && (
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 2, lineHeight: 1.7 }}>
+                  <p className="mt-4 text-sm leading-relaxed text-ink-muted">
                     {localize(education.description, language) || localize(education.details, language)}
-                  </Typography>
+                  </p>
                 )}
 
-                {/* Electives for university level */}
                 {education.electives && Array.isArray(education.electives) && education.electives.length > 0 && (
-                  <Box sx={{ mt: 2.5 }}>
-                    <Typography
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: '0.75rem',
-                        letterSpacing: '1.2px',
-                        textTransform: 'uppercase',
-                        color: 'primary.main',
-                        mb: 1.25,
-                      }}
-                    >
+                  <div className="mt-5">
+                    <h4 className="mb-3 text-xs font-bold uppercase tracking-[1.2px] text-brand">
                       {t('education.electiveSubjects')}
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    </h4>
+                    <ul className="flex flex-wrap gap-2">
                       {education.electives.map((subject, idx) => (
-                        <Chip
+                        <li
                           key={idx}
-                          label={localize(subject, language)}
-                          size="small"
-                          sx={glassChipSx(theme)}
-                        />
+                          className="glass rounded-full px-3 py-1 text-xs font-medium text-ink transition-colors duration-250 hover:border-brand/40"
+                        >
+                          {localize(subject, language)}
+                        </li>
                       ))}
-                    </Box>
-                  </Box>
+                    </ul>
+                  </div>
                 )}
-              </Box>
-            </Box>
+              </div>
+            </motion.article>
           ))}
-      </Box>
+      </div>
     </section>
   );
 }
 
 EducationSection.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string, // Made optional
+  title: localizedText.isRequired,
+  content: localizedText, // Made optional
   educationList: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      institution: PropTypes.string,
-      degree: PropTypes.string,
-      major: PropTypes.string, // Firebase data uses major field
-      duration: PropTypes.string, // New editor field
-      years: PropTypes.string, // Firebase data uses years field
-      description: PropTypes.string, // New editor field
-      details: PropTypes.string, // Firebase data uses details field
-      location: PropTypes.string,
+      institution: localizedText,
+      degree: localizedText,
+      major: localizedText, // Firebase data uses major field
+      duration: localizedText, // New editor field
+      years: localizedText, // Firebase data uses years field
+      description: localizedText, // New editor field
+      details: localizedText, // Firebase data uses details field
+      location: localizedText,
       logo: PropTypes.string,
       level: PropTypes.string, // university/school distinction
-      electives: PropTypes.arrayOf(PropTypes.string), // Firebase data has electives array
+      electives: PropTypes.arrayOf(localizedText), // Firebase data has electives array
     })
   ),
 };

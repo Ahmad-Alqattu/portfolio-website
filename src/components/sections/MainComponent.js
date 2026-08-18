@@ -163,7 +163,9 @@ const NavItem = styled(Box)(({ theme }) => ({
 const MainContent = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: '100vw',
-  overflowX: 'hidden',
+  // No overflow-x clip here: html and body already hide horizontal overflow,
+  // and clipping at this level traps full-bleed backdrops (the hero's gradient
+  // mesh) inside the content column, showing their edges as a rectangle.
   padding: theme.spacing(1, 2),
   paddingBottom: theme.spacing(12), // Extra space for mobile bottom nav
   [theme.breakpoints.up('sm')]: {

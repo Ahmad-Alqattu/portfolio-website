@@ -1,77 +1,13 @@
 import React from 'react';
-import { 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent,
-  CardMedia,
-  Box,
-  Button,
-  Chip,
-  Paper,
-  useMediaQuery,
-  useTheme,
-  IconButton
-} from '@mui/material';
-import { 
-  Download, 
-  Visibility, 
-  OpenInNew
-} from '@mui/icons-material';
+import { motion } from 'framer-motion';
+import { HiOutlineDownload, HiOutlineEye, HiOutlineBadgeCheck } from 'react-icons/hi';
 import PropTypes from 'prop-types';
 import SectionHeading from '../ui/SectionHeading';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
-
-// Liquid-glass action buttons, matching the floating nav and FABs. `primary`
-// gets a tinted fill so the two actions still read as primary/secondary
-// without falling back to an unrelated hard-coded blue.
-const glassIconButtonSx = (theme, primary) => {
-  const isDark = theme.palette.mode === 'dark';
-  return {
-    width: 48,
-    height: 48,
-    color: 'primary.main',
-    bgcolor: primary
-      ? isDark
-        ? 'rgba(129,199,132,0.18)'
-        : 'rgba(76,175,80,0.14)'
-      : isDark
-        ? 'rgba(255,255,255,0.06)'
-        : 'rgba(255,255,255,0.5)',
-    backdropFilter: 'blur(14px) saturate(180%)',
-    WebkitBackdropFilter: 'blur(14px) saturate(180%)',
-    border: `1px solid ${isDark ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.75)'}`,
-    boxShadow: isDark
-      ? '0 6px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12)'
-      : '0 6px 18px rgba(20,60,30,0.12), inset 0 1px 0 rgba(255,255,255,0.7)',
-    transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s ease, background-color 0.3s ease',
-    '&:hover': {
-      bgcolor: isDark ? 'rgba(129,199,132,0.28)' : 'rgba(76,175,80,0.22)',
-      transform: 'translateY(-3px) scale(1.06)',
-      boxShadow: isDark
-        ? `0 12px 26px rgba(0,0,0,0.45), 0 0 18px ${theme.palette.primary.main}55`
-        : `0 12px 26px rgba(20,60,30,0.18), 0 0 18px ${theme.palette.primary.main}44`,
-    },
-    '&:active': {
-      transform: 'translateY(-1px) scale(1.02)',
-    },
-    '& .MuiSvgIcon-root': {
-      transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)',
-    },
-    '&:hover .MuiSvgIcon-root': {
-      transform: primary ? 'scale(1.15)' : 'translateY(2px)',
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transition: 'none',
-      '&:hover': { transform: 'none' },
-    },
-  };
-};
+import localizedText from '../../utils/localizedText';
 
 const CertificatesSection = ({ id, title, content, data }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { language, t } = useLanguage();
   const certificates = data?.certificates || [];
 
@@ -85,218 +21,120 @@ const CertificatesSection = ({ id, title, content, data }) => {
   }
 
   return (
-    <Box id={id} sx={{ maxWidth: isMobile ? '95%' : '83%', margin: 'auto', py: 6, px: 2 }}>
-      {/* Section Title */}
-      <SectionHeading sectionId={id} sx={{ mb: 2 }}>{localize(title, language)}</SectionHeading>
+    <section id={id} className="mx-auto max-w-6xl px-4 py-12">
+      <SectionHeading sectionId={id} className="mb-4">{localize(title, language)}</SectionHeading>
 
-      {/* Section Description */}
       {content && (
-        <Typography
-          variant="body1"
-          sx={{
-            textAlign: 'center',
-            mb: 4,
-            color: 'text.secondary',
-            fontSize: '1.1rem',
-            maxWidth: '600px',
-            mx: 'auto'
-          }}
-        >
+        <p className="mx-auto mb-10 max-w-[600px] text-center text-lg leading-relaxed text-ink-muted">
           {localize(content, language)}
-        </Typography>
+        </p>
       )}
 
-      {/* Certificates Grid */}
-      <Grid container spacing={4}>
-        {activeCertificates.map((certificate, index) => (
-          <Grid size={{ xs: 12, sm: 6}} key={certificate.id || index}>
-          
-            <Paper 
-              elevation={4} 
-              sx={{ 
-                borderRadius: '16px',
-                overflow: 'hidden',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                bgcolor: 'background.paper',
-                border: '1px solid',
-                borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                '&:hover': {
-                  transform: 'translateY(-8px) scale(1.02)',
-                  boxShadow: theme.palette.mode === 'dark'
-                    ? '0 20px 40px rgba(0,0,0,0.5)'
-                    : '0 20px 40px rgba(0,0,0,0.12)',
-                  '& .cert-image': {
-                    transform: 'scale(1.05)',
-                  },
-                  '& .cert-title': {
-                    color: 'primary.main',
-                  }
-                }
-              }}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+        {activeCertificates.map((certificate, index) => {
+          const viewLink = certificate.link || certificate.pdf;
+          const downloadLink =
+            certificate.pdf && certificate.pdf !== certificate.link ? certificate.pdf : null;
+
+          return (
+            <motion.article
+              key={certificate.id || index}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.3), ease: [0.22, 1, 0.36, 1] }}
+              className="glass group motion-safe:hover:-translate-y-1.5 flex flex-col overflow-hidden transition-[transform,box-shadow,border-color] duration-300 hover:border-brand/40"
             >
-              <Card sx={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                {/* Certificate Image */}
-                
-                {certificate.image && (
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={certificate.image.startsWith('http') ? certificate.image : `/${certificate.image}`}
+              {certificate.image && (
+                // A certificate is a document: show the whole page on a neutral
+                // mat rather than cropping it to a banner, which cuts the
+                // content out and makes every card crop differently.
+                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-black/[0.04] p-4 dark:bg-white/[0.04]">
+                  <img
+                    src={certificate.image.startsWith('http') ? certificate.image : `/${certificate.image}`}
                     alt={`${localize(certificate.name, language)} certificate`}
-                    className="cert-image"
-                    sx={{
-                      objectFit: 'cover',
-                      transition: 'transform 0.3s ease',
-                      borderBottom: '1px solid rgba(0,0,0,0.1)'
-                    }}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-full max-w-full object-contain shadow-sm transition-transform duration-300 motion-safe:group-hover:scale-[1.03]"
                   />
 
-                )}{certificate.link && (
-                      <Chip
-                        label={`✓ ${t('certificates.verified')}`}
-                        color="success"
-                        size="small"
-                        sx={{ 
-                          position: 'absolute',
-                          top: 6,
-                          left: 2,
-                          zIndex: 1
-                        }}
-                      />
-                    )}
-
-                <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  {/* Certificate Header */}
-                  <Box sx={{ position: 'relative', mb: 2 }}>
-                    {/* Verification Status - Fixed Position */}
-                    
-                    
-                    {/* Certificate Info - Compact Layout */}
-               
-                      {/* Certificate Name */}
-                      <Typography 
-                        variant="h6" 
-                        className="cert-title"
-                        sx={{ 
-                          fontWeight: 'bold',
-                          color: 'primary.main',
-                          transition: 'color 0.3s ease',
-                          mb: 1,
-                          fontSize: '1rem',
-                          lineHeight: 1.3
-                        }}
-                      >
-                        📜 {localize(certificate.name, language)}
-                      </Typography>
-                      
-                      {/* Certificate Details - Compact Row */}
-                      <Box sx={{ 
-                        display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        gap: { xs: 0.5, sm: 2 },
-                        alignItems: { xs: 'flex-start', sm: 'center' },
-                        mb: 1
-                      }}>
-                        {/* Issuing Organization */}
-                        {certificate.issuer && (
-                          <Typography variant="body2" sx={{ 
-                            color: 'text.secondary',
-                            fontSize: '0.875rem',
-                            fontWeight: 500
-                          }}>
-                            🏢 {localize(certificate.issuer, language)}
-                          </Typography>
-                        )}
-
-                        {/* Issue Date */}
-                        {certificate.issueDate && (
-                          <Typography variant="body2" sx={{
-                            color: 'text.secondary',
-                            fontSize: '0.875rem',
-                            fontWeight: 500
-                          }}>
-                            📅 {certificate.issueDate}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-
-                  {/* Description */}
-                  {certificate.description && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mb: 3,
-                        color: 'text.secondary',
-                        lineHeight: 1.6,
-                        flexGrow: 1
-                      }}
-                    >
-                      {localize(certificate.description, language)}
-                    </Typography>
+                  {certificate.link && (
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-brand px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                      <HiOutlineBadgeCheck aria-hidden className="size-3.5" />
+                      {t('certificates.verified')}
+                    </span>
                   )}
+                </div>
+              )}
 
-                  {/* Action Buttons - Icon Only */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    gap: 2, 
-                    justifyContent: 'center',
-                    mt: 'auto'
-                  }}>
-                    {/* Primary Action - View Certificate (uses link if available, otherwise pdf) */}
-                    {(certificate.link || certificate.pdf) && (
-                      <IconButton
-                        href={certificate.link || certificate.pdf}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="View certificate"
-                        sx={glassIconButtonSx(theme, true)}
-                      >
-                        <Visibility />
-                      </IconButton>
-                    )}
+              {/* Caption strip: metadata on the left, actions on the right, so
+                  the buttons sit in a deliberate place instead of floating in
+                  the middle of empty space. */}
+              <div className="flex grow items-end justify-between gap-4 p-5">
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold leading-snug text-ink transition-colors duration-300 group-hover:text-brand">
+                    {localize(certificate.name, language)}
+                  </h3>
+                  <p className="mt-1 truncate text-sm text-ink-muted">
+                    {[localize(certificate.issuer, language), certificate.issueDate]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
+                  {certificate.description && (
+                    <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                      {localize(certificate.description, language)}
+                    </p>
+                  )}
+                </div>
 
-                    {/* Download Button - Only if PDF is different from link */}
-                    {certificate.pdf && certificate.link && certificate.pdf !== certificate.link && (
-                      <IconButton
-                        href={certificate.pdf}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Download certificate"
-                        sx={glassIconButtonSx(theme, false)}
-                      >
-                        <Download />
-                      </IconButton>
-                    )}
-                  </Box>
-                </CardContent>
-              </Card>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>  
+                <div className="flex shrink-0 gap-2">
+                  {viewLink && (
+                    <a
+                      href={viewLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${localize(certificate.name, language)}`}
+                      className="inline-flex size-10 items-center justify-center rounded-full bg-brand/15 text-brand transition-[background-color,transform] duration-200 hover:bg-brand/25 motion-safe:hover:scale-105"
+                    >
+                      <HiOutlineEye aria-hidden className="size-5" />
+                    </a>
+                  )}
+                  {downloadLink && (
+                    <a
+                      href={downloadLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Download ${localize(certificate.name, language)}`}
+                      className="inline-flex size-10 items-center justify-center rounded-full border border-brand/30 text-brand transition-[background-color,transform] duration-200 hover:bg-brand/10 motion-safe:hover:scale-105 [&>svg]:transition-transform [&>svg]:duration-200 motion-safe:hover:[&>svg]:translate-y-0.5"
+                    >
+                      <HiOutlineDownload aria-hidden className="size-5" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.article>
+          );
+        })}
+      </div>
+    </section>
   );
 };
 
 CertificatesSection.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string,
+  title: localizedText.isRequired,
+  content: localizedText,
   data: PropTypes.shape({
     certificates: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        name: PropTypes.string,
-        issuer: PropTypes.string,
+        name: localizedText,
+        issuer: localizedText,
         issueDate: PropTypes.string,
-        description: PropTypes.string,
+        description: localizedText,
         image: PropTypes.string,
-        pdf: PropTypes.string,
         link: PropTypes.string,
+        pdf: PropTypes.string,
         active: PropTypes.bool,
         order: PropTypes.number,
       })
