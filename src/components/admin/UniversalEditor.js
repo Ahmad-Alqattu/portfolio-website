@@ -41,6 +41,25 @@ const setLocalizedFieldValue = (onChange, data, path, lang, newText) => {
   onChange(path, { en: enValue, ar: newText });
 };
 
+// Same read/write semantics as the two helpers above, but for text held
+// directly in an array (a responsibility, an elective) rather than at a path
+// on an object. Editing one language must leave the other intact.
+const getLocalizedItem = (raw, lang) => {
+  if (raw == null) return '';
+  if (typeof raw === 'string') return lang === 'en' ? raw : '';
+  if (typeof raw === 'object') return raw[lang] || '';
+  return '';
+};
+
+const setLocalizedItem = (raw, lang, newText) => {
+  if (lang === 'en') {
+    if (raw && typeof raw === 'object') return { ...raw, en: newText };
+    return newText;
+  }
+  const enValue = typeof raw === 'string' ? raw : (raw?.en || '');
+  return { en: enValue, ar: newText };
+};
+
 const UniversalEditor = () => {
   const { currentUser } = useAuth();
   const { sections, useFirestore, refreshData } = useData();
@@ -1819,10 +1838,11 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
                 {(exp.responsibilities || []).map((responsibility, respIdx) => (
                   <div key={respIdx} className="flex gap-2">
                     <textarea
-                      value={responsibility}
+                      dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+                      value={getLocalizedItem(responsibility, editLanguage)}
                       onChange={(e) => {
                         const newResponsibilities = [...(exp.responsibilities || [])];
-                        newResponsibilities[respIdx] = e.target.value;
+                        newResponsibilities[respIdx] = setLocalizedItem(responsibility, editLanguage, e.target.value);
                         onChange(`data.experiences.${idx}.responsibilities`, newResponsibilities);
                       }}
                       rows={2}
