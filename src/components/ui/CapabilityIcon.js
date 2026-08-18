@@ -67,8 +67,11 @@ const rules = [
 ];
 
 function matchRules(text) {
+  // Defensive: these come from user-edited data and may arrive as a bilingual
+  // object rather than a string.
+  const value = typeof text === 'string' ? text : '';
   for (const [pattern, key] of rules) {
-    if (pattern.test(text)) return key;
+    if (pattern.test(value)) return key;
   }
   return null;
 }

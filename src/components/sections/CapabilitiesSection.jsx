@@ -2,12 +2,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import SectionHeading from '../ui/SectionHeading';
 import CapabilityIcon from '../ui/CapabilityIcon';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
 function CapabilitiesSection({ id, title, data, content }) {
+  const { language } = useLanguage();
   // Use data from props
   const capabilitiesData = data?.capabilities || [];
-  const sectionTitle = title || 'What Can I Do?';
-  const sectionContent = content || '';
+  const sectionTitle = localize(title, language) || 'What Can I Do?';
+  const sectionContent = localize(content, language) || '';
 
   return (
     <section id={id} className="py-8">
@@ -34,7 +37,8 @@ function CapabilitiesSection({ id, title, data, content }) {
             >
               {/* Icon in a tinted tile so it reads as a deliberate mark rather
                   than a stray image floating above the text. Falls back to a
-                  keyword-matched inline icon when none has been uploaded. */}
+                  keyword-matched inline icon when none has been uploaded — always
+                  matched on the English text so the icon survives translation. */}
               <div className="flex size-13 items-center justify-center rounded-2xl border border-brand/25 bg-brand/10">
                 {capability.icon ? (
                   <img
@@ -43,15 +47,18 @@ function CapabilitiesSection({ id, title, data, content }) {
                     className="size-7 object-contain"
                   />
                 ) : (
-                  <CapabilityIcon title={capability.title} description={capability.description} />
+                  <CapabilityIcon
+                    title={localize(capability.title, 'en')}
+                    description={localize(capability.description, 'en')}
+                  />
                 )}
               </div>
 
               <h3 className="text-[1.05rem] font-bold leading-snug text-ink">
-                {capability.title}
+                {localize(capability.title, language)}
               </h3>
               <p className="text-sm leading-relaxed text-ink-muted">
-                {capability.description}
+                {localize(capability.description, language)}
               </p>
             </motion.article>
           ))}

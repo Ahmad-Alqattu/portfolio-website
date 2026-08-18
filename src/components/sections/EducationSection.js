@@ -108,7 +108,7 @@ EducationSection.propTypes = {
       details: localizedText, // Firebase data uses details field
       location: localizedText,
       logo: PropTypes.string,
-      level: PropTypes.string, // university/school distinction
+      level: localizedText, // university/school distinction
       electives: PropTypes.arrayOf(localizedText), // Firebase data has electives array
     })
   ),

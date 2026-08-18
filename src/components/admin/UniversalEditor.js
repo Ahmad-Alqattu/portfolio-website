@@ -1071,8 +1071,8 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                     <label className="block text-sm font-medium text-gray-700 mb-2">Project Name</label>
                     <input
                       type="text"
-                      value={project.name || ''}
-                      onChange={(e) => onChange(`data.projects.${idx}.name`, e.target.value)}
+                      value={getLocalizedFieldValue(project, 'name', editLanguage)}
+                      onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.projects.${idx}.${path}`, value), project, 'name', editLanguage, e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter project name"
                     />
@@ -1082,8 +1082,8 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                     <label className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
                     <input
                       type="text"
-                      value={project.description || ''}
-                      onChange={(e) => onChange(`data.projects.${idx}.description`, e.target.value)}
+                      value={getLocalizedFieldValue(project, 'description', editLanguage)}
+                      onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.projects.${idx}.${path}`, value), project, 'description', editLanguage, e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Brief description"
                     />
@@ -1131,8 +1131,8 @@ const ProjectsEditor = ({ data, onChange, onImageUpload, uploading, onBrowseStor
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Description</label>
                   <textarea
-                    value={project.fullDescription || ''}
-                    onChange={(e) => onChange(`data.projects.${idx}.fullDescription`, e.target.value)}
+                    value={getLocalizedFieldValue(project, 'fullDescription', editLanguage)}
+                    onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.projects.${idx}.${path}`, value), project, 'fullDescription', editLanguage, e.target.value)}
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Detailed project description, technologies used, challenges faced..."
@@ -1491,8 +1491,9 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                             <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                             <input
                               type="text"
-                              value={capabilityObj.title || ''}
-                              onChange={(e) => updateCapability(idx, 'title', e.target.value)}
+                              dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+                              value={getLocalizedFieldValue(capabilityObj, 'title', editLanguage)}
+                              onChange={(e) => setLocalizedFieldValue((path, value) => updateCapability(idx, path, value), capabilityObj, 'title', editLanguage, e.target.value)}
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                               placeholder="Capability title..."
                             />
@@ -1502,8 +1503,9 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                             <textarea
-                              value={capabilityObj.description || ''}
-                              onChange={(e) => updateCapability(idx, 'description', e.target.value)}
+                              dir={editLanguage === 'ar' ? 'rtl' : 'ltr'}
+                              value={getLocalizedFieldValue(capabilityObj, 'description', editLanguage)}
+                              onChange={(e) => setLocalizedFieldValue((path, value) => updateCapability(idx, path, value), capabilityObj, 'description', editLanguage, e.target.value)}
                               rows={3}
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                               placeholder="Describe this capability in detail..."
@@ -1518,7 +1520,7 @@ const CapabilitiesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                                 <div className="relative">
                                   <img
                                     src={capabilityObj.icon.startsWith('http') ? capabilityObj.icon : `/${capabilityObj.icon}`}
-                                    alt={`${capabilityObj.title} icon`}
+                                    alt={`${localize(capabilityObj.title, 'en')} icon`}
                                     className="w-16 h-16 object-contain rounded-sm border"
                                   />
                                   <button
@@ -1747,8 +1749,8 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
                 <label className="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
                 <input
                   type="text"
-                  value={exp.title || ''}
-                  onChange={(e) => onChange(`data.experiences.${idx}.title`, e.target.value)}
+                  value={getLocalizedFieldValue(exp, 'title', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.experiences.${idx}.${path}`, value), exp, 'title', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -1757,8 +1759,8 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
                 <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
                 <input
                   type="text"
-                  value={exp.company || ''}
-                  onChange={(e) => onChange(`data.experiences.${idx}.company`, e.target.value)}
+                  value={getLocalizedFieldValue(exp, 'company', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.experiences.${idx}.${path}`, value), exp, 'company', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -1767,8 +1769,8 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
                 <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
                 <input
                   type="text"
-                  value={exp.duration || ''}
-                  onChange={(e) => onChange(`data.experiences.${idx}.duration`, e.target.value)}
+                  value={getLocalizedFieldValue(exp, 'duration', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.experiences.${idx}.${path}`, value), exp, 'duration', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="2023 - Present"
                 />
@@ -1778,8 +1780,8 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                 <input
                   type="text"
-                  value={exp.location || ''}
-                  onChange={(e) => onChange(`data.experiences.${idx}.location`, e.target.value)}
+                  value={getLocalizedFieldValue(exp, 'location', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.experiences.${idx}.${path}`, value), exp, 'location', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="City, Country"
                 />
@@ -1789,8 +1791,8 @@ const ExperienceEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSt
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
               <textarea
-                value={exp.description || ''}
-                onChange={(e) => onChange(`data.experiences.${idx}.description`, e.target.value)}
+                value={getLocalizedFieldValue(exp, 'description', editLanguage)}
+                onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.experiences.${idx}.${path}`, value), exp, 'description', editLanguage, e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Job overview and summary..."
@@ -2030,8 +2032,8 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
                 <label className="block text-sm font-medium text-gray-700 mb-2">Degree</label>
                 <input
                   type="text"
-                  value={edu.degree || ''}
-                  onChange={(e) => onChange(`data.educationList.${idx}.degree`, e.target.value)}
+                  value={getLocalizedFieldValue(edu, 'degree', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.educationList.${idx}.${path}`, value), edu, 'degree', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Bachelor of Science in Computer Science"
                 />
@@ -2041,8 +2043,8 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
                 <label className="block text-sm font-medium text-gray-700 mb-2">Institution</label>
                 <input
                   type="text"
-                  value={edu.institution || ''}
-                  onChange={(e) => onChange(`data.educationList.${idx}.institution`, e.target.value)}
+                  value={getLocalizedFieldValue(edu, 'institution', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.educationList.${idx}.${path}`, value), edu, 'institution', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="University Name"
                 />
@@ -2052,8 +2054,8 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
                 <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
                 <input
                   type="text"
-                  value={edu.duration || ''}
-                  onChange={(e) => onChange(`data.educationList.${idx}.duration`, e.target.value)}
+                  value={getLocalizedFieldValue(edu, 'duration', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.educationList.${idx}.${path}`, value), edu, 'duration', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="2019 - 2023"
                 />
@@ -2063,8 +2065,8 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                 <input
                   type="text"
-                  value={edu.location || ''}
-                  onChange={(e) => onChange(`data.educationList.${idx}.location`, e.target.value)}
+                  value={getLocalizedFieldValue(edu, 'location', editLanguage)}
+                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.educationList.${idx}.${path}`, value), edu, 'location', editLanguage, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="City, Country"
                 />
@@ -2074,8 +2076,8 @@ const EducationEditor = ({ data, onChange, onImageUpload, uploading, onBrowseSto
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
               <textarea
-                value={edu.description || ''}
-                onChange={(e) => onChange(`data.educationList.${idx}.description`, e.target.value)}
+                value={getLocalizedFieldValue(edu, 'description', editLanguage)}
+                onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.educationList.${idx}.${path}`, value), edu, 'description', editLanguage, e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Relevant coursework, achievements, GPA..."
@@ -2542,8 +2544,8 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Certificate Name</label>
                                 <input
                                   type="text"
-                                  value={certificate.name || ''}
-                                  onChange={(e) => onChange(`data.certificates.${idx}.name`, e.target.value)}
+                                  value={getLocalizedFieldValue(certificate, 'name', editLanguage)}
+                                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.certificates.${idx}.${path}`, value), certificate, 'name', editLanguage, e.target.value)}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                   placeholder="Enter certificate name"
                                 />
@@ -2553,8 +2555,8 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Issuing Organization</label>
                                 <input
                                   type="text"
-                                  value={certificate.issuer || ''}
-                                  onChange={(e) => onChange(`data.certificates.${idx}.issuer`, e.target.value)}
+                                  value={getLocalizedFieldValue(certificate, 'issuer', editLanguage)}
+                                  onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.certificates.${idx}.${path}`, value), certificate, 'issuer', editLanguage, e.target.value)}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                   placeholder="Organization name"
                                 />
@@ -2589,8 +2591,8 @@ const CertificatesEditor = ({ data, onChange, onImageUpload, uploading, onBrowse
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                               <textarea
-                                value={certificate.description || ''}
-                                onChange={(e) => onChange(`data.certificates.${idx}.description`, e.target.value)}
+                                value={getLocalizedFieldValue(certificate, 'description', editLanguage)}
+                                onChange={(e) => setLocalizedFieldValue((path, value) => onChange(`data.certificates.${idx}.${path}`, value), certificate, 'description', editLanguage, e.target.value)}
                                 rows={3}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Description of the certificate..."
