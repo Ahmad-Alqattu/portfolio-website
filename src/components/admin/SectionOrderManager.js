@@ -10,7 +10,7 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
     // Initialize with current sections and add order property if missing
     const sectionsWithOrder = sections.map((section, index) => ({
       ...section,
-      order: section.order !== undefined ? section.order : index,
+      order: section.order !== undefined ? section.order : index + 1,
       visible: section.visible !== undefined ? section.visible : true
     }));
     
@@ -26,10 +26,10 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Update order property
+    // Update order property (start from 1, not 0)
     const updatedItems = items.map((item, index) => ({
       ...item,
-      order: index
+      order: index + 1
     }));
 
     setOrderedSections(updatedItems);
@@ -63,7 +63,7 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-xs border p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h3 className="text-lg font-medium text-gray-900">Section Order & Visibility</h3>
@@ -122,7 +122,7 @@ const SectionOrderManager = ({ sections, onSectionOrderChange, onSectionVisibili
                           <span className="text-sm font-medium text-gray-900">
                             {section.title || section.name || section.type}
                           </span>
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-sm">
                             {section.type}
                           </span>
                         </div>

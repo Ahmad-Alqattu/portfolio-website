@@ -1,33 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Box,
   Typography,
-  Container,
-  Button,
   IconButton,
   Stack,
   CssBaseline,
-  FormControlLabel,
+  Tooltip,
+  useScrollTrigger,
+  useMediaQuery,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { useAuth } from '../../contexts/AuthContext';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import EditIcon from '@mui/icons-material/Edit';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import TranslateIcon from '@mui/icons-material/Translate';
+import { useActiveSection } from '../../contexts/ActiveSectionContext';
+import { useData } from '../../contexts/DataContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
-const pages = [
-  { title: 'Home', path: '/' },
-];
+const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)';
 
 function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const theme = useTheme();
-  const { currentUser } = useAuth();
+  const isDark = theme.palette.mode === 'dark';
+  const condensed = useScrollTrigger({ disableHysteresis: true, threshold: 40 });
+  const [progress, setProgress] = useState(0);
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { activeSection } = useActiveSection();
+  const { sections } = useData();
+  const { language, toggleLanguage, t } = useLanguage();
 
-  const onPageClick = (path) => {
-    navigate(path);
-  };
+  const navSections = (sections || [])
+    .filter((s) => s.type !== 'footerAndLinks')
+    .sort((a, b) => (a.order || 999) - (b.order || 999));
+
+  // Mobile has no persistently-visible section list (unlike the desktop
+  // sidebar), so once the user has scrolled past the intro, swap the owner
+  // name for the section they're currently reading — one calm, stable label
+  // instead of requiring them to open the menu to check their position.
+  const currentSectionTitle = localize(navSections.find((s) => s.id === activeSection)?.title, language);
+  const showSectionTitle = isMobile && condensed && Boolean(currentSectionTitle);
+
+  const pathForSection = (section) =>
+    (section.type || '').toLowerCase() === 'intro' ? '/about' : `/${section.id}`;
+
+  useEffect(() => {
+    let frame = null;
+    const update = () => {
+      frame = null;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+    };
+    const onScroll = () => {
+      if (frame === null) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame !== null) cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);
@@ -37,126 +75,207 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
     window.open('https://github.com/Ahmad-Alqattu', '_blank');
   };
 
+  const iconButtonSx = {
+    color: theme.palette.text.primary,
+    transition: 'color 0.3s ease, background-color 0.3s ease',
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+    },
+  };
+
   return (
     <>
       <CssBaseline />
       <AppBar
-        position="sticky"
-        // Use theme background colors instead of fixed color
+        position="fixed"
+        elevation={0}
         sx={{
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
+          backgroundColor: 'transparent',
+          backgroundImage: 'none',
+          boxShadow: 'none',
+          pt: '12px',
+          px: 2,
+          transition: `padding 0.45s ${EASE}`,
+          '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
         }}
       >
-        <Container maxWidth="xl">
+        <Box
+          sx={{
+            width: 'fit-content',
+            maxWidth: '100%',
+            mx: 'auto',
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '999px',
+            color: theme.palette.text.primary,
+            backgroundColor: isDark
+              ? `rgba(22, 22, 22, ${condensed ? 0.6 : 0.42})`
+              : `rgba(255, 255, 255, ${condensed ? 0.62 : 0.45})`,
+            backgroundImage: isDark
+              ? 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0) 100%)'
+              : 'linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.02) 100%)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: '1px solid',
+            borderColor: isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.7)',
+            boxShadow: [
+              isDark
+                ? 'inset 0 1px 0 rgba(255,255,255,0.22)'
+                : 'inset 0 1px 0 rgba(255,255,255,0.85)',
+              condensed
+                ? isDark
+                  ? '0 14px 36px rgba(0,0,0,0.5)'
+                  : '0 8px 30px rgba(20,60,30,0.12)'
+                : isDark
+                  ? '0 8px 24px rgba(0,0,0,0.35)'
+                  : '0 6px 20px rgba(20,60,30,0.07)',
+            ].join(', '),
+            transition: [
+              `background-color 0.45s ${EASE}`,
+              `border-color 0.45s ${EASE}`,
+              `box-shadow 0.45s ${EASE}`,
+            ].join(', '),
+            '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+          }}
+        >
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
-            sx={{ py: 1 }}
+            spacing={{ xs: 1, md: 2 }}
+            sx={{
+              px: { xs: 2, md: 3 },
+              py: condensed ? 0.75 : 1,
+              minHeight: 44,
+              transition: `padding 0.45s ${EASE}`,
+            }}
           >
-            {/* Left side: Brand */}
             <Typography
-              variant="h5"
-              sx={{ fontWeight: 'bold', cursor: 'pointer' }}
               onClick={() => navigate('/')}
-            >
-              Ahmad Luay 
-            </Typography>
-
-            {/* Center: Desktop Nav Links */}
-            <Box
               sx={{
-                flexGrow: 1,
-                display: { xs: 'none', md: 'flex' },
-                justifyContent: 'center',
-                gap: 2,
+                whiteSpace: 'nowrap',
+                fontWeight: 700,
+                cursor: 'pointer',
+                color: showSectionTitle ? 'text.primary' : 'primary.main',
+                fontSize: { xs: '0.9rem', md: '0.95rem' },
+                transition: 'color 0.3s ease',
+                '&:hover': { opacity: 0.8 },
               }}
             >
-              {pages.map((page) => (
-                <Button
-                  key={page.title}
-                  onClick={() => onPageClick(page.path)}
+              {showSectionTitle ? currentSectionTitle : 'Ahmad Al-Qattu'}
+            </Typography>
+
+            {!isMobile && navSections.length > 0 && (
+              <>
+                <Box sx={{ width: '1px', height: 14, bgcolor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(20,40,30,0.15)' }} />
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  {navSections.map((section) => {
+                    const isActive = activeSection === section.id;
+                    return (
+                      <Box
+                        key={section.id}
+                        onClick={() => navigate(pathForSection(section))}
+                        sx={{
+                          position: 'relative',
+                          cursor: 'pointer',
+                          px: 1.5,
+                          py: 0.5,
+                          borderRadius: '999px',
+                          whiteSpace: 'nowrap',
+                          // The active section reads a step larger, so the
+                          // current position is legible at a glance
+                          fontSize: isActive ? '0.98rem' : '0.82rem',
+                          fontWeight: isActive ? 700 : 500,
+                          color: isActive ? 'primary.main' : 'text.secondary',
+                          bgcolor: isActive
+                            ? isDark
+                              ? 'rgba(129,199,132,0.16)'
+                              : 'rgba(76,175,80,0.12)'
+                            : 'transparent',
+                          transition:
+                            'color 0.25s ease, background-color 0.25s ease, font-size 0.25s ease',
+                          '@media (prefers-reduced-motion: reduce)': {
+                            transition: 'none',
+                          },
+                          '&:hover': {
+                            color: 'primary.main',
+                          },
+                        }}
+                      >
+                        {localize(section.title, language)}
+                      </Box>
+                    );
+                  })}
+                </Stack>
+                <Box sx={{ width: '1px', height: 14, bgcolor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(20,40,30,0.15)' }} />
+              </>
+            )}
+
+            <Stack direction="row" spacing={0} alignItems="center">
+              <Tooltip title={t('nav.githubProfile')}>
+                <IconButton
+                  onClick={handleGitHubClick}
+                  aria-label={t('nav.githubProfile')}
+                  size="small"
+                  sx={iconButtonSx}
+                >
+                  <GitHubIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title={t('nav.switchLanguage')}>
+                <IconButton
+                  onClick={toggleLanguage}
+                  aria-label={t('nav.switchLanguage')}
+                  size="small"
+                  sx={iconButtonSx}
+                >
+                  <Stack direction="row" spacing={0.3} alignItems="center">
+                    <TranslateIcon fontSize="small" />
+                    <Typography sx={{ fontSize: '0.7rem', fontWeight: 700 }}>
+                      {language === 'en' ? 'AR' : 'EN'}
+                    </Typography>
+                  </Stack>
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title={darkMode ? t('nav.switchToLight') : t('nav.switchToDark')}>
+                <IconButton
+                  onClick={toggleDarkMode}
+                  aria-label={t('nav.switchToDark')}
+                  size="small"
                   sx={{
-                    color: theme.palette.text.primary,
-                    fontWeight: 500,
+                    ...iconButtonSx,
+                    transition: 'transform 0.7s ease-out, color 0.3s ease',
+                    transform: darkMode ? 'rotate(360deg)' : 'rotate(0deg)',
                   }}
                 >
-                  {page.title}
-                </Button>
-              ))}
-            </Box>
-
-            {/* Right side: GitHub and Dark Mode Toggle */}
-            <Stack direction="row" spacing={1} alignItems="center">
-              {/* GitHub Icon */}
-              <IconButton
-                onClick={handleGitHubClick}
-                aria-label="GitHub Profile"
-                sx={{ color: theme.palette.text.primary }}
-              >
-                <GitHubIcon />
-              </IconButton>
-
-              <FormControlLabel
-  control={
-    <Stack direction="row" alignItems="center" spacing={1}>
-      <Typography 
-        onClick={toggleDarkMode} 
-        style={{
-          cursor: 'pointer',
-          transition: 'transform 0.7s ease-out',
-          transform: darkMode ? 'rotate(360deg)' : 'rotate(0deg)'
-        }}
-        aria-label="Toggle dark mode"
-      >
-        {darkMode ? '🌙' : '☀️'}
-      </Typography>
-    </Stack>
-  }
-/>
-                      {/* Mobile Menu Icon - only shows on small screens */}
-              {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                  size="large"
-                  onClick={handleOpenNavMenu}
-                  aria-label="Open navigation menu"
-                  sx={{ color: theme.palette.text.primary }}
-                >
-                  <MenuIcon />
+                  {darkMode ? (
+                    <DarkModeOutlinedIcon fontSize="small" />
+                  ) : (
+                    <LightModeOutlinedIcon fontSize="small" />
+                  )}
                 </IconButton>
-              </Box> */}
+              </Tooltip>
             </Stack>
           </Stack>
 
-          {/* Mobile Dropdown Menu
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorElNav}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            open={Boolean(anchorElNav)}
-            onClose={handleCloseNavMenu}
+          {/* Reading progress for the single-page layout */}
+          <Box
+            aria-hidden
             sx={{
-              display: { xs: 'block', md: 'none' },
+              position: 'absolute',
+              left: 0,
+              bottom: 0,
+              height: '2px',
+              width: `${progress * 100}%`,
+              backgroundColor: theme.palette.primary.main,
+              opacity: progress > 0.005 ? 0.75 : 0,
+              transition: 'opacity 0.3s ease',
+              pointerEvents: 'none',
             }}
-          >
-            {pages.map((page) => (
-              <MenuItem key={page.title} onClick={() => onPageClick(page.path)}>
-                <Typography variant="h6" align="center">
-                  {page.title}
-                </Typography>
-              </MenuItem>
-            ))}
-          </Menu> */}
-        </Container>
+          />
+        </Box>
       </AppBar>
     </>
   );

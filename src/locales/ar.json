@@ -1,0 +1,58 @@
+{
+  "intro": {
+    "available": "متاح للعمل",
+    "ctaLine": "مستعد لبناء شيء رائع معاً؟",
+    "downloadResume": "تحميل السيرة الذاتية"
+  },
+  "projects": {
+    "moreInfo": "المزيد من المعلومات",
+    "view": "عرض",
+    "seeMore": "عرض المزيد",
+    "more": "المزيد",
+    "seeLess": "عرض أقل",
+    "images": "صور المشروع",
+    "videos": "فيديوهات المشروع",
+    "close": "إغلاق",
+    "noProjects": "لا توجد مشاريع متاحة.",
+    "noMedia": "لا توجد وسائط متاحة",
+    "moreCount": "+{count} المزيد"
+  },
+  "education": {
+    "electiveSubjects": "المواد الاختيارية للتخصص:"
+  },
+  "certificates": {
+    "verified": "موثّق"
+  },
+  "contact": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "message": "الرسالة",
+    "send": "إرسال الرسالة"
+  },
+  "footer": {
+    "welcomeTitle": "مرحباً بكم في موقعي",
+    "welcomeDescription": "شكراً لزيارتكم. لا تترددوا بالتواصل معي.",
+    "contactInfo": "معلومات التواصل",
+    "socialLinks": "روابط التواصل الاجتماعي",
+    "downloadCV": "تحميل السيرة الذاتية",
+    "backToTop": "العودة للأعلى"
+  },
+  "main": {
+    "available": "متاح للعمل",
+    "menu": "القائمة",
+    "backToTop": "العودة للأعلى",
+    "edit": "تعديل",
+    "errorLoading": "خطأ في تحميل بيانات الموقع: "
+  },
+  "nav": {
+    "githubProfile": "حساب GitHub",
+    "switchToLight": "التبديل للوضع الفاتح",
+    "switchToDark": "التبديل للوضع الداكن",
+    "switchLanguage": "تبديل اللغة"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "goHome": "العودة للرئيسية"
+  }
+}

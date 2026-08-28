@@ -1,150 +1,115 @@
 // src/components/sections/EducationSection.jsx
 import React from 'react';
-import { Typography, Grid, Box, Avatar, Divider, Chip, useMediaQuery, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
+import SectionHeading from '../ui/SectionHeading';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
+import localizedText from '../../utils/localizedText';
 
 function EducationSection({ id, title, content, educationList = [] }) {
-  // Ensure educationList is an array
+  // Use educationList as the primary data source
   const validEducationList = Array.isArray(educationList) ? educationList : [];
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { language, t } = useLanguage();
 
   return (
     <section id={id} className="py-16">
-      {/* Section Title */}
-      <Typography 
-        variant="h2" 
-        component="h2" 
-        sx={{           
-          textAlign: 'center', 
-          fontSize: '2.5rem', 
-          fontWeight: 'bold', 
-          mb: 4, 
-          color: 'primary.main' 
-        }}
-      >
-        {title}
-      </Typography>
+      <SectionHeading sectionId={id}>{localize(title, language)}</SectionHeading>
 
-      {/* Introductory Content */}
       {content && (
-        <Typography
-          variant="body1"
-          sx={{
-            fontSize: { xs: '1.125rem', md: '1.25rem' },
-            color: 'text.secondary',
-            mb: 6,
-            maxWidth: '800px',
-            margin: 'auto',
-            textAlign: 'center',
-          }}
-        >
-          {content}
-        </Typography>
+        <p className="mx-auto mb-12 max-w-3xl text-center text-lg leading-relaxed text-ink-muted md:text-xl">
+          {localize(content, language)}
+        </p>
       )}
 
-      {/* Education List */}
-      <Grid container sx={{ maxWidth: isMobile ? '90%' : '65%', margin: 'auto' }}>
-        {validEducationList.map((education, index) => (
-          <Grid item xs={12} key={education.id || index}>
-            {/* Display education item */}
-            <Box
-              sx={{
-                border: '1px solid',
-                borderColor: 'grey.300',
-                borderRadius: '16px',
-                p: 3,
-                boxShadow: 2,
-                textAlign: 'center',
-                mb: 3,
-              }}
+      <div className="mx-auto flex max-w-[860px] flex-col gap-6">
+        {validEducationList
+          .filter(education => education.active !== false) // Show only active education items
+          .sort((a, b) => (a.order || 999) - (b.order || 999)) // Sort by order
+          .map((education, index) => (
+            <motion.article
+              key={education.id || index}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.3), ease: [0.22, 1, 0.36, 1] }}
+              className="glass motion-safe:hover:-translate-y-1 p-6 transition-[transform,box-shadow,border-color] duration-300 hover:border-brand/40 md:p-8"
             >
-              <Grid container spacing={2} alignItems="center" justifyContent="center" textAlign="center">
+              <div className="flex items-start gap-5">
                 {education.logo && (
-                  <Grid item>
-                    <Avatar
-                      src={education.logo}
-                      alt={`${education.institution} logo`}
-                      sx={{ width: 60, height: 60 }}
-                      variant="rounded"
-                    />
-                  </Grid>
+                  <img
+                    src={education.logo}
+                    alt={`${localize(education.institution, language)} logo`}
+                    className="size-14 shrink-0 rounded-xl object-contain"
+                  />
                 )}
-                <Grid item xs={12}>
-                  <Typography 
-                    variant="h4" 
-                    sx={{ 
-                      fontWeight: 'bold',
-                      fontSize: { xs: '1.125rem', md: '1.8rem' },
-                    }}
-                  >
-                    {education.institution}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {education.degree} {education.major && `in ${education.major}`}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {education.duration || education.years}
-                  </Typography>
-                  {education.location && (
-                    <Typography variant="body2" color="text.secondary">
-                      {education.location}
-                    </Typography>
-                  )}
-                </Grid>
-              </Grid>
+                <div className="min-w-0">
+                  <h3 className="text-lg font-bold leading-snug text-ink md:text-[1.35rem]">
+                    {localize(education.institution, language)}
+                  </h3>
+                  <p className="mt-0.5 text-[0.95rem] font-semibold text-brand">
+                    {localize(education.degree, language)}
+                    {education.major && ` in ${localize(education.major, language)}`}
+                  </p>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    {localize(education.duration, language) || localize(education.years, language)}
+                    {education.location && ` • ${localize(education.location, language)}`}
+                  </p>
+                </div>
+              </div>
 
-              {/* Educational details/description */}
-              {(education.description || education.details) && (
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                  {education.description || education.details}
-                </Typography>
-              )}
+              {/* Body text lines up with the institution name rather than the
+                  card edge, so each entry reads as one text column */}
+              <div className={education.logo ? 'md:ml-[76px]' : ''}>
+                {(education.description || education.details) && (
+                  <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+                    {localize(education.description, language) || localize(education.details, language)}
+                  </p>
+                )}
 
-              {/* Electives for university level */}
-              {education.electives && Array.isArray(education.electives) && education.electives.length > 0 && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: '500', mb: 1 }}>
-                    Elective Subjects for Major:
-                  </Typography>
-                  <Grid container spacing={1} justifyContent="center">
-                    {education.electives.map((subject, idx) => (
-                      <Grid item key={idx}>
-                        <Chip label={subject} color="primary" variant="outlined" />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Box>
-              )}
-            </Box>
-
-            {/* Divider between entries */}
-            {index < validEducationList.length - 1 && <Divider sx={{ my: 4 }} />}
-          </Grid>
-        ))}
-      </Grid>
+                {education.electives && Array.isArray(education.electives) && education.electives.length > 0 && (
+                  <div className="mt-5">
+                    <h4 className="mb-3 text-xs font-bold uppercase tracking-[1.2px] text-brand">
+                      {t('education.electiveSubjects')}
+                    </h4>
+                    <ul className="flex flex-wrap gap-2">
+                      {education.electives.map((subject, idx) => (
+                        <li
+                          key={idx}
+                          className="glass rounded-full px-3 py-1 text-xs font-medium text-ink transition-colors duration-250 hover:border-brand/40"
+                        >
+                          {localize(subject, language)}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </motion.article>
+          ))}
+      </div>
     </section>
   );
 }
 
 EducationSection.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string, // Made optional
+  title: localizedText.isRequired,
+  content: localizedText, // Made optional
   educationList: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      institution: PropTypes.string,
-      degree: PropTypes.string,
-      major: PropTypes.string, // Firebase data uses major field
-      duration: PropTypes.string, // New editor field
-      years: PropTypes.string, // Firebase data uses years field
-      description: PropTypes.string, // New editor field
-      details: PropTypes.string, // Firebase data uses details field
-      location: PropTypes.string,
+      institution: localizedText,
+      degree: localizedText,
+      major: localizedText, // Firebase data uses major field
+      duration: localizedText, // New editor field
+      years: localizedText, // Firebase data uses years field
+      description: localizedText, // New editor field
+      details: localizedText, // Firebase data uses details field
+      location: localizedText,
       logo: PropTypes.string,
       level: PropTypes.string, // university/school distinction
-      electives: PropTypes.arrayOf(PropTypes.string), // Firebase data has electives array
+      electives: PropTypes.arrayOf(localizedText), // Firebase data has electives array
     })
   ),
 };

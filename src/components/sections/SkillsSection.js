@@ -1,88 +1,69 @@
-
 import React from 'react';
-import {
-  Typography,
-  Grid,
-  Chip,
-  Box,
-  useMediaQuery,
-  useTheme
-} from '@mui/material';
+import { motion } from 'framer-motion';
+import { useData } from '../../contexts/DataContext';
+import SectionHeading from '../ui/SectionHeading';
+import SkillIcon from '../ui/SkillIcon';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
 
-// Example "skillsList" object with categories
-const skillsList = {
-  'Front-End': ['HTML5', 'CSS3', 'JavaScript', 'React', 'Bootstrap'],
-  'Back-End': ['javalin', 'springBoot', 'PHP', '.NET Core'],
-  'Databases': ['MySQL','MsSQL', 'PostgreSQL', 'Firebase'],
-  'Mobile': ['Flutter', 'React Native', 'Android (Java)'],
-  "apps and script":['Java-fx','Java','Python',],
-  'Tools & Other': ['Git', 'Docker', 'Linux', 'IIS'],
-};
+function SkillsSection({ id, title, content }) {
+  const { sections } = useData();
+  const { language } = useLanguage();
 
-// Optional color mapping for your Chips
-const categoryColors = {
-  'Front-End': 'primary',
-  'Back-End': 'secondary',
-  Databases: 'success',
-  Mobile: 'info',
-  'Tools & Other': 'warning',
-};
+  // Get skills data from sections or use fallback
+  const getSkillsData = () => {
+    const skillsSection = sections.find(s => s.type === 'skills');
+    return skillsSection?.data?.skillsList || {
+      'Front-End': ['HTML5', 'CSS3', 'JavaScript', 'React', 'Bootstrap'],
+      'Back-End': ['javalin', 'springBoot', 'PHP', '.NET Core'],
+      'Databases': ['MySQL','MsSQL', 'PostgreSQL', 'Firebase'],
+      'Mobile': ['Flutter', 'React Native', 'Android (Java)'],
+      "apps and script":['Java-fx','Java','Python',],
+      'Tools & Other': ['Git', 'Docker', 'Linux', 'IIS'],
+    };
+  };
 
-function SkillsSection({ id, title}) {
-  // Convert the object’s keys into an array
+  const skillsList = getSkillsData();
+
+  // Convert the object's keys into an array
   const categories = Object.keys(skillsList);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
 
   return (
-    <Box       id={id}
- sx={{ py: 4 }}>
-    
-      {/* Page Title */}
+    <section id={id} className="py-8">
+      <SectionHeading sectionId={id}>{localize(title, language) || 'Skills'}</SectionHeading>
 
-              <Typography variant="h2" component="h2" sx={{           textAlign: 'center', 
-fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
-        Skills
-      </Typography>
+      {content && (
+        <p className="mx-auto mb-10 max-w-2xl text-center text-base leading-relaxed text-ink-muted md:text-lg">
+          {localize(content, language)}
+        </p>
+      )}
 
-      {/* Categories + Chips */}
-      <Box sx={{           maxWidth: isMobile? '100%' : '70%', margin: 'auto' }}>
-        <Grid container spacing={4}>
-          {categories.map((category) => (
-            <Grid item xs={12} sm={6} md={4} key={category}>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 500,
-                  mb: 2,
-                  color: 'text.primary',
-                  textAlign: 'center',
-                }}
-              >
-                {category}
-              </Typography>
-              <Grid container spacing={1} justifyContent="center">
-                {skillsList[category].map((skill, idx) => (
-                  <Grid item key={idx}>
-                    <Chip
-                      label={skill}
-                      color={categoryColors[category] || 'default'}
-                      variant="outlined"
-                      sx={{
-                        fontSize: '0.875rem',
-                        padding: '6px 12px',
-                      }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Box>
+      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+        {categories.map((category) => (
+          <div key={category}>
+            <h3 className="mb-4 text-center text-[0.85rem] font-bold uppercase tracking-[1.5px] text-brand">
+              {category}
+            </h3>
+            <ul className="flex flex-wrap justify-center gap-2">
+              {skillsList[category].map((skill, idx) => (
+                <motion.li
+                  key={idx}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.35, delay: Math.min(idx * 0.04, 0.3), ease: [0.22, 1, 0.36, 1] }}
+                  className="glass motion-safe:hover:-translate-y-[3px] flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium text-ink transition-[transform,box-shadow,border-color] duration-250 hover:border-brand/40 hover:shadow-[0_8px_20px_rgba(20,60,30,0.12)]"
+                >
+                  <SkillIcon name={skill} />
+                  {skill}
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
-export default  SkillsSection;
+export default SkillsSection;

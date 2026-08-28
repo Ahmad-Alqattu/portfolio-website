@@ -19,36 +19,27 @@ const getUserSectionsCollection = (userId = 'default-user') => `users/${userId}/
 // Get all sections from Firestore for specific user
 export const getAllSections = async (userId = 'default-user') => {
   try {
-    console.log('🔍 getAllSections called for userId:', userId);
     const collectionPath = getUserSectionsCollection(userId);
-    console.log('📂 Collection path:', collectionPath);
     
     const sectionsRef = collection(db, collectionPath);
     
-    // First try without orderBy to see if we can get any documents
-    console.log('📊 Querying sections without orderBy...');
+    // Query sections
     let snapshot = await getDocs(sectionsRef);
-    console.log('📄 Raw documents found:', snapshot.size);
     
     const sections = [];
     snapshot.forEach((doc) => {
-      console.log(`  - Document: ${doc.id}`, doc.data());
       sections.push({
         id: doc.id,
         ...doc.data()
       });
     });
     
-    // Now try to sort by order if the field exists
+    // Sort by order if the field exists
     const sectionsWithOrder = sections.filter(s => s.order !== undefined);
     if (sectionsWithOrder.length > 0) {
-      console.log('✅ Some sections have order field, sorting...');
-      sections.sort((a, b) => (a.order || 0) - (b.order || 0));
-    } else {
-      console.log('⚠️ No sections have order field, returning unsorted');
+      sections.sort((a, b) => (a.order || 999) - (b.order || 999));
     }
     
-    console.log('📋 Final sections:', sections.length);
     return sections;
   } catch (error) {
     console.error('❌ Error fetching sections:', error);
@@ -60,9 +51,10 @@ export const getAllSections = async (userId = 'default-user') => {
 export const subscribeToSections = (callback, userId = 'default-user') => {
   try {
     const sectionsRef = collection(db, getUserSectionsCollection(userId));
-    const q = query(sectionsRef, orderBy('order', 'asc'));
+    // Don't use orderBy in query as it requires all docs to have the field
+    // We'll sort manually in the callback instead
     
-    return onSnapshot(q, (snapshot) => {
+    return onSnapshot(sectionsRef, (snapshot) => {
       const sections = [];
       snapshot.forEach((doc) => {
         sections.push({
@@ -70,6 +62,10 @@ export const subscribeToSections = (callback, userId = 'default-user') => {
           ...doc.data()
         });
       });
+      
+      // Sort by order manually to handle missing order fields
+      sections.sort((a, b) => (a.order || 999) - (b.order || 999));
+      
       callback(sections);
     }, (error) => {
       console.error('Error in sections subscription:', error);
@@ -123,9 +119,9 @@ export const updateSection = async (sectionId, sectionData, userId = 'default-us
 };
 
 // Create a new section
-export const createSection = async (sectionData) => {
+export const createSection = async (sectionData, userId = 'default-user') => {
   try {
-    const sectionRef = doc(collection(db, SECTIONS_COLLECTION));
+    const sectionRef = doc(collection(db, getUserSectionsCollection(userId)));
     
     const newSectionData = {
       ...sectionData,
@@ -143,9 +139,9 @@ export const createSection = async (sectionData) => {
 };
 
 // Delete a section
-export const deleteSection = async (sectionId) => {
+export const deleteSection = async (sectionId, userId = 'default-user') => {
   try {
-    const sectionRef = doc(db, SECTIONS_COLLECTION, sectionId);
+    const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
     await deleteDoc(sectionRef);
     
     return { success: true };
@@ -156,9 +152,9 @@ export const deleteSection = async (sectionId) => {
 };
 
 // Upload section data (used by migration tool)
-export const uploadSectionData = async (sectionId, sectionData) => {
+export const uploadSectionData = async (sectionId, sectionData, userId = 'default-user') => {
   try {
-    const sectionRef = doc(db, SECTIONS_COLLECTION, sectionId);
+    const sectionRef = doc(db, getUserSectionsCollection(userId), sectionId);
     
     const uploadData = {
       ...sectionData,
@@ -176,9 +172,9 @@ export const uploadSectionData = async (sectionId, sectionData) => {
 };
 
 // Get sections count for dashboard stats
-export const getSectionsCount = async () => {
+export const getSectionsCount = async (userId = 'default-user') => {
   try {
-    const sectionsRef = collection(db, SECTIONS_COLLECTION);
+    const sectionsRef = collection(db, getUserSectionsCollection(userId));
     const snapshot = await getDocs(sectionsRef);
     return snapshot.size;
   } catch (error) {
@@ -198,37 +194,4 @@ export const checkFirebaseConnection = async () => {
     console.error('Firebase connection error:', error);
     return false;
   }
-};
-
-// Legacy functions for backward compatibility
-export const getIntroData = async () => {
-  return await getSection('intro');
-};
-
-export const getSkillsData = async () => {
-  return await getSection('skills');
-};
-
-export const getProjectsData = async () => {
-  return await getSection('projects');
-};
-
-export const getCapabilitiesData = async () => {
-  return await getSection('capabilities');
-};
-
-export const updateIntroData = async (data) => {
-  return await updateSection('intro', data);
-};
-
-export const updateSkillsData = async (data) => {
-  return await updateSection('skills', data);
-};
-
-export const updateProjectsData = async (data) => {
-  return await updateSection('projects', data);
-};
-
-export const updateCapabilitiesData = async (data) => {
-  return await updateSection('capabilities', data);
 };

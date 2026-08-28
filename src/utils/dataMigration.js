@@ -6,7 +6,7 @@ export const migrateLocalDataToFirebase = async () => {
   try {
     // Wait for auth state to be ready
     if (!auth.currentUser) {
-      console.log('❌ Authentication required for migration');
+  
       // Try to wait a moment for auth to initialize
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -15,19 +15,19 @@ export const migrateLocalDataToFirebase = async () => {
       }
     }
 
-    console.log('✅ User authenticated:', auth.currentUser.email);
+  
 
     // Fetch the local JSON data
-    console.log('📥 Loading local data...');
+  
     const response = await fetch('/data/sectionsData.json');
     const localData = await response.json();
 
-    console.log('🔍 Found sections:', localData.map(s => s.id || s.type));
+  
 
     // Migrate each section with proper data structure
     const results = [];
     for (const section of localData) {
-      console.log(`📤 Migrating ${section.id || section.type}...`);
+  
       
       // Fix data structures for specific sections
       let processedSection = { ...section };
@@ -161,16 +161,16 @@ export const migrateLocalDataToFirebase = async () => {
       results.push(result);
       
       if (result.success) {
-        console.log(`✅ ${processedSection.id || processedSection.type} migrated successfully`);
+
       } else {
-        console.log(`❌ ${processedSection.id || processedSection.type} failed:`, result.error);
+
       }
     }
 
     const successful = results.filter(r => r.success).length;
     const total = results.length;
 
-    console.log(`🎉 Migration complete: ${successful}/${total} sections migrated`);
+
     
     return {
       success: successful === total,

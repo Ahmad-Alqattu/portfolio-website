@@ -4,7 +4,8 @@ import SkillsSection from '../sections/SkillsSection';
 import EducationSection from '../sections/EducationSection';
 import ExperienceSection from '../sections/ExperienceSection';
 import ProjectsSection from '../sections/ProjectsSection';
-import CapabilitiesSection from '../sections/CapabilitiesSection';
+import CapabilitiesSection from '../sections/CapabilitiesSection.jsx';
+import CertificatesSection from '../sections/CertificatesSection';
 import Footer from '../layout/Footer';
 
 const SectionPreview = ({ sectionType, sectionData }) => {
@@ -20,13 +21,15 @@ const SectionPreview = ({ sectionType, sectionData }) => {
       case 'skills':
         return <SkillsSection {...sectionData} />;
       case 'education':
-        return <EducationSection {...sectionData} educationList={sectionData.data?.educations || sectionData.data?.educationList} />;
+        return <EducationSection {...sectionData} educationList={ sectionData.data?.educationList} />;
       case 'experience':
-        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences || sectionData.experience} />;
+        return <ExperienceSection {...sectionData} experiences={sectionData.data?.experiences } />;
       case 'projects':
         return <ProjectsSection {...sectionData} projects={sectionData.data?.projects} />;
       case 'capabilities':
-        return <CapabilitiesSection {...sectionData} />;
+        return <CapabilitiesSection {...sectionData} data={sectionData.data} />;
+      case 'certificates':
+        return <CertificatesSection {...sectionData} data={sectionData.data} />;
       case 'footerAndLinks':
         return <Footer data={sectionData.data} />;
       default:
@@ -40,7 +43,7 @@ const SectionPreview = ({ sectionType, sectionData }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
+    <div className="bg-white rounded-lg shadow-xs border">
       <div className="p-4 border-b bg-gray-50">
         <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide">
           Live Preview

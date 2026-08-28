@@ -1,142 +1,104 @@
 import React from 'react';
-import { 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent,
-  Box,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  useMediaQuery,
-  useTheme
-} from '@mui/material';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-
-
+import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
+import SectionHeading from '../ui/SectionHeading';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { localize } from '../../utils/localize';
+import localizedText from '../../utils/localizedText';
 
 const ExperienceSection = ({ id, title, experiences = [] }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  return (
-    <Box id={id} sx={{           maxWidth: isMobile? '100%' : '75%', margin: 'auto', py: 6, }}>
+  const { language } = useLanguage();
 
-              <Typography variant="h2" component="h2" sx={{           textAlign: 'center', 
-fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
-      
-        {title}
-      </Typography>
-      
-      <Grid container spacing={3}>
-        {experiences.map((exp, index) => (
-          <Grid item xs={12} key={index}>
-            <Paper 
-              elevation={3}
-              sx={{
-                borderRadius: 4, // Increased border radius for Paper
-                overflow: 'hidden', // Ensures content doesn't overflow rounded corners
-                '&:hover': {
-                  boxShadow: 6,
-                  transition: 'box-shadow 0.3s ease-in-out'
-                }
-              }}
+  return (
+    <section id={id} className="mx-auto max-w-[860px] py-12">
+      <SectionHeading sectionId={id}>{localize(title, language)}</SectionHeading>
+
+      <div className="flex flex-col gap-6">
+        {experiences
+          .filter(experience => experience.active !== false)
+          .sort((a, b) => (a.order || 999) - (b.order || 999))
+          .map((experience, index) => (
+            <motion.article
+              key={experience.id || index}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.3), ease: [0.22, 1, 0.36, 1] }}
+              className="glass motion-safe:hover:-translate-y-1 p-6 transition-[transform,box-shadow,border-color] duration-300 hover:border-brand/40 md:p-8"
             >
-              <Card sx={{ borderRadius: 4 }}> {/* Matching border radius for Card */}
-                <CardContent sx={{ p: 3 }}> {/* Added more padding */}
-                  <Box 
-                    sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'flex-start', 
-                      mb: 2,
-                      p: 1,
-                      borderRadius: 2, // Subtle border radius for header area
-                      bgcolor: 'background.default'
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      {/* Company Logo */}
-                      {exp.logo && (
-                        <Box
-                          component="img"
-                          src={exp.logo.startsWith('http') ? exp.logo : `/${exp.logo}`}
-                          alt={`${exp.company} logo`}
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            objectFit: 'contain',
-                            borderRadius: 1,
-                            border: '1px solid',
-                            borderColor: 'grey.300',
-                            p: 0.5
-                          }}
+              {/* Company Header */}
+              <div className="mb-4 flex items-start gap-5">
+                {experience.logo && (
+                  <img
+                    src={experience.logo}
+                    alt={`${localize(experience.company, language)} logo`}
+                    className="size-14 shrink-0 rounded-xl object-contain"
+                  />
+                )}
+                <div className="min-w-0 grow">
+                  <h3 className="text-lg font-bold leading-snug text-ink md:text-[1.35rem]">
+                    {localize(experience.company, language)}
+                  </h3>
+                  <p className="mt-0.5 text-[0.95rem] font-semibold text-brand">
+                    {localize(experience.title, language)}
+                  </p>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    {localize(experience.period, language) || localize(experience.duration, language)}
+                    {experience.location && ` • ${localize(experience.location, language)}`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Body text lines up with the company name rather than the card
+                  edge, so each entry reads as one text column */}
+              <div className={experience.logo ? 'md:ml-[76px]' : ''}>
+                {experience.description && (
+                  <p className="mb-3 leading-relaxed text-ink-muted">
+                    {localize(experience.description, language)}
+                  </p>
+                )}
+
+                {experience.responsibilities && experience.responsibilities.length > 0 && (
+                  <ul className="flex flex-col gap-2">
+                    {experience.responsibilities.map((responsibility, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <span
+                          aria-hidden
+                          className="mt-[9px] size-[7px] shrink-0 rounded-full bg-brand"
                         />
-                      )}
-                      <Box>
-                        <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold' }}>
-                          {exp.title}
-                        </Typography>
-                        <Typography 
-                          variant="h6" 
-                          color="text.secondary"
-                          sx={{ 
-                            mt: 0.5,
-                            borderRadius: 1 // Subtle border radius for company name
-                          }}
-                        >
-                          {exp.company}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Typography 
-                      variant="subtitle1" 
-                      color="text.secondary"
-                      sx={{ 
-                        px: 2, 
-                        py: 0.5, 
-                        bgcolor: 'action.hover',
-                        borderRadius: 2 // Pill-shaped border radius for date
-                      }}
-                    >
-                      {exp.period}
-                    </Typography>
-                  </Box>
-                  
-                  <List sx={{ pl: 1 }}>
-                    {exp.responsibilities.map((responsibility, idx) => (
-                      <ListItem 
-                        key={idx} 
-                        sx={{ 
-                          py: 0.5,
-                          '&:hover': {
-                            bgcolor: 'action.hover',
-                            borderRadius: 2 // Border radius for list items on hover
-                          }
-                        }}
-                      >
-                        <ListItemIcon sx={{ minWidth: 25 }}>
-                          <FiberManualRecordIcon sx={{ fontSize: 8, color: 'primary.main' }} />
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary={responsibility}
-                          primaryTypographyProps={{
-                            variant: 'body1',
-                            color: 'text.primary'
-                          }}
-                        />
-                      </ListItem>
+                        <span className="text-sm leading-relaxed text-ink-muted">
+                          {localize(responsibility, language)}
+                        </span>
+                      </li>
                     ))}
-                  </List>
-                </CardContent>
-              </Card>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>  
+                  </ul>
+                )}
+              </div>
+            </motion.article>
+          ))}
+      </div>
+    </section>
   );
+};
+
+ExperienceSection.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: localizedText.isRequired,
+  experiences: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      company: localizedText,
+      title: localizedText,
+      period: localizedText,
+      duration: localizedText,
+      location: localizedText,
+      description: localizedText,
+      responsibilities: PropTypes.arrayOf(localizedText),
+      logo: PropTypes.string,
+      active: PropTypes.bool,
+      order: PropTypes.number,
+    })
+  ),
 };
 
 export default ExperienceSection;

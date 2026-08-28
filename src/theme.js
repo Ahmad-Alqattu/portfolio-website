@@ -48,6 +48,13 @@ const baseThemeOptions = {
       fontSize: '2.5rem',
       fontWeight: 700,
     },
+    // Section headings across the site all render as h2
+    h2: {
+      fontSize: 'clamp(2.25rem, 5vw, 3.25rem)',
+      fontWeight: 800,
+      letterSpacing: '-1px',
+      lineHeight: 1.1,
+    },
     h4: {
       fontSize: '1.5rem',
       fontWeight: 600,
@@ -64,9 +71,10 @@ const baseThemeOptions = {
   },
 };
 
-export function createMyTheme(mode) {
+export function createMyTheme(mode, direction = 'ltr') {
   return createTheme({
     ...baseThemeOptions,
+    direction,
     palette: mode === 'dark' ? { mode: 'dark', ...darkPalette } : { mode: 'light', ...lightPalette },
   });
 }

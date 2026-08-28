@@ -10,7 +10,8 @@ const FileUpload = ({
   currentFile = null,
   label = "Upload File",
   preview = true,
-  className = ""
+  className = "",
+  fileType = "image" // "image" or "video"
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(currentFile || null);
@@ -38,15 +39,31 @@ const FileUpload = ({
   const validateFile = (file) => {
     setError('');
     
+    // Set default size limits based on file type
+    let sizeLimit = maxSizeKB * 1024;
+    if (fileType === 'video') {
+      sizeLimit = 50 * 1024 * 1024; // 50MB for videos
+    } else if (fileType === 'image') {
+      sizeLimit = 50 * 1024 * 1024; // 50MB for images
+    }
+    
     // Check file size
-    if (file.size > maxSizeKB * 1024) {
-      setError(`File size must be less than ${formatFileSize(maxSizeKB * 1024)}`);
+    if (file.size > sizeLimit) {
+      setError(`${fileType === 'video' ? 'Video' : 'Image'} size must be less than ${formatFileSize(sizeLimit)}`);
       return false;
     }
 
+    // Set default allowed types based on file type
+    let validTypes = allowedTypes;
+    if (fileType === 'video' && allowedTypes.includes('image/jpeg')) {
+      validTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+    } else if (fileType === 'image' && allowedTypes.includes('video/mp4')) {
+      validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    }
+
     // Check file type
-    if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
-      setError(`File type not allowed. Accepted: ${allowedTypes.join(', ')}`);
+    if (validTypes.length > 0 && !validTypes.includes(file.type)) {
+      setError(`File type not allowed. Accepted: ${validTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')}`);
       return false;
     }
 
@@ -178,27 +195,25 @@ const FileUpload = ({
             </button>
           </div>
           
-          {previewUrl.startsWith('data:') || previewUrl.includes('blob:') || previewUrl.startsWith('http') ? (
-            <div className="space-y-3">
-              {/* Image Preview */}
-              {(previewUrl.includes('image') || accept.includes('image')) && (
-                <div className="relative">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="max-w-full h-auto max-h-48 object-contain rounded border mx-auto"
-                  />
-                </div>
-              )}
-              
-              {/* File Info */}
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                {getFileIcon(accept)}
-                <span>File uploaded successfully</span>
-              </div>
-            </div>
+          {/* Show preview based on file type */}
+          {fileType === 'video' && previewUrl.startsWith('blob:') ? (
+            <video
+              src={previewUrl}
+              controls
+              className="max-w-full h-32 object-cover rounded-lg border"
+            />
+          ) : fileType === 'image' && (previewUrl.startsWith('data:image') || previewUrl.startsWith('blob:') || previewUrl.startsWith('http')) ? (
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="max-w-full h-32 object-cover rounded-lg border"
+              onError={(e) => {
+                console.error('Image preview failed to load:', e);
+                e.target.style.display = 'none';
+              }}
+            />
           ) : (
-            <div className="flex items-center gap-3 p-3 bg-white rounded border">
+            <div className="flex items-center gap-3 p-3 bg-white rounded-sm border">
               {getFileIcon()}
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">File ready</p>

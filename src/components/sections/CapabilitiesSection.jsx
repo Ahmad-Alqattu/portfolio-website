@@ -1,127 +1,62 @@
 import React from 'react';
-import {
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Box,
-  useMediaQuery,
-  useTheme
-} from '@mui/material';
-
-// Define the "What Can I Do?" list
-const capabilities = [
-  {
-    title: 'Build Robust Applications',
-    description:
-      'I develop stable and efficient services and applications, including JavaFX-based desktop apps and Python apps—scripts for data extraction and classification.',
-  },
-  {
-    title: 'Create Web Services & APIs',
-    description:
-      'I design reliable and scalable RESTful and SOAP-based APIs using frameworks like Spring Boot, Javalin, .NET Core, and PHP.',
-  },
-  {
-    title: 'Develop Mobile Experiences',
-    description:
-      'I deliver smooth, intuitive, and responsive mobile solutions with Flutter, hands-on React Native, and native Android (Java).',
-  },
-  {
-    title: 'Work with Databases & Cloud Services',
-    description:
-      'I manage and secure data using MySQL, PostgreSQL, Microsoft SQL Server, and Firebase (real-time DB, Firestore, and cloud functions).',
-  },
-  {
-    title: 'Front-End Development',
-    description:
-      'I craft clean, responsive, and user-friendly interfaces using HTML5, CSS3, HTMX, JavaScript, React.js, and Bootstrap.',
-  },
-  {
-    title: 'Optimize with Git & DevOps Tools',
-    description:
-      'I streamline deployment and collaboration using Git, Docker, Linux environments, and hosting platforms such as IIS on Windows.',
-  },
-];
+import { motion } from 'framer-motion';
+import SectionHeading from '../ui/SectionHeading';
+import CapabilityIcon from '../ui/CapabilityIcon';
 
 function CapabilitiesSection({ id, title, data, content }) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  // Use data from props or fall back to hardcoded capabilities
-  const capabilitiesData = data?.capabilities || capabilities.map(cap => cap.title);
+  // Use data from props
+  const capabilitiesData = data?.capabilities || [];
   const sectionTitle = title || 'What Can I Do?';
   const sectionContent = content || '';
 
-  // Create capability objects from data
-  const capabilityItems = capabilitiesData.map((capability, index) => {
-    if (typeof capability === 'string') {
-      // If it's just a string, use the original hardcoded descriptions
-      const originalCap = capabilities.find(cap => cap.title === capability) || capabilities[index];
-      return {
-        title: capability,
-        description: originalCap?.description || 'Professional capability in this area.'
-      };
-    }
-    return capability; // If it's already an object with title and description
-  });
-
   return (
-    <Box  id={id} sx={{ py: 4 }}>
-      {/* Page Title */}
-
-              <Typography variant="h2" component="h2" sx={{           textAlign: 'center', 
-fontSize: '2.5rem', fontWeight: 'bold', mb: 4, color: 'primary.main' }}>
-        {sectionTitle}
-      </Typography>
+    <section id={id} className="py-8">
+      <SectionHeading sectionId={id}>{sectionTitle}</SectionHeading>
 
       {sectionContent && (
-        <Typography variant="body1" sx={{ textAlign: 'center', mb: 4, maxWidth: '800px', mx: 'auto' }}>
+        <p className="mx-auto mb-12 max-w-[680px] text-center text-base leading-relaxed text-ink-muted md:text-lg">
           {sectionContent}
-        </Typography>
+        </p>
       )}
 
-      {/* Grid of Cards */}
-      <Box sx={{          maxWidth: isMobile? '100%' : '80%', margin: 'auto' }}>
-        <Grid
-          container
-          spacing={{ xs: 2, md: 4 }}
-          columns={{ xs: 4, sm: 8, md: 12 }}
-        >
-          {capabilityItems.map((cap, index) => (
-            <Grid item xs={4} sm={4} md={4} key={index}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  boxShadow: 2,
-                  borderRadius: 2,
-                  transition: 'transform 0.2s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h6"
-                    sx={{ mb: 1, fontWeight: 'bold', color: 'text.primary' }}
-                  >
-                    {cap.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: 'text.secondary' }}
-                  >
-                    {cap.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {capabilitiesData
+          .filter(capability => capability.active !== false)
+          .sort((a, b) => (a.order || 999) - (b.order || 999))
+          .map((capability, index) => (
+            <motion.article
+              key={capability.id || index}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: Math.min(index * 0.07, 0.35), ease: [0.22, 1, 0.36, 1] }}
+              className="glass motion-safe:hover:-translate-y-1.5 flex flex-col items-start gap-3 p-6 transition-[transform,box-shadow,border-color] duration-300 hover:border-brand/40"
+            >
+              {/* Icon in a tinted tile so it reads as a deliberate mark rather
+                  than a stray image floating above the text. Falls back to a
+                  keyword-matched inline icon when none has been uploaded. */}
+              <div className="flex size-13 items-center justify-center rounded-2xl border border-brand/25 bg-brand/10">
+                {capability.icon ? (
+                  <img
+                    src={capability.icon.startsWith('http') ? capability.icon : `/${capability.icon}`}
+                    alt=""
+                    className="size-7 object-contain"
+                  />
+                ) : (
+                  <CapabilityIcon title={capability.title} description={capability.description} />
+                )}
+              </div>
+
+              <h3 className="text-[1.05rem] font-bold leading-snug text-ink">
+                {capability.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-ink-muted">
+                {capability.description}
+              </p>
+            </motion.article>
           ))}
-        </Grid>
-      </Box>
-    </Box>
+      </div>
+    </section>
   );
 }
 
