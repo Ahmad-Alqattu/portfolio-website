@@ -442,15 +442,25 @@ function MainComponent() {
   // When routed to /:sectionId, scroll into view once sections render.
   // Skipped when the URL changed because of our own scroll-sync below —
   // the user is already there.
+  // Scrolls once per route change: a later content refresh (the live
+  // Firestore snapshot arrives a few seconds after load) must not yank a
+  // reader who has already scrolled elsewhere back to the URL's section.
+  const scrolledForSection = useRef(null);
   useEffect(() => {
-    if (!sectionId) return;
-    if (isUrlSyncFromScroll.current) {
-      isUrlSyncFromScroll.current = false;
+    if (!sectionId) {
+      scrolledForSection.current = null;
       return;
     }
+    if (isUrlSyncFromScroll.current) {
+      isUrlSyncFromScroll.current = false;
+      scrolledForSection.current = sectionId;
+      return;
+    }
+    if (scrolledForSection.current === sectionId) return;
     const targetId = routeAliasToSectionId(sectionId);
     const exists = sections.some((s) => s.id === targetId);
     if (!exists) return;
+    scrolledForSection.current = sectionId;
     scrollToSectionWhenReady(targetId);
   }, [sectionId, sections]);
 

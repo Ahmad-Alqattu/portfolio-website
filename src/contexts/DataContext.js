@@ -187,16 +187,15 @@ export const DataProvider = ({ children }) => {
     const { subscribeToSections } = await firestoreApi();
     // Subscribe to all sections
     const unsubscribe = subscribeToSections((updatedSections) => {
-      if (updatedSections.length > 0) {
+      // An empty snapshot (e.g. offline, served from an empty local cache)
+      // must not wipe content that is already on screen.
+      if (updatedSections.length === 0) return;
 
-        // Update cache with real-time data
-        const sortedSections = updatedSections.sort((a, b) => (a.order || 999) - (b.order || 999));
-        setCachedData(sortedSections);
-      } else {
-        // Clear cache if no sections
-        clearCache();
-      }
-      setSections(updatedSections);
+      const sortedSections = updatedSections.sort((a, b) => (a.order || 999) - (b.order || 999));
+      setCachedData(sortedSections);
+      // Same content as the prerendered snapshot: keep the existing array so
+      // nothing re-renders.
+      setSections((prev) => (JSON.stringify(prev) === JSON.stringify(sortedSections) ? prev : sortedSections));
     }, userId);
 
     // Clean up listener on component unmount

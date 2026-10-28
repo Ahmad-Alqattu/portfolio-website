@@ -64,10 +64,10 @@ export const LanguageProvider = ({ children }) => {
       }
       setAppLanguage(code);
       if (publicRoute) {
-        navigate(`${withLang(location.pathname, code)}${location.hash}`, { replace: true, preventScrollReset: true });
+        navigate(`${withLang(location.pathname, code)}${location.search}${location.hash}`, { replace: true, preventScrollReset: true });
       }
     },
-    [publicRoute, location.pathname, location.hash, navigate]
+    [publicRoute, location.pathname, location.search, location.hash, navigate]
   );
 
   const toggleLanguage = () => setLanguage(language === 'en' ? 'ar' : 'en');

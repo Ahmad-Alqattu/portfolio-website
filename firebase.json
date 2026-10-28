@@ -89,7 +89,7 @@
         ]
       },
       {
-        "source": "/@(app.html|404.html|login)",
+        "source": "/@(app|app.html|login)",
         "headers": [
           {
             "key": "X-Robots-Tag",

@@ -40,17 +40,24 @@ exports.publishSite = onCall({secrets: [githubToken]}, async (request) => {
     tx.set(ref, {requestedAt: now, requestedBy: token.email});
   });
 
-  const res = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
-    method: "POST",
-    headers: {
-      "Accept": "application/vnd.github+json",
-      "Authorization": `Bearer ${githubToken.value()}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      "User-Agent": "portfolio-publish",
-    },
-    body: JSON.stringify({event_type: "publish"}),
-    signal: AbortSignal.timeout(15000),
-  });
+  let res;
+  try {
+    res = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "Authorization": `Bearer ${githubToken.value()}`,
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "portfolio-publish",
+      },
+      body: JSON.stringify({event_type: "publish"}),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch (err) {
+    // Nothing was dispatched: release the rate limit so a retry works.
+    await ref.delete();
+    throw new HttpsError("unavailable", `Could not reach GitHub: ${err.message}`);
+  }
   if (res.status !== 204) {
     await ref.delete();
     throw new HttpsError("internal", `GitHub refused the publish request (${res.status}).`);
