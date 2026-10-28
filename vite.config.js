@@ -1,25 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react';
-import critical from 'rollup-plugin-critical';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    critical({
-      criticalUrl: './build/index.html',
-      criticalBase: './build',
-      criticalPages: [
-        {
-          uri: '',
-          template: 'index',
-        },
-      ],
-      criticalConfig: {
-        inline: true,
-        extract: false,
-      },
-    }),
   ],
   server: {
     port: 3000,
@@ -30,22 +15,13 @@ export default defineConfig({
     chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
+        // Only the libraries every page renders with get fixed chunks.
+        // Firebase (lazy-loaded after first paint), framer-motion and the
+        // admin-only drag-and-drop are left to Rollup, so a dynamic import
+        // stays dynamic instead of being pulled into the first load.
         manualChunks: {
-          // Keep React ecosystem together
-          'react-vendor': ['react', 'react-dom'],
-          
-          // Firebase libraries needed by every visitor (auth is used app-wide
-          // just to show the admin "Edit" link when signed in). firebase/storage
-          // is deliberately left out — it's only used by admin upload screens,
-          // which are already lazy-loaded, so letting Rollup place it
-          // automatically keeps it out of what anonymous visitors download.
-          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          
-          // MUI libraries
-          'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
-          
-          // Other utilities
-          'utils-vendor': ['framer-motion', 'react-lazyload', '@hello-pangea/dnd']
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'mui-vendor': ['@mui/material', '@emotion/react', '@emotion/styled'],
         },
         // Add cache-friendly file naming
         entryFileNames: 'assets/[name]-[hash].js',

@@ -5,9 +5,42 @@
   },
   "hosting": {
     "public": "build",
+    "cleanUrls": true,
+    "trailingSlash": false,
     "headers": [
       {
-        "source": "**/*.@(js|css)",
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          }
+        ]
+      },
+      {
+        "source": "**/!(*.*)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/assets/**",
         "headers": [
           {
             "key": "Cache-Control",
@@ -16,20 +49,60 @@
         ]
       },
       {
-        "source": "**/*.@(jpg|jpeg|png|gif|webp|svg|ico)",
+        "source": "**/*.@(jpg|jpeg|png|gif|webp|avif|svg|ico)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=86400"
+            "value": "public, max-age=604800, stale-while-revalidate=86400"
           }
         ]
       },
       {
-        "source": "**/*.@(mp4|webm|mov|avi|mkv)",
+        "source": "**/*.@(mp4|webm)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=86400"
+            "value": "public, max-age=604800"
+          }
+        ]
+      },
+      {
+        "source": "**/*.md",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "text/markdown; charset=utf-8"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "/@(llms.txt|llms-full.txt|robots.txt|sitemap.xml)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "/@(app.html|404.html|login)",
+        "headers": [
+          {
+            "key": "X-Robots-Tag",
+            "value": "noindex"
+          }
+        ]
+      },
+      {
+        "source": "/admin{,/**}",
+        "headers": [
+          {
+            "key": "X-Robots-Tag",
+            "value": "noindex"
           }
         ]
       }
@@ -39,14 +112,31 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
+    "redirects": [
       {
-        "source": "/sitemap.xml",
-        "function": "sitemap"
+        "source": "/edit",
+        "destination": "/admin",
+        "type": 301
       },
       {
-        "source": "!/@(projects|assets)/**",
-        "destination": "/index.html"
+        "source": "/home",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/ar/home",
+        "destination": "/ar",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/admin{,/**}",
+        "destination": "/app.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/app.html"
       }
     ]
   }

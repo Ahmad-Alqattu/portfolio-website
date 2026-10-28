@@ -10,7 +10,8 @@ import {
   useScrollTrigger,
   useMediaQuery,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { publicSections } from '../../seo/site';
 import { useTheme } from '@mui/material/styles';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
@@ -31,11 +32,9 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { activeSection } = useActiveSection();
   const { sections } = useData();
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, localizedPath } = useLanguage();
 
-  const navSections = (sections || [])
-    .filter((s) => s.type !== 'footerAndLinks')
-    .sort((a, b) => (a.order || 999) - (b.order || 999));
+  const navSections = publicSections(sections || []);
 
   // Mobile has no persistently-visible section list (unlike the desktop
   // sidebar), so once the user has scrolled past the intro, swap the owner
@@ -45,7 +44,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const showSectionTitle = isMobile && condensed && Boolean(currentSectionTitle);
 
   const pathForSection = (section) =>
-    (section.type || '').toLowerCase() === 'intro' ? '/about' : `/${section.id}`;
+    localizedPath((section.type || '').toLowerCase() === 'intro' ? '/about' : `/${section.id}`);
 
   useEffect(() => {
     let frame = null;
@@ -150,7 +149,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
             }}
           >
             <Typography
-              onClick={() => navigate('/')}
+              onClick={() => navigate(localizedPath('/'))}
               sx={{
                 whiteSpace: 'nowrap',
                 fontWeight: 700,
@@ -173,8 +172,11 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                     return (
                       <Box
                         key={section.id}
-                        onClick={() => navigate(pathForSection(section))}
+                        component={RouterLink}
+                        to={pathForSection(section)}
                         sx={{
+                          display: 'inline-block',
+                          textDecoration: 'none',
                           position: 'relative',
                           cursor: 'pointer',
                           px: 1.5,

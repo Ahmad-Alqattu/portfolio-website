@@ -6,6 +6,7 @@ import SectionHeading from '../ui/SectionHeading';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
 import localizedText from '../../utils/localizedText';
+import { imageProps, mediaUrl } from '../../utils/images';
 
 function useProjectsState() {
   const [visibleCount, setVisibleCount] = useState(6);
@@ -48,7 +49,7 @@ function ProjectMediaCarousel({ videos, images }) {
     return null;
   }
 
-  const resolve = (src) => (src.startsWith('http') ? src : `/${src}`);
+  const resolve = mediaUrl;
   const handleNext = () => setCurrentIndex((prev) => (prev + 1) % media.length);
   const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
   const current = media[currentIndex];
@@ -61,6 +62,7 @@ function ProjectMediaCarousel({ videos, images }) {
             key={current.src}
             src={resolve(current.src)}
             controls
+            preload="metadata"
             className="max-h-[45vh] max-w-full object-contain sm:max-h-[55vh]"
             onError={(e) => {
               console.error('Video failed to load:', e.target.src);
@@ -68,9 +70,8 @@ function ProjectMediaCarousel({ videos, images }) {
           />
         ) : (
           <picture>
-            <source srcSet={resolve(current.src)} type="image/webp" />
             <img
-              src={resolve(current.src)}
+              {...imageProps(current.src, '(min-width: 1024px) 70vw, 95vw')}
               alt={`Project media ${currentIndex + 1}`}
               className="max-h-[45vh] max-w-full object-contain sm:max-h-[55vh]"
               onError={(e) => {
@@ -200,12 +201,8 @@ function ProjectsSection({ id, title, content, projects }) {
                 {/* Media background */}
                 {hasImage ? (
                   <picture>
-                    <source
-                      srcSet={project.images[0].startsWith('http') ? project.images[0] : `/${project.images[0]}`}
-                      type="image/webp"
-                    />
                     <img
-                      src={project.images[0].startsWith('http') ? project.images[0] : `/${project.images[0]}`}
+                      {...imageProps(project.images[0], '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw')}
                       alt={`${localize(project.name, language)} thumbnail`}
                       className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-110"
                       loading="lazy"
@@ -220,7 +217,8 @@ function ProjectsSection({ id, title, content, projects }) {
                   </picture>
                 ) : hasVideo ? (
                   <video
-                    src={project.videos[0].startsWith('http') ? project.videos[0] : `/${project.videos[0]}`}
+                    src={mediaUrl(project.videos[0])}
+                    preload="metadata"
                     className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-110"
                     muted
                     playsInline

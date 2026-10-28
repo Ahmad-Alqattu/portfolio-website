@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 
 export default [
-  { ignores: ['build/**', 'functions/**', 'node_modules/**'] },
+  { ignores: ['build/**', 'functions/**', 'node_modules/**', '.content/**'] },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],
@@ -39,6 +39,16 @@ export default [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       // Codebase doesn't use PropTypes or TypeScript; this rule isn't actionable here.
       'react/prop-types': 'off',
+    },
+  },
+  {
+    // Build-time Node scripts (prerender, content fetch, image pipeline).
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      // Callbacks passed to page.evaluate() run in the browser.
+      globals: { ...globals.node, ...globals.browser },
     },
   },
 ];

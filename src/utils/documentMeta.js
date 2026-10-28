@@ -1,61 +1,42 @@
-// Keeps <title>, the canonical <link>, and the description <meta> in sync
-// with the current route. This is a client-rendered SPA with no
-// server-side rendering, so every route otherwise serves the exact same
-// static HTML — including a canonical tag that always points at the
-// homepage. That tells search engines every other route is a duplicate of
-// "/", which is why Search Console reports them as discovered/crawled but
-// never indexed. Updating these tags after mount at least gives Google (it
-// does execute JS before deciding whether to index) an accurate signal.
+// Keeps the live page's <head> in step with the route as the visitor
+// scrolls or switches language. The prerendered HTML already ships the
+// right tags for its URL; this only rewrites them in place afterwards,
+// from the same builder (src/seo/site.js) so the two never disagree.
+import { pageMeta } from '../seo/site';
 
-export const SITE_NAME = 'Ahmad Al-Qattu';
-export const BASE_URL = 'https://ahmadalqatu.com';
-export const DEFAULT_TITLE = 'Ahmad Al-Qattu - احمد لؤي امين القطو - Software Engineer Portfolio';
-export const DEFAULT_DESCRIPTION =
-  'Ahmad Al-Qattu - احمد لؤي امين القطو | Software Engineer & Web Developer specializing in React, Java, Python, JavaScript, TypeScript. Portfolio showcasing innovative software solutions, full-stack development projects, and modern web applications. Expert in building scalable applications with cutting-edge technologies.';
-
-function setMetaTag(selector, createEl, attr, value) {
-  let el = document.querySelector(selector);
+function upsert(selector, create, attrs) {
+  let el = document.head.querySelector(selector);
   if (!el) {
-    el = createEl();
+    el = create();
     document.head.appendChild(el);
   }
-  el.setAttribute(attr, value);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
 }
 
-export function updateDocumentMeta({ path, title, description }) {
-  document.title = title || DEFAULT_TITLE;
+const meta = (attr, key) => () => {
+  const el = document.createElement('meta');
+  el.setAttribute(attr, key);
+  return el;
+};
 
-  const canonicalUrl = `${BASE_URL}${path === '/' ? '/' : path}`;
-  setMetaTag(
-    'link[rel="canonical"]',
-    () => {
-      const link = document.createElement('link');
-      link.rel = 'canonical';
-      return link;
-    },
-    'href',
-    canonicalUrl
-  );
+export function updateDocumentMeta(sections, pathname) {
+  if (!sections?.length) return;
+  const m = pageMeta(sections, pathname);
 
-  setMetaTag(
-    'meta[property="og:url"]',
-    () => {
-      const meta = document.createElement('meta');
-      meta.setAttribute('property', 'og:url');
-      return meta;
-    },
-    'content',
-    canonicalUrl
-  );
+  document.title = m.title;
+  upsert('meta[name="description"]', meta('name', 'description'), { content: m.description });
+  upsert('link[rel="canonical"]', () => Object.assign(document.createElement('link'), { rel: 'canonical' }), { href: m.canonical });
+  for (const a of m.alternates) {
+    upsert(
+      `link[rel="alternate"][hreflang="${a.hreflang}"]`,
+      () => Object.assign(document.createElement('link'), { rel: 'alternate', hreflang: a.hreflang }),
+      { href: a.href }
+    );
+  }
+  upsert('link[rel="alternate"][type="text/markdown"]', () => Object.assign(document.createElement('link'), { rel: 'alternate', type: 'text/markdown' }), { href: m.markdown });
 
-  setMetaTag(
-    'meta[name="description"]',
-    () => {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      return meta;
-    },
-    'content',
-    description || DEFAULT_DESCRIPTION
-  );
+  const og = { 'og:title': m.title, 'og:description': m.description, 'og:url': m.canonical, 'og:image': m.ogImage, 'og:locale': m.ogLocale, 'og:locale:alternate': m.ogLocaleAlternate };
+  Object.entries(og).forEach(([k, v]) => upsert(`meta[property="${k}"]`, meta('property', k), { content: v }));
+  const tw = { 'twitter:title': m.title, 'twitter:description': m.description, 'twitter:image': m.ogImage };
+  Object.entries(tw).forEach(([k, v]) => upsert(`meta[name="${k}"]`, meta('name', k), { content: v }));
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { ThemeProvider, CssBaseline, Box, Typography, Button } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { createMyTheme } from './theme';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
@@ -10,8 +10,7 @@ import ResponsiveNavBar from './components/layout/ResponsiveNavBar';
 import MainComponent from './components/sections/MainComponent';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/admin/ProtectedRoute';
-// Import analytics initialization
-import './firebase/analytics';
+import NotFoundPage from './components/layout/NotFoundPage';
 
 // Lazy load admin components for better performance
 const Login = lazy(() => import('./components/admin/Login'));
@@ -22,43 +21,6 @@ import EnhancedPageSkeleton from './components/ui/EnhancedPageSkeleton';
 
 // Loading component for lazy-loaded routes
 const PageLoader = () => <EnhancedPageSkeleton />;
-
-// 404 Error Page Component
-const NotFoundPage = () => {
-  const { t } = useLanguage();
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        textAlign: 'center',
-        px: 2
-      }}
-    >
-      <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'primary.main' }}>
-        404
-      </Typography>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        {t('notFound.title')}
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
-        {t('notFound.description')}
-      </Typography>
-      <Button
-        component={Link}
-        to="/"
-        variant="contained"
-        size="large"
-        sx={{ textTransform: 'none' }}
-      >
-        {t('notFound.goHome')}
-      </Button>
-    </Box>
-  );
-};
 
 // Component to conditionally render nav and footer
 const ConditionalLayout = ({ darkMode, setDarkMode, children }) => {
@@ -84,6 +46,14 @@ function AppContent() {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
+  // Analytics isn't needed to show anything, so it loads once the page is idle.
+  useEffect(() => {
+    if (navigator.webdriver) return undefined;
+    const load = () => import('./firebase/analytics');
+    const id = 'requestIdleCallback' in window ? window.requestIdleCallback(load, { timeout: 5000 }) : setTimeout(load, 3000);
+    return () => ('cancelIdleCallback' in window ? window.cancelIdleCallback(id) : clearTimeout(id));
+  }, []);
+
   const theme = createMyTheme(darkMode ? 'dark' : 'light', isRTL ? 'rtl' : 'ltr');
 
   return (
@@ -92,16 +62,12 @@ function AppContent() {
       <AuthProvider>
         <DataProvider>
           <ActiveSectionProvider>
-            <Router
-              future={{
-                v7_startTransition: true,
-                v7_relativeSplatPath: true
-              }}
-            >
               <ConditionalLayout darkMode={darkMode} setDarkMode={setDarkMode}>
                 <div className="App">
                   <Routes>
                     <Route path="/" element={<MainComponent />} />
+                    <Route path="/ar" element={<MainComponent />} />
+                    <Route path="/ar/:sectionId" element={<MainComponent />} />
                     <Route path="/:sectionId" element={<MainComponent />} />
                     <Route path="/login" element={
                       <Suspense fallback={<PageLoader />}>
@@ -119,7 +85,6 @@ function AppContent() {
                   </Routes>
                 </div>
               </ConditionalLayout>
-            </Router>
           </ActiveSectionProvider>
         </DataProvider>
       </AuthProvider>
@@ -129,9 +94,16 @@ function AppContent() {
 
 function App() {
   return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
+    </Router>
   );
 }
 

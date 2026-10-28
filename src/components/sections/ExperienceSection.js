@@ -5,6 +5,7 @@ import SectionHeading from '../ui/SectionHeading';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
 import localizedText from '../../utils/localizedText';
+import { imageProps } from '../../utils/images';
 
 const ExperienceSection = ({ id, title, experiences = [] }) => {
   const { language } = useLanguage();
@@ -30,7 +31,9 @@ const ExperienceSection = ({ id, title, experiences = [] }) => {
               <div className="mb-4 flex items-start gap-5">
                 {experience.logo && (
                   <img
-                    src={experience.logo}
+                    {...imageProps(experience.logo, '56px')}
+                    loading="lazy"
+                    decoding="async"
                     alt={`${localize(experience.company, language)} logo`}
                     className="size-14 shrink-0 rounded-xl object-contain"
                   />

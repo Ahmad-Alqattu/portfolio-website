@@ -1,7 +1,13 @@
 // Portfolio Data Context with Firestore integration and caching
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getAllSections, subscribeToSections } from '../firebase/firestore';
-import { PageSkeleton } from '../components/ui/SkeletonLoader';
+
+// Prerendered pages embed the build-time snapshot of the sections, so the
+// first render needs neither Firestore nor the cache. The Firestore SDK is
+// then loaded lazily, only to pick up edits published since that build.
+const initialData = typeof window !== 'undefined' && Array.isArray(window.__INITIAL_DATA__)
+  ? window.__INITIAL_DATA__
+  : null;
+const firestoreApi = () => import('../firebase/firestore');
 
 // Cache configuration
 const CACHE_KEY = 'portfolio_sections_cache';
@@ -19,8 +25,8 @@ export const useData = () => {
 };
 
 export const DataProvider = ({ children }) => {
-  const [sections, setSections] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [sections, setSections] = useState(() => initialData || []);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState(null);
   const [useFirestore, setUseFirestore] = useState(false);
   const [cleanupRef, setCleanupRef] = useState(null);
@@ -72,13 +78,35 @@ export const DataProvider = ({ children }) => {
     // the critical path before any content could even start loading.
     const userId = 'default-user';
     let cleanupListeners;
+    let cancelled = false;
 
-    loadPortfolioData(userId).then(() => {
-      cleanupListeners = setupRealtimeListeners(userId);
-      setCleanupRef(cleanupListeners);
-    });
+    const subscribe = async () => {
+      const cleanup = await setupRealtimeListeners(userId);
+      if (cancelled) cleanup();
+      else {
+        cleanupListeners = cleanup;
+        setCleanupRef(() => cleanup);
+      }
+    };
+
+    let idleId = null;
+    if (initialData) {
+      // The prerenderer itself (a headless browser) only needs the snapshot.
+      if (!navigator.webdriver) {
+        idleId = 'requestIdleCallback' in window
+          ? window.requestIdleCallback(subscribe, { timeout: 5000 })
+          : setTimeout(subscribe, 3000);
+      }
+    } else {
+      loadPortfolioData(userId).then(subscribe);
+    }
 
     return () => {
+      cancelled = true;
+      if (idleId !== null) {
+        if ('cancelIdleCallback' in window) window.cancelIdleCallback(idleId);
+        else clearTimeout(idleId);
+      }
       if (cleanupListeners) {
         cleanupListeners();
       }
@@ -114,6 +142,7 @@ export const DataProvider = ({ children }) => {
       
       // Load from Firestore
 
+      const { getAllSections } = await firestoreApi();
       const firestoreData = await getAllSections(finalUserId);
 
       if (firestoreData.length > 0) {
@@ -154,7 +183,8 @@ export const DataProvider = ({ children }) => {
     setLoading(false);
   }
 
-  function setupRealtimeListeners(userId = 'default-user') {
+  async function setupRealtimeListeners(userId = 'default-user') {
+    const { subscribeToSections } = await firestoreApi();
     // Subscribe to all sections
     const unsubscribe = subscribeToSections((updatedSections) => {
       if (updatedSections.length > 0) {

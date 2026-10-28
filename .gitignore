@@ -31,3 +31,9 @@ yarn-error.log*
 
 # Firebase deploy cache
 .firebase/
+
+# Build-time Firestore snapshot
+.content/
+
+# Firebase CLI logs
+*-debug.log

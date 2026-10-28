@@ -28,16 +28,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useActiveSection } from '../../contexts/ActiveSectionContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
-import { updateDocumentMeta, SITE_NAME } from '../../utils/documentMeta';
+import { updateDocumentMeta } from '../../utils/documentMeta';
+import { publicSections } from '../../seo/site';
+import NotFoundPage from '../layout/NotFoundPage';
 import LazyLoad from 'react-lazyload';
 import { motion } from 'framer-motion';
-const IntroSection = React.lazy(() => import('./IntroSection'));
-const SkillsSection = React.lazy(() => import('./SkillsSection'));
-const ProjectsSection = React.lazy(() => import('./ProjectsSection'));
-const CapabilitiesSection = React.lazy(() => import('./CapabilitiesSection'));
-const EducationSection = React.lazy(() => import('./EducationSection'));
-const ExperienceSection = React.lazy(() => import('./ExperienceSection'));
-const CertificatesSection = React.lazy(() => import('./CertificatesSection'));
+import { sectionComponent } from './sectionModules';
 import { EnhancedPageSkeleton } from '../ui/EnhancedPageSkeleton';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
@@ -367,10 +363,19 @@ const BackToTopButton = ({ show }) => {
 
 
 function MainComponent() {
+  // Real components when index.js preloaded them (prerendered page), so the
+  // first render matches the HTML instead of flashing a Suspense skeleton.
+  const IntroSection = sectionComponent('intro');
+  const SkillsSection = sectionComponent('skills');
+  const ProjectsSection = sectionComponent('projects');
+  const CapabilitiesSection = sectionComponent('capabilities');
+  const EducationSection = sectionComponent('education');
+  const ExperienceSection = sectionComponent('experience');
+  const CertificatesSection = sectionComponent('certificates');
   const { sections, loading, error } = useData();
   const { currentUser, isAdmin } = useAuth();
   const { activeSection, setActiveSection } = useActiveSection();
-  const { language, t } = useLanguage();
+  const { language, t, localizedPath } = useLanguage();
   const [showMobileBottomNav, setShowMobileBottomNav] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -463,32 +468,20 @@ function MainComponent() {
 
     const section = sections.find((s) => s.id === activeSection);
     if (!section) return;
+    // On an unknown /<section> (rendered as 404) leave the URL alone.
+    if (sectionId && !sections.some((s) => s.id === routeAliasToSectionId(sectionId))) return;
 
-    const syncPath = scrollSyncPathForSection(section);
+    const syncPath = localizedPath(scrollSyncPathForSection(section));
     if (location.pathname !== syncPath) {
       isUrlSyncFromScroll.current = true;
       navigate(syncPath, { replace: true, preventScrollReset: true });
     }
 
-    if (syncPath === '/') {
-      updateDocumentMeta({ path: '/' });
-      return;
-    }
-
-    const sectionTitle = localize(section.title, language);
-    const sectionContent = localize(section.content, language);
-    const description = sectionContent
-      ? sectionContent.length > 155
-        ? `${sectionContent.slice(0, 155).trim()}…`
-        : sectionContent
-      : `${sectionTitle} — part of ${SITE_NAME}'s software engineer portfolio.`;
-
-    updateDocumentMeta({
-      path: displayPathForSection(section),
-      title: `${sectionTitle} - ${SITE_NAME} | Software Engineer Portfolio`,
-      description,
-    });
-  }, [activeSection, sections, language, location.pathname, navigate]);
+    // Title, description, canonical, hreflang and OG tags come from the same
+    // builder the prerenderer uses, so the live page and the HTML crawlers
+    // get stay identical.
+    updateDocumentMeta(sections, localizedPath(displayPathForSection(section)));
+  }, [activeSection, sections, sectionId, language, location.pathname, navigate, localizedPath]);
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     
@@ -577,11 +570,13 @@ function MainComponent() {
     );
   }
 
-  // Filter out footerAndLinks from navigation (it will be rendered separately)
-  const filteredSections = sections.filter(section => section.type !== 'footerAndLinks');
-  
-  // Sort sections by order
-  const sortedSections = filteredSections.sort((a, b) => (a.order || 999) - (b.order || 999));
+  // Same filter the prerenderer, sitemap and llms.txt use.
+  const sortedSections = publicSections(sections);
+
+  // An unknown /<section> is a real 404, not a copy of the homepage.
+  if (sectionId && sortedSections.length && !sortedSections.some((s) => s.id === routeAliasToSectionId(sectionId))) {
+    return <NotFoundPage />;
+  }
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -711,7 +706,7 @@ function MainComponent() {
                       <ListItem
                         key={section.id} 
                         onClick={() => {
-                          navigate(displayPathForSection(section));
+                          navigate(localizedPath(displayPathForSection(section)));
                           setMobileMenuOpen(false);
                         }}
                         sx={{
@@ -838,7 +833,7 @@ function MainComponent() {
           zIndex: 1000 
         }}>
           <a
-            href="/edit"
+            href="/admin"
             target="_blank"
             style={{
               display: 'inline-flex',

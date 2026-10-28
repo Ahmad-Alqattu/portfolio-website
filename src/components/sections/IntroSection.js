@@ -3,6 +3,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { HiOutlineDownload } from 'react-icons/hi';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
+import { imageProps } from '../../utils/images';
 
 const containerVariants = {
   hidden: {},
@@ -119,7 +120,8 @@ function IntroSection({ id, name, title, content, data }) {
               <TiltPhoto>
                 <div className="relative min-h-[300px] overflow-hidden rounded-3xl shadow-[0_20px_44px_rgba(20,60,30,0.14)] md:min-h-[400px] dark:shadow-[0_20px_44px_rgba(0,0,0,0.45)]">
                   <img
-                    src={image}
+                    {...imageProps(image, '(min-width: 768px) 40vw, 90vw')}
+                    fetchPriority="high"
                     alt={localizedName || 'Profile picture'}
                     className="size-full min-h-[300px] object-cover object-[center_22%] md:min-h-[400px]"
                   />

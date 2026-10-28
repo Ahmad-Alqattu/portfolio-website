@@ -6,6 +6,7 @@ import SectionHeading from '../ui/SectionHeading';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
 import localizedText from '../../utils/localizedText';
+import { imageProps } from '../../utils/images';
 
 const CertificatesSection = ({ id, title, content, data }) => {
   const { language, t } = useLanguage();
@@ -51,7 +52,7 @@ const CertificatesSection = ({ id, title, content, data }) => {
                 // content out and makes every card crop differently.
                 <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-black/[0.04] p-4 dark:bg-white/[0.04]">
                   <img
-                    src={certificate.image.startsWith('http') ? certificate.image : `/${certificate.image}`}
+                    {...imageProps(certificate.image, '(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 95vw')}
                     alt={`${localize(certificate.name, language)} certificate`}
                     loading="lazy"
                     decoding="async"

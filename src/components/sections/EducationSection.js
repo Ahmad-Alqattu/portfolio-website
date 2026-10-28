@@ -6,6 +6,7 @@ import SectionHeading from '../ui/SectionHeading';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
 import localizedText from '../../utils/localizedText';
+import { imageProps } from '../../utils/images';
 
 function EducationSection({ id, title, content, educationList = [] }) {
   // Use educationList as the primary data source
@@ -38,7 +39,9 @@ function EducationSection({ id, title, content, educationList = [] }) {
               <div className="flex items-start gap-5">
                 {education.logo && (
                   <img
-                    src={education.logo}
+                    {...imageProps(education.logo, '56px')}
+                    loading="lazy"
+                    decoding="async"
                     alt={`${localize(education.institution, language)} logo`}
                     className="size-14 shrink-0 rounded-xl object-contain"
                   />
