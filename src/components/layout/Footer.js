@@ -9,6 +9,12 @@ import { useData } from '../../contexts/DataContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
 
+// The brand green (#4caf50) is too light for text on white (2.8:1); a darker
+// green passes WCAG AA. Dark mode keeps its own lighter green.
+const accent = (theme) => (theme.palette.mode === 'dark' ? theme.palette.primary.main : '#2e7d32');
+// Inline text links grow to a 24px tap target.
+const tapTarget = { display: 'inline-block', py: 0.5 };
+
 const Footer = ({ data = null }) => {
   const { sections } = useData();
   const { language, t, isRTL } = useLanguage();
@@ -104,7 +110,7 @@ const Footer = ({ data = null }) => {
             top: -20,
             left: '50%',
             transform: 'translateX(-50%)',
-            bgcolor: 'primary.main',
+            bgcolor: accent,
             color: 'white',
             '&:hover': { bgcolor: 'darkprimary.main' },
             width: 40,
@@ -119,12 +125,12 @@ const Footer = ({ data = null }) => {
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <Grid container spacing={0}>
           <Grid size={{ md: 4 }}>
-            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: accent, mb: 0 }}>
               {t('footer.contactInfo')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {contactInfo?.phone || '+970 0598-682-679'}<br />
-              <Link href={`mailto:${contactInfo?.email || 'ahmadl.qatu@gmail.com'}`} color="primary.main" underline="hover">
+              <Link href={`mailto:${contactInfo?.email || 'ahmadl.qatu@gmail.com'}`} sx={{ color: accent, ...tapTarget }} underline="hover">
                 {contactInfo?.email || 'ahmadl.qatu@gmail.com'}
               </Link><br />
               {localize(contactInfo?.location, language) || 'Ramallah, Palestine'}
@@ -132,7 +138,7 @@ const Footer = ({ data = null }) => {
           </Grid>
 
           <Grid size={{ md: 4 }} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: accent, mb: 2 }}>
               {localize(welcomeMessage.title, language)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -141,7 +147,7 @@ const Footer = ({ data = null }) => {
           </Grid>
 
           <Grid size={{ md: 4 }} sx={{ textAlign: isRTL ? 'left' : 'right' }}>
-            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mr: isRTL ? 0 : 4.5, ml: isRTL ? 4.5 : 0 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: accent, mr: isRTL ? 0 : 4.5, ml: isRTL ? 4.5 : 0 }}>
               {t('footer.socialLinks')}
             </Typography>
             {socialLinks?.enabled !== false && (
@@ -169,7 +175,7 @@ const Footer = ({ data = null }) => {
               </Box>
             )}
             {cvLink && (
-              <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: isRTL ? 0 : 5.5, ml: isRTL ? 5.5 : 0 }} href={cvLink} color="primary.main" >
+              <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: isRTL ? 0 : 5.5, ml: isRTL ? 5.5 : 0 }} href={cvLink}>
                 {t('footer.downloadCV')}
               </Link>
             )}
@@ -180,7 +186,7 @@ const Footer = ({ data = null }) => {
       {/* Mobile Layout */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 4, alignItems: 'center' }}>
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: accent, mb: 2 }}>
             {localize(welcomeMessage.title, language)}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -189,14 +195,14 @@ const Footer = ({ data = null }) => {
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: accent, mb: 2 }}>
             {t('footer.contactInfo')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            <Link href={`tel:${(contactInfo.phone || '').replace(/[^+\d]/g, '')}`} color="inherit" underline="hover" dir="ltr">
+            <Link href={`tel:${(contactInfo.phone || '').replace(/[^+\d]/g, '')}`} color="inherit" underline="hover" dir="ltr" sx={tapTarget}>
               {contactInfo.phone}
             </Link><br />
-            <Link href={`mailto:${contactInfo.email}`} color="primary.main" underline="hover">
+            <Link href={`mailto:${contactInfo.email}`} sx={{ color: accent, ...tapTarget }} underline="hover">
               {contactInfo.email}
             </Link><br />
             {localize(contactInfo.location, language)}
@@ -204,35 +210,35 @@ const Footer = ({ data = null }) => {
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: accent, mb: 2 }}>
             {t('footer.socialLinks')}
           </Typography>
           {socialLinks?.enabled !== false && (
             <Box sx={{ mb: 1 }}>
               {socialLinks?.githubEnabled !== false && socialLinks.github && (
-                <IconButton href={socialLinks.github} target="_blank" aria-label="GitHub" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.github} target="_blank" aria-label="GitHub" sx={{ color: accent }}>
                   <GitHubIcon />
                 </IconButton>
               )}
               {socialLinks?.linkedinEnabled !== false && socialLinks.linkedin && (
-                <IconButton href={socialLinks.linkedin} target="_blank" aria-label="LinkedIn" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.linkedin} target="_blank" aria-label="LinkedIn" sx={{ color: accent }}>
                   <LinkedInIcon />
                 </IconButton>
               )}
               {socialLinks?.facebookEnabled !== false && socialLinks.facebook && (
-                <IconButton href={socialLinks.facebook} target="_blank" aria-label="Facebook" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.facebook} target="_blank" aria-label="Facebook" sx={{ color: accent }}>
                   <FacebookIcon />
                 </IconButton>
               )}
               {socialLinks?.emailEnabled !== false && socialLinks.email && (
-                <IconButton href={socialLinks.email} aria-label="Email" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.email} aria-label="Email" sx={{ color: accent }}>
                   <EmailIcon />
                 </IconButton>
               )}
             </Box>
           )}
           {cvLink && (
-            <Link href={cvLink} color="primary.main" underline="hover">
+            <Link href={cvLink} sx={{ color: accent }} underline="hover">
               {t('footer.downloadCV')}
             </Link>
           )}

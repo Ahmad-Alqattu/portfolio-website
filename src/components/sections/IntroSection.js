@@ -139,12 +139,13 @@ function IntroSection({ id, name, title, content, data }) {
           {/* Bio — plain prose. A card around a single paragraph adds a border,
               a shadow and a background without adding any meaning. */}
           {localizedContent && (
-            <motion.p
-              variants={itemVariants}
+            // Not animated: it is the largest element on a phone, and fading it
+            // in held back Largest Contentful Paint by about two seconds.
+            <p
               className="max-w-[60ch] leading-[1.75] text-ink-muted md:col-span-7 md:col-start-1 md:row-start-2 md:text-lg"
             >
               {localizedContent}
-            </motion.p>
+            </p>
           )}
 
           {/* Resume download — a small action, so a button, not a panel */}

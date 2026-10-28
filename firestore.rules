@@ -1,0 +1,14 @@
+rules_version = '2';
+// Public read for the portfolio; only the owner's account may write.
+// The admin email check in Login.js is client-side only, so this is the real gate.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'MD9lkeUr2rf2fOjWtn0ICVtnLSF3';
+    }
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+  }
+}

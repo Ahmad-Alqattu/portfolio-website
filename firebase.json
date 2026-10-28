@@ -139,5 +139,14 @@
         "destination": "/app.html"
       }
     ]
-  }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": [
+    {
+      "bucket": "portfolio-8b0ca.firebasestorage.app",
+      "rules": "storage.rules"
+    }
+  ]
 }
