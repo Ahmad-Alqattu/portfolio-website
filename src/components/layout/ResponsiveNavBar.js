@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   AppBar,
   Box,
@@ -28,7 +28,10 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const condensed = useScrollTrigger({ disableHysteresis: true, threshold: 40 });
-  const [progress, setProgress] = useState(0);
+  // Written straight to the bar's style: as React state it re-rendered the
+  // whole nav bar on every scroll frame, and each new width made emotion
+  // generate and inject a new CSS class.
+  const progressBar = useRef(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { activeSection } = useActiveSection();
   const { sections } = useData();
@@ -52,7 +55,12 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
       frame = null;
       const doc = document.documentElement;
       const max = doc.scrollHeight - doc.clientHeight;
-      setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      const bar = progressBar.current;
+      if (bar) {
+        bar.style.transform = `scaleX(${progress})`;
+        bar.style.opacity = progress > 0.005 ? '0.75' : '0';
+      }
     };
     const onScroll = () => {
       if (frame === null) frame = requestAnimationFrame(update);
@@ -305,15 +313,19 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
 
           {/* Reading progress for the single-page layout */}
           <Box
+            ref={progressBar}
             aria-hidden
             sx={{
               position: 'absolute',
               left: 0,
               bottom: 0,
               height: '2px',
-              width: `${progress * 100}%`,
+              width: '100%',
+              transform: 'scaleX(0)',
+              transformOrigin: 'left',
+              '[dir="rtl"] &': { transformOrigin: 'right' },
               backgroundColor: theme.palette.primary.main,
-              opacity: progress > 0.005 ? 0.75 : 0,
+              opacity: 0,
               transition: 'opacity 0.3s ease',
               pointerEvents: 'none',
             }}

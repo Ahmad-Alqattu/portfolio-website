@@ -14,7 +14,9 @@ const loaders = {
   certificates: () => import('./CertificatesSection'),
 };
 
-const lazy = Object.fromEntries(Object.entries(loaders).map(([type, load]) => [type, React.lazy(load)]));
+// memo: the page re-renders whenever the active section or the URL changes
+// while scrolling; the sections' props don't change then, so they skip it.
+const lazy = Object.fromEntries(Object.entries(loaders).map(([type, load]) => [type, React.memo(React.lazy(load))]));
 const loaded = {};
 
 export function preloadSections(types = Object.keys(loaders)) {
@@ -22,7 +24,7 @@ export function preloadSections(types = Object.keys(loaders)) {
     types
       .filter((type) => loaders[type])
       .map((type) => loaders[type]().then((m) => {
-        loaded[type] = m.default;
+        loaded[type] = loaded[type] || React.memo(m.default);
       }))
   );
 }

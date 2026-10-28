@@ -31,7 +31,6 @@ import { localize } from '../../utils/localize';
 import { updateDocumentMeta } from '../../utils/documentMeta';
 import { publicSections } from '../../seo/site';
 import NotFoundPage from '../layout/NotFoundPage';
-import LazyLoad from 'react-lazyload';
 import { motion } from 'framer-motion';
 import { sectionComponent } from './sectionModules';
 import { EnhancedPageSkeleton } from '../ui/EnhancedPageSkeleton';
@@ -277,28 +276,7 @@ const BackToTopButton = ({ show }) => {
   const { t } = useLanguage();
 
   const scrollToTop = () => {
-    // Use custom smooth scroll with 1.5s duration
-    const startPosition = window.pageYOffset;
-    const startTime = performance.now();
-    const duration = 1500; // 1.5 seconds
-    
-    const easeInOutCubic = (t) => {
-      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-    };
-    
-    const animateScroll = (currentTime) => {
-      const timeElapsed = currentTime - startTime;
-      const progress = Math.min(timeElapsed / duration, 1);
-      const easedProgress = easeInOutCubic(progress);
-      
-      window.scrollTo(0, startPosition * (1 - easedProgress));
-      
-      if (progress < 1) {
-        requestAnimationFrame(animateScroll);
-      }
-    };
-    
-    requestAnimationFrame(animateScroll);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -378,8 +356,6 @@ function MainComponent() {
   const { language, t, localizedPath } = useLanguage();
   const [showMobileBottomNav, setShowMobileBottomNav] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [navTimeout, setNavTimeout] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -448,6 +424,9 @@ function MainComponent() {
   const scrolledForSection = useRef(null);
   useEffect(() => {
     if (!sectionId) {
+      // A scroll-sync to "/" consumes the flag too; left set, it would make
+      // the next nav click look like a scroll-sync and be ignored.
+      isUrlSyncFromScroll.current = false;
       scrolledForSection.current = null;
       return;
     }
@@ -492,79 +471,68 @@ function MainComponent() {
     // get stay identical.
     updateDocumentMeta(sections, localizedPath(displayPathForSection(section)));
   }, [activeSection, sections, sectionId, language, location.pathname, navigate, localizedPath]);
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-    
-    // Handle mobile bottom navigation visibility
-    if (isMobile) {
-      if (currentScrollY > 100) { // Show after scrolling 100px
-        setShowMobileBottomNav(true);
-        
-        // Clear existing timeout
-        if (navTimeout) {
-          clearTimeout(navTimeout);
-        }
-        
-        // Set new timeout to hide after 3 seconds of no scrolling
-        const newTimeout = setTimeout(() => {
+  // Scroll tracking runs at most once per frame and only touches React state
+  // when a value actually changes. Setting state on every scroll event (as a
+  // new hide-timer did) re-rendered every section on each event, which made
+  // scrolling and nav jumps stutter on phones.
+  const scrollState = useRef({ sections, activeSection, isMobile });
+  useEffect(() => {
+    scrollState.current = { sections, activeSection, isMobile };
+  }, [sections, activeSection, isMobile]);
+  const bottomNavTimer = useRef(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const { sections: list, activeSection: current, isMobile: mobile } = scrollState.current;
+      const currentScrollY = window.scrollY;
+
+      // Mobile bottom navigation: shown while scrolling past the top, hidden
+      // after 3 s without scrolling.
+      if (mobile) {
+        clearTimeout(bottomNavTimer.current);
+        if (currentScrollY > 100) {
+          setShowMobileBottomNav(true);
+          bottomNavTimer.current = setTimeout(() => setShowMobileBottomNav(false), 3000);
+        } else {
           setShowMobileBottomNav(false);
-          }, 3000);
-          setNavTimeout(newTimeout);
-      } else {
-        // Near top - hide navigation
-        setShowMobileBottomNav(false);
-        if (navTimeout) {
-          clearTimeout(navTimeout);
-          setNavTimeout(null);
         }
       }
-      setLastScrollY(currentScrollY);
-    }
-    
-    // Active section = whichever section's bounds currently contain a fixed
-    // "you are here" line near the top of the viewport. Unlike comparing
-    // section centers, this stays correct no matter how tall a section is —
-    // a long section stays active for its entire scroll, not just near its
-    // midpoint.
-    const triggerLine = 140;
-    let newActiveSection = null;
 
-    for (let section of sections) {
-      const element = document.getElementById(section.id);
-      if (element) {
+      // Active section = whichever section's bounds currently contain a fixed
+      // "you are here" line near the top of the viewport. Unlike comparing
+      // section centers, this stays correct no matter how tall a section is.
+      const triggerLine = 140;
+      let next = null;
+      for (const section of list) {
+        const element = document.getElementById(section.id);
+        if (!element) continue;
         const rect = element.getBoundingClientRect();
         if (rect.top <= triggerLine && rect.bottom > triggerLine) {
-          newActiveSection = section.id;
+          next = section.id;
           break;
         }
       }
-    }
-
-    if (!newActiveSection) {
-      const scrolledToBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-      if (scrolledToBottom && sections.length > 0) {
-        newActiveSection = sections[sections.length - 1].id;
+      if (!next && list.length > 0) {
+        const scrolledToBottom =
+          window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+        if (scrolledToBottom) next = list[list.length - 1].id;
       }
-    }
+      if (next && next !== current) setActiveSection(next);
 
-    if (newActiveSection && newActiveSection !== activeSection) {
-      setActiveSection(newActiveSection);
-    }
-
-    setShowBackToTop(currentScrollY > 400);
-  }, [sections, activeSection, isMobile, lastScrollY, navTimeout]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      // Clean up timeout on unmount
-      if (navTimeout) {
-        clearTimeout(navTimeout);
-      }
+      setShowBackToTop(currentScrollY > 400);
     };
-  }, [handleScroll, navTimeout]);
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(frame);
+      clearTimeout(bottomNavTimer.current);
+    };
+  }, [setActiveSection]);
 
   // Show loading state
   if (loading) {
@@ -588,32 +556,13 @@ function MainComponent() {
     return <NotFoundPage />;
   }
 
+  // Native smooth scrolling: the browser runs it off the main thread and the
+  // reader can stop it by scrolling, unlike a 1.5 s scripted animation that
+  // keeps pulling the page while they try to scroll.
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const targetPosition = element.offsetTop - 100; // Offset for navbar
-      const startPosition = window.pageYOffset;
-      const distance = targetPosition - startPosition;
-      const startTime = performance.now();
-      const duration = 1500; // 1.5 seconds
-      
-      const easeInOutCubic = (t) => {
-        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-      };
-      
-      const animateScroll = (currentTime) => {
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const easedProgress = easeInOutCubic(progress);
-        
-        window.scrollTo(0, startPosition + distance * easedProgress);
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        }
-      };
-      
-      requestAnimationFrame(animateScroll);
+      window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
     }
   };
 

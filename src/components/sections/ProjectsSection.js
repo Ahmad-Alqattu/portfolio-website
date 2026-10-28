@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import LazyLoad from 'react-lazyload';
 import { FiGithub, FiArrowUpRight, FiX, FiChevronLeft, FiChevronRight, FiPlay } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import SectionHeading from '../ui/SectionHeading';
@@ -193,7 +192,10 @@ function ProjectsSection({ id, title, content, projects }) {
           const hasVideo = project.videos && project.videos.length > 0;
 
           return (
-            <LazyLoad key={project.id} height={340} offset={100} once>
+            // No scroll-driven lazy wrapper: the cards are already in the
+            // prerendered HTML and their images load lazily on their own, while
+            // react-lazyload walked the DOM for every card on every scroll event.
+            <React.Fragment key={project.id}>
               <div
                 className="group relative isolate aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[28px] bg-neutral-900 shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out motion-safe:hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand/20 hover:ring-brand/60 sm:aspect-[4/4.5]"
                 onClick={() => handleOpenModal(project)}
@@ -285,7 +287,7 @@ function ProjectsSection({ id, title, content, projects }) {
                   </div>
                 </div>
               </div>
-            </LazyLoad>
+            </React.Fragment>
           );
         })}
       </div>

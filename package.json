@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "start": "vite",
     "lint": "eslint .",
+    "deploy": "npm run build && node scripts/check-site.mjs && npx -y firebase-tools@14 deploy --only hosting",
     "build:spa": "vite build",
     "content": "node scripts/fetch-content.mjs"
   },
@@ -23,7 +24,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.7.0",
-    "react-lazyload": "^3.2.1",
     "react-router-dom": "^6.23.1",
     "uuid": "^11.1.0"
   },

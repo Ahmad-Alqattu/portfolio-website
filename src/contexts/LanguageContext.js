@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import en from '../locales/en.json';
 import ar from '../locales/ar.json';
@@ -55,24 +55,29 @@ export const LanguageProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const setLanguage = useCallback(
-    (code) => {
-      try {
-        localStorage.setItem(STORAGE_KEY, code);
-      } catch {
-        // Private mode: the URL still carries the choice.
-      }
-      setAppLanguage(code);
-      if (publicRoute) {
-        navigate(`${withLang(location.pathname, code)}${location.search}${location.hash}`, { replace: true, preventScrollReset: true });
-      }
-    },
-    [publicRoute, location.pathname, location.search, location.hash, navigate]
-  );
+  // Read through a ref so setLanguage (and the context value) stays the same
+  // object while only the URL changes.
+  const routeRef = useRef({ location, navigate, publicRoute });
+  useEffect(() => {
+    routeRef.current = { location, navigate, publicRoute };
+  }, [location, navigate, publicRoute]);
 
-  const toggleLanguage = () => setLanguage(language === 'en' ? 'ar' : 'en');
+  const setLanguage = useCallback((code) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, code);
+    } catch {
+      // Private mode: the URL still carries the choice.
+    }
+    setAppLanguage(code);
+    const { location: loc, navigate: go, publicRoute: onPublicRoute } = routeRef.current;
+    if (onPublicRoute) {
+      go(`${withLang(loc.pathname, code)}${loc.search}${loc.hash}`, { replace: true, preventScrollReset: true });
+    }
+  }, []);
 
-  const t = (key, vars) => {
+  const toggleLanguage = useCallback(() => setLanguage(language === 'en' ? 'ar' : 'en'), [language, setLanguage]);
+
+  const t = useCallback((key, vars) => {
     const value = resolveKey(translations[language], key) ?? resolveKey(translations.en, key) ?? key;
     if (typeof value === 'string' && vars) {
       return Object.keys(vars).reduce(
@@ -81,12 +86,18 @@ export const LanguageProvider = ({ children }) => {
       );
     }
     return value;
-  };
+  }, [language]);
 
   // Turns a language-less path ("/projects") into this language's URL.
   const localizedPath = useCallback((path) => withLang(path, language), [language]);
 
-  const value = { language, setLanguage, toggleLanguage, isRTL, t, localizedPath };
+  // Stable while the language stays the same: the provider re-renders on every
+  // URL change (scroll-sync updates the URL), and a new value object would
+  // re-render every section that reads the language.
+  const value = useMemo(
+    () => ({ language, setLanguage, toggleLanguage, isRTL, t, localizedPath }),
+    [language, setLanguage, toggleLanguage, isRTL, t, localizedPath]
+  );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };

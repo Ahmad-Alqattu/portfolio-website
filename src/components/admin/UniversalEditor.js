@@ -11,8 +11,7 @@ import FileUpload from './FileUpload';
 import SectionOrderManager from './SectionOrderManager';
 import StorageBrowser from './StorageBrowser';
 import { translateObjectDeep } from '../../utils/autoTranslate';
-import { Languages, Rocket } from 'lucide-react';
-import { publishSite } from '../../firebase/publish';
+import { Languages } from 'lucide-react';
 import { localize } from '../../utils/localize';
 
 // Bilingual field helpers: a text field may be a plain string (English-only,
@@ -412,20 +411,7 @@ const UniversalEditor = () => {
     setSaving(false);
   };
 
-  // Rebuild the prerendered site (what search engines and AI agents read)
-  // from the content saved so far. Visitors already see saved edits live.
-  const [publishing, setPublishing] = useState(false);
-  const handlePublish = async () => {
-    setPublishing(true);
-    try {
-      const { actionsUrl } = await publishSite();
-      setMessage(`🚀 Publishing started — the site updates in about 3–5 minutes. Progress: ${actionsUrl}`);
-    } catch (error) {
-      setMessage('❌ Publish failed: ' + (error.message || error.code));
-    } finally {
-      setPublishing(false);
-    }
-  };
+
 
   const handleBackupData = () => {
     try {
@@ -610,15 +596,6 @@ const UniversalEditor = () => {
                   {translating ? 'Translating...' : `Auto-translate to ${editLanguage === 'ar' ? 'Arabic' : 'English'}`}
                 </button>
               )}
-              <button
-                onClick={handlePublish}
-                disabled={publishing}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 w-full md:w-auto"
-                title="Rebuild the public site from saved content so search engines and AI agents see your latest edits"
-              >
-                <Rocket size={16} />
-                {publishing ? 'Publishing…' : 'Publish site'}
-              </button>
               <button
                 onClick={handleBackupData}
                 className="flex items-center gap-2 px-4 py-2 text-green-600 border border-green-300 rounded-lg hover:bg-green-50 w-full md:w-auto"

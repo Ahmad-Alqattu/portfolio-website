@@ -173,24 +173,15 @@ from `.env`) and writes, into `build/`:
 ### Publishing content changes
 Saved edits show to visitors immediately (the page refreshes from Firestore
 after it loads). The prerendered HTML that search engines and AI agents read
-is refreshed by **Publish site** in the admin panel, which calls the
-`publishSite` Cloud Function → GitHub Actions (`.github/workflows/deploy.yml`)
-→ build, check, deploy to Firebase Hosting. Pushes to `master` deploy the
-same way.
+is rebuilt from the saved content by a deploy:
 
-One-time setup:
-1. GitHub → Settings → Secrets and variables → Actions:
-   - variables: the `VITE_FIREBASE_*` values from `.env`
-   - secret `FIREBASE_SERVICE_ACCOUNT`: JSON key of a service account with
-     the *Firebase Hosting Admin* role
-2. A fine-grained GitHub token for this repository with *Contents: read and
-   write*, stored for the function: `firebase functions:secrets:set GITHUB_DISPATCH_TOKEN`
-3. `firebase deploy --only functions`
-
-### Manual deploy
 ```bash
-npm run build && firebase deploy --only hosting
+npm run deploy   # fetch content, build, prerender, check, firebase deploy --only hosting
 ```
+
+Pushes to `master` run the same build and checks in GitHub Actions
+(`.github/workflows/deploy.yml`); they also deploy once the repository has the
+`VITE_FIREBASE_*` variables and the `FIREBASE_SERVICE_ACCOUNT` secret.
 
 ## 📄 License
 
