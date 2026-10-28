@@ -126,7 +126,7 @@ function IntroSection({ id, name, title, content, data }) {
                     className="size-full object-cover object-[center_22%]"
                   />
                   {showAvailable && (
-                    <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-1 backdrop-blur-sm dark:bg-black/75">
+                    <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-1 backdrop-blur-sm dark:bg-black/75">
                       <span aria-hidden className="size-1.5 rounded-full bg-brand" />
                       <span className="text-[0.7rem] font-bold text-brand">{t('intro.available')}</span>
                     </span>

@@ -25,7 +25,7 @@ const section = (type) => {
 
 // --- intro -------------------------------------------------------------------------
 
-// New profile photo (grey suit), served from public/.
+// New profile photo (Al-Ameen Technologies booth, suit), served from public/.
 const intro = section('intro');
 intro.data.image = 'profile/ahmad.webp';
 
