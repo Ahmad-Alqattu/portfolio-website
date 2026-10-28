@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-28T17:34:58.044Z",
+  "timestamp": "2026-10-28T22:00:01.065Z",
   "sections": [
     {
       "id": "projects",
@@ -15,7 +15,10 @@
             "images": [
               "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965698-Picture2.png?alt=media&token=e10c9660-d31c-434d-93c4-3a4d6c3df015",
               "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965694-Picture3.png?alt=media&token=cbcfb314-1397-41a8-a821-8a7153e6b2dd",
-              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965700-Picture1.png?alt=media&token=fa7a7127-ba8a-4e7a-aa44-1205c3d9d2f9"
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965700-Picture1.png?alt=media&token=fa7a7127-ba8a-4e7a-aa44-1205c3d9d2f9",
+              "projects/water/01.webp",
+              "projects/water/02.webp",
+              "projects/water/03.webp"
             ],
             "fullDescription": {
               "en": "I design and build a modular enterprise platform for public-sector water operations. Each domain — laboratories (LIMS), water resources, supply and distribution, wastewater treatment, GIS, licensing, billing and notifications — is its own module behind a shared gateway with single sign-on and two-factor authentication. The modules share platform services: configurable services and forms, workflow-driven processing, document generation, audit trails and outbox-based integrations.\n\nStack: .NET 10 with .NET Aspire and a YARP gateway, ASP.NET Core, Entity Framework Core, PostgreSQL/PostGIS, React 19 and TypeScript, MapLibre GL JS, Docker.\n\nField app: an offline-first React Native (Expo) companion for staff on site — sampling, meter reading, surveys and damage assessment. It saves records on the device and syncs them when the connection returns.\n\nFocus: shared platform capabilities, secure workflows and data integrity, so a new domain is added as a module instead of a separate system.",

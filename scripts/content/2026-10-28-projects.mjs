@@ -36,6 +36,13 @@ water.fullDescription = {
   ar: 'أصمّم وأبني منصة مؤسسية معيارية لعمليات قطاع المياه في الجهات العامة. كل مجال — المختبرات LIMS، وموارد المياه، والتزويد والتوزيع، ومحطات معالجة الصرف الصحي، وGIS، والترخيص، والرسوم، والإشعارات — وحدة مستقلة خلف بوابة مشتركة بدخول موحّد وتحقق بخطوتين، وتتشارك الوحدات خدمات المنصة: الخدمات والنماذج الديناميكية، ومسارات العمل، وتوليد الوثائق، وسجل التدقيق، والتكاملات المبنية على Outbox.\n\nالتقنيات: ‎.NET 10 مع ‎.NET Aspire وبوابة YARP، وASP.NET Core، وEntity Framework Core، وPostgreSQL/PostGIS، وReact 19 وTypeScript، وMapLibre GL JS، وDocker.\n\nالتطبيق الميداني: تطبيق React Native (Expo) يعمل بدون إنترنت أولًا لموظفي الميدان — أخذ العينات، وقراءة العدادات، والمسوحات، وتقييم الأضرار — يحفظ على الجهاز ويزامن عند عودة الاتصال.\n\nالتركيز الأساسي: قدرات مشتركة قابلة لإعادة الاستخدام، ومسارات عمل آمنة، وسلامة البيانات، ووحدات تتكامل بوضوح مع نمو المنصة.',
 };
 
+water.images = [
+  ...(water.images || []),
+  'projects/water/01.webp', // licensing: service catalog
+  'projects/water/02.webp', // service builder
+  'projects/water/03.webp', // service builder: location fields
+];
+
 const emun = byName('E-Municipality Platform');
 const emunWeb = byName('eMunicipality');
 emun.name = { en: 'E-Municipality Platform', ar: 'منصة البلديات الإلكترونية' };
