@@ -1,0 +1,426 @@
+{
+  "timestamp": "2026-10-28T17:34:58.044Z",
+  "sections": [
+    {
+      "id": "projects",
+      "type": "projects",
+      "userId": "default-user",
+      "order": 4,
+      "data": {
+        "projects": [
+          {
+            "link": [],
+            "active": true,
+            "order": 1,
+            "images": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965698-Picture2.png?alt=media&token=e10c9660-d31c-434d-93c4-3a4d6c3df015",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965694-Picture3.png?alt=media&token=cbcfb314-1397-41a8-a821-8a7153e6b2dd",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965700-Picture1.png?alt=media&token=fa7a7127-ba8a-4e7a-aa44-1205c3d9d2f9"
+            ],
+            "fullDescription": {
+              "en": "I design and build a modular enterprise platform for public-sector water operations. Each domain — laboratories (LIMS), water resources, supply and distribution, wastewater treatment, GIS, licensing, billing and notifications — is its own module behind a shared gateway with single sign-on and two-factor authentication. The modules share platform services: configurable services and forms, workflow-driven processing, document generation, audit trails and outbox-based integrations.\n\nStack: .NET 10 with .NET Aspire and a YARP gateway, ASP.NET Core, Entity Framework Core, PostgreSQL/PostGIS, React 19 and TypeScript, MapLibre GL JS, Docker.\n\nField app: an offline-first React Native (Expo) companion for staff on site — sampling, meter reading, surveys and damage assessment. It saves records on the device and syncs them when the connection returns.\n\nFocus: shared platform capabilities, secure workflows and data integrity, so a new domain is added as a module instead of a separate system.",
+              "ar": "أصمّم وأبني منصة مؤسسية مكوّنة من وحدات لعمليات قطاع المياه في الجهات العامة. لكل مجال وحدة مستقلة — المختبرات (LIMS)، وموارد المياه، والتزويد والتوزيع، ومعالجة مياه الصرف الصحي، ونظم المعلومات الجغرافية (GIS)، والترخيص، والفوترة، والإشعارات — خلف بوابة واحدة تدعم تسجيل الدخول الموحّد والتحقق بخطوتين. وتتشارك الوحدات خدمات المنصة: خدمات ونماذج قابلة للضبط، ومعالجة قائمة على مسارات العمل، وتوليد الوثائق، وسجل التدقيق، وتكاملات مبنية على نمط Outbox.\n\nالتقنيات: ‎.NET 10 مع ‎.NET Aspire وبوابة YARP، وASP.NET Core، وEntity Framework Core، وPostgreSQL/PostGIS، وReact 19 وTypeScript، وMapLibre GL JS، وDocker.\n\nالتطبيق الميداني: تطبيق مصاحب مبني بـReact Native (Expo) يعمل دون اتصال لموظفي الميدان — أخذ العينات، وقراءة العدادات، والمسوحات، وتقييم الأضرار. يحفظ السجلات على الجهاز ويزامنها عند عودة الاتصال.\n\nالتركيز: قدرات مشتركة للمنصة، ومسارات عمل آمنة، وسلامة البيانات، بحيث يُضاف أي مجال جديد كوحدة لا كنظام منفصل."
+            },
+            "id": 1787040000000,
+            "name": {
+              "ar": "منصة مؤسسية لإدارة قطاع المياه",
+              "en": "Enterprise Water Management Platform"
+            },
+            "videos": [],
+            "description": {
+              "en": "A modular national platform for water-sector operations: labs, water resources, distribution, wastewater, GIS and licensing behind one gateway, with an offline field app.",
+              "ar": "منصة وطنية مكوّنة من وحدات لقطاع المياه: المختبرات وموارد المياه والتوزيع والصرف الصحي ونظم المعلومات الجغرافية والترخيص خلف بوابة واحدة، مع تطبيق ميداني يعمل دون اتصال."
+            }
+          },
+          {
+            "id": 1787040000001,
+            "active": true,
+            "name": {
+              "en": "Mowazze — Van-Sales Distribution SaaS",
+              "ar": "موزّع — منصة البيع المتنقل للموزّعين"
+            },
+            "description": {
+              "en": "A van-sales SaaS for distributors: sell, collect and close out the day offline on a phone, while the owner reviews each van’s sales and cash on the web.",
+              "ar": "منصة سحابية بالاشتراك للموزّعين: البيع والتحصيل وإقفال اليوم من هاتف يعمل دون اتصال، ويراجع صاحب المؤسسة مبيعات كل مركبة ونقدها عبر الويب."
+            },
+            "fullDescription": {
+              "en": "Designed and built a van-sales product for independent distributors and distribution companies. On the phone, a distributor loads stock, sells in cash or on credit, collects payments, records returns and expenses, and closes out the day with a cash count that shows the difference from what the system expects. On the web, the owner manages the warehouse, loads each van and reviews every distributor’s sales, collections and closing differences.\n\nArchitecture: a .NET 10 modular monolith with Entity Framework Core and PostgreSQL. Each organization is isolated by row-level security, and the application connects with a database role that cannot bypass it. Balances and stock are never edited by hand — they are computed from ledgers of movements. The mobile app (React Native, Expo) works fully offline: every record gets a device-generated UUIDv7 ID and each van has its own invoice numbering, so re-syncing never creates duplicates and two offline vans never issue the same invoice number. The owner web app uses React, Vite and Tailwind, with a TypeScript contract shared by the mobile and web apps.\n\nAlso: subscription plans with a free trial, an in-app Arabic guide with an AI assistant that answers based on it, Excel/PDF reports, and a Google Play release.",
+              "ar": "صمّمت وبنيت منتجًا للبيع المتنقل للموزّعين المستقلين وشركات التوزيع. على الهاتف يحمّل الموزّع البضاعة، ويبيع نقدًا أو بالأجل، ويحصّل الدفعات، ويسجّل المرتجعات والمصروفات، ثم يُقفل يومه بجرد النقد فيظهر الفرق عن القيمة المتوقعة في النظام. وعبر الويب يدير صاحب المؤسسة المستودع، ويحمّل كل مركبة، ويراجع مبيعات كل موزّع وتحصيلاته وفروقات إقفاله.\n\nالمعمارية: Modular Monolith على ‎.NET 10 مع Entity Framework Core وPostgreSQL. كل مؤسسة معزولة بأمان مستوى الصفوف (Row-Level Security)، ويتصل التطبيق بحساب قاعدة بيانات لا يستطيع تجاوز هذا العزل. لا تُعدَّل الأرصدة والمخزون يدويًا، بل تُحسب من دفاتر الحركات. ويعمل تطبيق الهاتف (React Native وExpo) دون اتصال بالكامل: يحصل كل سجل على معرّف UUIDv7 يولّده الجهاز، ولكل مركبة ترقيم فواتير خاص بها، فلا تُنشئ إعادة المزامنة سجلات مكرّرة، ولا تصدر مركبتان تعملان دون اتصال رقم الفاتورة نفسه. وتطبيق المالك على الويب مبني بـReact وVite وTailwind، مع عقد TypeScript مشترك بين تطبيقي الهاتف والويب.\n\nوأيضًا: خطط اشتراك مع فترة تجريبية مجانية، ودليل استخدام عربي داخل التطبيق مع مساعد ذكي يجيب من محتواه، وتقارير Excel وPDF، وإصدار منشور على Google Play."
+            },
+            "link": [
+              "https://distribution.alameenapps.com",
+              "https://play.google.com/store/apps/details?id=com.alameenapps.distribution"
+            ],
+            "images": [
+              "projects/distribution/01.webp",
+              "projects/distribution/02.webp",
+              "projects/distribution/03.webp",
+              "projects/distribution/04.webp",
+              "projects/distribution/05.webp"
+            ],
+            "videos": [],
+            "order": 2
+          },
+          {
+            "id": 1770545636528,
+            "fullDescription": {
+              "en": "I develop and maintain an e-government platform used by Palestinian municipalities, so citizens can apply for municipal services, pay fees and track their requests online.\n\nMobile: one React Native codebase (Expo, Hermes, EAS builds), published on Google Play for Tulkarm, Yabad, Aqqaba, Azzun, Al-Kum, Huwwara and Tarqumia. Each municipality gets its own build with its branding, services and settings.\n\nWeb: the citizen portal and PWA (React, Material UI) run on a .NET 8 REST API with Entity Framework Core and JWT authentication, and integrate with the municipalities’ existing systems over SOAP/WCF. Staff process requests in an ASP.NET MVC system with a configurable workflow engine.\n\nAlso: service-request tracking, PDF document generation, Arabic and English support, and the release pipeline for Android and iOS.",
+              "ar": "أطوّر وأصون منصة حكومة إلكترونية تستخدمها بلديات فلسطينية، ليقدّم المواطنون طلبات الخدمات البلدية ويسدّدوا رسومها ويتابعوها إلكترونيًا.\n\nالهاتف: قاعدة شيفرة واحدة بـReact Native (Expo وHermes وبناءات EAS)، منشورة على Google Play لبلديات طولكرم ويعبد وعقابا وعزون والكوم وحوارة وترقوميا. ولكل بلدية نسخة بناء خاصة بهويتها وخدماتها وإعداداتها.\n\nالويب: بوابة المواطن وتطبيق PWA ‏(React وMaterial UI) يعملان على REST API مبني بـ‎.NET 8 وEntity Framework Core ومصادقة JWT، ويتكاملان مع أنظمة البلديات القائمة عبر SOAP/WCF. ويعالج الموظفون الطلبات في نظام مبني على ASP.NET MVC مع محرّك مسارات عمل قابل للضبط.\n\nوأيضًا: تتبع طلبات الخدمات، وتوليد مستندات PDF، ودعم العربية والإنجليزية، ومسار إصدار تطبيقات Android وiOS."
+            },
+            "images": [
+              "projects/emunicipality/01.webp",
+              "projects/emunicipality/02.webp",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1770547018375-WhatsApp%20Image%202026-02-08%20at%2012.35.57%20PM%20(3).jpeg?alt=media&token=4b1c5d47-cdd0-4d50-8c6c-74d13c4eddc1",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1770547026481-WhatsApp%20Image%202026-02-08%20at%2012.35.57%20PM%20(1).jpeg?alt=media&token=29cd6a3b-d74f-460a-898c-fd0023840760",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1770547026483-WhatsApp%20Image%202026-02-08%20at%2012.35.57%20PM.jpeg?alt=media&token=c3f71c99-f129-4015-893e-2f2915e1b814",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1770547026483-WhatsApp%20Image%202026-02-08%20at%2012.35.58%20PM%20(1).jpeg?alt=media&token=f9bddb89-3be3-43f0-863e-8300fc832c42",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1770547026484-WhatsApp%20Image%202026-02-08%20at%2012.35.58%20PM.jpeg?alt=media&token=810c56fc-8e9c-4a58-8f78-d5eb49736e57",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1770547051864-WhatsApp%20Image%202026-02-08%20at%2012.35.57%20PM%20(2).jpeg?alt=media&token=b731e418-4b06-4d12-91b1-0939a309d574",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753912553032-image.png?alt=media&token=3c0e32a4-6154-4c71-8c51-8511d826ab3e",
+              "projects/emunicipality/03.webp",
+              "projects/emunicipality/04.webp"
+            ],
+            "link": [
+              "https://eservice.mtulkarm.com/",
+              "https://play.google.com/store/apps/details?id=com.mtulkarm.eservice.twa",
+              "https://play.google.com/store/apps/details?id=ps.yabad.twa",
+              "https://play.google.com/store/apps/details?id=ps.aqqaba.emun",
+              "https://play.google.com/store/apps/details?id=org.azzoun.emun",
+              "https://play.google.com/store/apps/details?id=org.alkum.emun",
+              "https://play.google.com/store/apps/details?id=com.alameenapps.howwara",
+              "https://play.google.com/store/apps/details?id=org.tarqumia_city.eservice.twa"
+            ],
+            "active": true,
+            "description": {
+              "en": "Digital municipal services for citizens and staff: a web portal, branded mobile apps for seven municipalities from one codebase, and the staff workflow system.",
+              "ar": "خدمات بلدية رقمية للمواطنين والموظفين: بوابة ويب، وتطبيقات هاتف تحمل هويات سبع بلديات من قاعدة شيفرة واحدة، ونظام مسارات العمل للموظفين."
+            },
+            "order": 3,
+            "videos": [],
+            "name": {
+              "en": "E-Municipality Platform",
+              "ar": "منصة البلديات الإلكترونية"
+            }
+          },
+          {
+            "images": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756221361359-Screenshot%202025-08-26%20181151.png?alt=media&token=3e7134af-4c21-4de5-815a-fc49ff14056c",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756221361358-Screenshot%202025-08-26%20181345.png?alt=media&token=519774f0-d805-4a75-b625-769e221118db",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756221361356-Screenshot%202025-08-26%20181406.png?alt=media&token=ff28b993-3a46-438f-a110-84d05ffcb2ff",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756221361354-Screenshot%202025-08-26%20181538.png?alt=media&token=039f73ac-2e9c-499c-9a5f-0ab2f9c2f5b2",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756221009257-screencapture-localhost-5173-datacenter-camps-add-2025-05-29-14_37_45.png?alt=media&token=b7be3007-f134-4ae3-87dc-b4d89285254f"
+            ],
+            "active": true,
+            "name": {
+              "en": "Refugee Data Center",
+              "ar": "مركز بيانات اللاجئين"
+            },
+            "id": 1761221070618,
+            "fullDescription": {
+              "en": "Refugee Data Center (funded by UNDP)\nA web platform for managing refugee data, financial allocations, disbursements, projects, grants and events. I worked on the approval workflows, step tracking and task dashboards; modernized the React and Material UI interfaces; introduced schema-driven forms; and improved lookups, attachments and the Arabic right-to-left experience. I also contributed to the .NET, Entity Framework Core and PostgreSQL backend and its JWT-secured APIs, with role-based permissions and error handling.",
+              "ar": "مركز بيانات اللاجئين (بدعم من UNDP)\nمنصة ويب لإدارة بيانات اللاجئين والمخصصات المالية والصرف والمشاريع والمنح والفعاليات. عملت على مسارات الموافقة وتتبع المراحل ولوحات المهام، وحدّثت واجهات React وMaterial UI، وأدخلت نماذج مبنية على المخططات (Schema)، وحسّنت حقول البحث والاختيار والمرفقات وتجربة الواجهة العربية من اليمين إلى اليسار. كما ساهمت في الواجهة الخلفية المبنية على ‎.NET وEntity Framework Core وPostgreSQL وواجهات API المحمية بـJWT، مع الصلاحيات حسب الأدوار ومعالجة الأخطاء."
+            },
+            "videos": [],
+            "order": 4,
+            "description": {
+              "en": "A web platform for managing refugee data, programs, allocations, disbursements, grants, projects and approval workflows.",
+              "ar": "منصة ويب لإدارة بيانات اللاجئين وبرامجهم والمخصصات والصرف والمنح والمشاريع ومسارات الموافقة."
+            },
+            "link": []
+          },
+          {
+            "order": 5,
+            "active": true,
+            "link": [],
+            "images": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756250155443-aaaa.png?alt=media&token=db7f37e4-5e74-48db-98f3-ab406d0497cd",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756250155441-Picture2.png?alt=media&token=dbdd8107-a8b9-4e90-b3cc-d3ee764abdaf",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1756250214292-Picture3.png?alt=media&token=64a3e560-5146-4971-8f5f-5d074d58e0f8",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753093123307-ScrollCapture%202025-03-16%20at%2014.15.36.jpg?alt=media&token=a33a5c1c-fdce-45f3-854b-859d74aa2446"
+            ],
+            "description": {
+              "en": "A bilingual operations and maintenance dashboard with workflow forms, searchable tables, file uploads and role-based access.",
+              "ar": "لوحة تحكم ثنائية اللغة للتشغيل والصيانة، مع نماذج لمسارات العمل وجداول قابلة للبحث ورفع ملفات وصلاحيات حسب الأدوار."
+            },
+            "fullDescription": {
+              "en": "Developed a React operations-and-maintenance dashboard with reusable Material UI components and schema-driven forms built with React Hook Form. Built Axios-based hooks for data fetching and error handling, added bilingual Arabic/English responsive layouts, and implemented searchable, paginated tables, file uploads, input validation and role-protected routes.",
+              "ar": "طوّرت لوحة تحكم للتشغيل والصيانة مبنية بـReact، مع مكوّنات Material UI قابلة لإعادة الاستخدام ونماذج مبنية على المخططات باستخدام React Hook Form. وبنيت Hooks قابلة لإعادة الاستخدام فوق Axios لجلب البيانات ومعالجة الأخطاء، ودعمت العربية والإنجليزية بواجهات متجاوبة، وأضفت جداول قابلة للبحث ومقسّمة إلى صفحات، ورفع الملفات، والتحقق من صحة المدخلات، ومسارات محمية حسب الأدوار."
+            },
+            "id": 1761220801895,
+            "name": {
+              "en": "Operations & Maintenance Dashboard",
+              "ar": "لوحة متابعة التشغيل والصيانة"
+            },
+            "videos": []
+          },
+          {
+            "order": 6,
+            "fullDescription": {
+              "en": "Built Python automation that cleans, extracts and validates Excel data for a land-settlement archiving initiative, and JavaFX desktop utilities that audit and merge scanned PDFs to support archive quality control.\n\nOCR: trained a compact CRNN model (about one million parameters, PyTorch) that reads the request, basin and parcel numbers from scanned folder covers, so files can be indexed without typing them in. Benchmarked it against general-purpose vision models on accuracy, speed and cost per page before choosing it for the pipeline.",
+              "ar": "بنيت أدوات أتمتة بـPython تنظّف بيانات Excel وتستخرجها وتتحقق منها ضمن مشروع لأرشفة تسوية الأراضي، وتطبيقات سطح مكتب بـJavaFX لتدقيق ملفات PDF الممسوحة ضوئيًا ودمجها لدعم ضبط جودة الأرشيف.\n\nالتعرّف الضوئي على الحروف (OCR): درّبت نموذج CRNN صغيرًا (نحو مليون معامل، PyTorch) يقرأ أرقام الطلب والحوض والقطعة من أغلفة الملفات الممسوحة ضوئيًا، فتُفهرس الملفات دون إدخال يدوي. وقارنته بنماذج الرؤية العامة من حيث الدقة والسرعة وتكلفة الصفحة قبل اعتماده في مسار المعالجة."
+            },
+            "link": [],
+            "videos": [],
+            "id": 4,
+            "description": {
+              "en": "Python automation, JavaFX desktop tools and a compact OCR model for digitizing land-settlement archives.",
+              "ar": "أدوات أتمتة بـPython وتطبيقات سطح مكتب بـJavaFX ونموذج صغير للتعرّف الضوئي على الحروف لرقمنة أرشيف تسوية الأراضي."
+            },
+            "active": true,
+            "name": {
+              "en": "Land Settlement Archiving",
+              "ar": "أرشفة تسوية الأراضي"
+            },
+            "images": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753912573254-image.png?alt=media&token=a4ea7fa9-0010-4f73-8c6d-d02c342d0291"
+            ]
+          },
+          {
+            "id": 1787040000002,
+            "active": true,
+            "name": {
+              "en": "PocketForge — AI Dev Workstation on Android",
+              "ar": "بوكيت فورج — بيئة تطوير بالذكاء الاصطناعي على Android"
+            },
+            "description": {
+              "en": "A research prototype for AI-assisted coding on an Android phone: coding-agent sessions, approval before each command, and Android builds on the device.",
+              "ar": "نموذج بحثي للبرمجة بمساعدة الذكاء الاصطناعي على هاتف Android: جلسات وكيل برمجي، وموافقة قبل كل أمر، وبناء تطبيقات Android على الجهاز نفسه."
+            },
+            "fullDescription": {
+              "en": "An exploration of how far a phone can go as a development machine. The app runs AI coding-agent sessions on the device with a Linux-like toolchain, asks the user before each command or file change, and can install the Android SDK, build an app, sign the release and install or share it — all on the phone. Tools are exposed to the agent over MCP.\n\nBuilt in Kotlin with Jetpack Compose; the core is a tested Kotlin/JVM library, verified end-to-end on a real Android 16 device.\n\nStatus: proof of concept.",
+              "ar": "تجربة لمعرفة إلى أي حد يمكن أن يكون الهاتف جهاز تطوير. يشغّل التطبيق على الجهاز جلسات وكيل برمجي يعمل بالذكاء الاصطناعي ضمن سلسلة أدوات شبيهة ببيئة Linux، ويطلب موافقة المستخدم قبل كل أمر أو تعديل للملفات، ويستطيع تثبيت Android SDK وبناء تطبيق وتوقيع الإصدار وتثبيته أو مشاركته، وكل ذلك على الهاتف. والأدوات متاحة للوكيل عبر بروتوكول MCP.\n\nمبني بـKotlin وJetpack Compose، ونواته مكتبة Kotlin/JVM مختبرة، وجرى التحقق منه بالكامل على جهاز Android 16 حقيقي.\n\nالحالة: نموذج أولي."
+            },
+            "link": [],
+            "images": [
+              "projects/pocketforge/01.webp",
+              "projects/pocketforge/02.webp"
+            ],
+            "videos": [],
+            "order": 7
+          },
+          {
+            "images": [
+              "projects/Twitter/image.png",
+              "projects/Twitter/image1.png",
+              "projects/Twitter/image2.png",
+              "projects/Twitter/image3.png",
+              "projects/Twitter/image4.png"
+            ],
+            "active": true,
+            "name": {
+              "en": "Twitter Clone",
+              "ar": "تطبيق يحاكي Twitter"
+            },
+            "description": {
+              "en": "A Twitter-style microblogging app with authentication, posting, reposting and following.",
+              "ar": "تطبيق تدوين قصير على غرار Twitter، يدعم تسجيل الدخول والنشر وإعادة النشر والمتابعة."
+            },
+            "videos": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1754234885930-Twitter%20Clone%20-%20Welcome%20-%20Google%20Chrome%202024-09-05%2023-40-50.mp4?alt=media&token=23e54875-6f68-42e0-8d4b-800ec7784fea"
+            ],
+            "fullDescription": {
+              "en": "Developed a Twitter clone with Javalin, Pebble, HTMX, Bootstrap and PostgreSQL. Implemented authentication, posting, reposting and following, a responsive interface, Docker containerization, and automated tests including Selenide-based integration tests.",
+              "ar": "طوّرت تطبيقًا يحاكي Twitter باستخدام Javalin وPebble وHTMX وBootstrap وPostgreSQL. شمل العمل المصادقة والنشر وإعادة النشر والمتابعة، وواجهة متجاوبة، وتشغيل التطبيق داخل Docker، واختبارات آلية منها اختبارات تكامل باستخدام Selenide."
+            },
+            "id": 1,
+            "order": 8,
+            "link": [
+              "https://github.com/Ahmad-Alqattu/twitterClone"
+            ]
+          },
+          {
+            "active": true,
+            "id": 2,
+            "order": 9,
+            "fullDescription": {
+              "en": "Built Rahlaty, a Flutter mobile app for local tours and bookings. It includes tour booking, itinerary planning, personalized suggestions, user profiles, an admin panel for tours and bookings, group messaging for each tour, Firebase/Firestore data storage and weather API integration.",
+              "ar": "بنيت تطبيق «رحلتي» باستخدام Flutter للجولات المحلية والحجوزات. يتضمن حجز الجولات، وتخطيط برامج الرحلات، والاقتراحات المخصّصة، والملفات الشخصية للمستخدمين، ولوحة إدارة للجولات والحجوزات، ومراسلة جماعية لكل جولة، وتخزين البيانات في Firebase/Firestore، والتكامل مع واجهة برمجية (API) لبيانات الطقس."
+            },
+            "name": {
+              "en": "Rahlaty",
+              "ar": "رحلتي"
+            },
+            "images": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753912504231-Gproject-2.jpg?alt=media&token=6305648b-6d0c-4a05-b46b-83741cd63f3e",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753912504230-Gproject-1.jpg?alt=media&token=c644be36-b109-467f-a742-bcbfb68aed9a",
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753912504232-Gproject-3.jpg?alt=media&token=dbc48176-92aa-4136-ab41-b6ab52d19b15"
+            ],
+            "videos": [
+              "projects\\Gproject\\Media1.mp4"
+            ],
+            "link": [],
+            "description": {
+              "en": "A Flutter mobile app for local tours: booking, itineraries, personalized suggestions and group messaging.",
+              "ar": "تطبيق Flutter للجولات المحلية: الحجز، وبرامج الرحلات، والاقتراحات المخصّصة، والمراسلة الجماعية."
+            }
+          },
+          {
+            "active": true,
+            "name": {
+              "en": "PHP / SQL Task Manager",
+              "ar": "إدارة مهام باستخدام PHP وSQL"
+            },
+            "images": [
+              "https://user-images.githubusercontent.com/19889053/219016291-724f7c9f-58f7-4be8-a290-d51ae926b2bf.png",
+              "https://user-images.githubusercontent.com/19889053/219016246-96c95d75-9001-4b9f-a12a-72e5149f8f71.png",
+              "https://user-images.githubusercontent.com/19889053/219016304-36169340-51af-4b14-80dd-8db939aad2d8.png",
+              "https://user-images.githubusercontent.com/19889053/219016347-eebec546-995c-46d7-b2b4-cbd2e127d76e.png",
+              "https://user-images.githubusercontent.com/19889053/219016374-da08089d-1e26-4519-b4d9-0113b59f92ab.png"
+            ],
+            "description": {
+              "en": "A university task-management web application demonstrating CRUD operations and role-based access.",
+              "ar": "تطبيق ويب جامعي لإدارة المهام يطبّق عمليات CRUD والصلاحيات حسب الأدوار."
+            },
+            "order": 10,
+            "link": [
+              "https://github.com/Ahmad-Alqattu/web-project-php-sql"
+            ],
+            "videos": [],
+            "fullDescription": {
+              "en": "Built a university task-management web application that demonstrates CRUD operations. Users can create, view, update and delete tasks through a PHP backend and a SQL database, with role-based access control.",
+              "ar": "بنيت تطبيق ويب جامعيًا لإدارة المهام يطبّق عمليات CRUD. يتيح للمستخدمين إنشاء المهام وعرضها وتعديلها وحذفها عبر واجهة خلفية مبنية بـPHP وقاعدة بيانات SQL، مع صلاحيات حسب الأدوار."
+            },
+            "id": 5
+          },
+          {
+            "order": 11,
+            "videos": [],
+            "name": {
+              "en": "Arabic Next-Word Prediction (Trigram)",
+              "ar": "التنبؤ بالكلمة التالية في النص العربي"
+            },
+            "active": true,
+            "id": 6,
+            "description": {
+              "en": "An Arabic next-word prediction app built on a trigram (3-gram) language model.",
+              "ar": "تطبيق للتنبؤ بالكلمة التالية في النص العربي باستخدام نموذج لغوي ثلاثي (3-gram)."
+            },
+            "link": [
+              "https://github.com/Ahmad-Alqattu/AI-3-gram_word_prediction"
+            ],
+            "fullDescription": {
+              "en": "Built an Arabic next-word prediction application in Java and JavaFX using a trigram language model. Users enter partial text and get likely next-word suggestions with their probabilities in an interactive desktop interface.",
+              "ar": "بنيت تطبيقًا للتنبؤ بالكلمة التالية في النص العربي باستخدام Java وJavaFX ونموذج لغوي ثلاثي (3-gram). يكتب المستخدم نصًا جزئيًا فيحصل على اقتراحات للكلمة التالية مع احتمالاتها عبر واجهة سطح مكتب تفاعلية."
+            },
+            "images": [
+              "projects\\ai-3gram\\image.png"
+            ]
+          },
+          {
+            "link": [
+              "https://github.com/Ahmad-Alqattu/dijkstra-algorithm-network-routing"
+            ],
+            "fullDescription": {
+              "en": "Built an interactive JavaFX application that visualizes Dijkstra’s shortest-path algorithm. Users select source and destination nodes, and the application computes and displays the lowest-cost path and its total cost.",
+              "ar": "بنيت تطبيقًا تفاعليًا بـJavaFX يوضّح خوارزمية Dijkstra لإيجاد أقصر مسار. يختار المستخدم عقدتي البداية والوجهة، ثم يحسب التطبيق المسار الأقل تكلفة ويعرضه مع تكلفته الإجمالية."
+            },
+            "videos": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1754257734650-192378694-479b531d-ab76-4b58-9d65-50d8498fa4ba.mp4?alt=media&token=7d8381de-16ec-4293-b8d8-104865162fb6"
+            ],
+            "description": {
+              "ar": "تطبيق JavaFX لتوضيح إيجاد أقصر مسار باستخدام خوارزمية Dijkstra.",
+              "en": "A JavaFX visualization of shortest-path routing using Dijkstra's algorithm."
+            },
+            "id": 7,
+            "images": [
+              "https://user-images.githubusercontent.com/19889053/192376178-bd552c9e-42c7-4bd7-a7cf-b462bd465c57.png"
+            ],
+            "order": 12,
+            "name": {
+              "en": "Dijkstra Network Routing",
+              "ar": "توجيه الشبكات بخوارزمية Dijkstra"
+            },
+            "active": true
+          },
+          {
+            "description": {
+              "en": "A desktop library system in Java, JavaFX and MySQL for members, books, lending, returns and invoicing.",
+              "ar": "نظام سطح مكتب لإدارة مكتبة مبني بـJava وJavaFX وMySQL، يشمل الأعضاء والكتب والإعارة والإرجاع والفواتير."
+            },
+            "order": 13,
+            "active": true,
+            "link": [
+              "https://github.com/Ahmad-Alqattu/library-DBMS"
+            ],
+            "images": [
+              "https://user-images.githubusercontent.com/19889053/192526121-d8585ff8-cb41-414a-9e05-2ec56833125d.png"
+            ],
+            "id": 8,
+            "name": {
+              "ar": "نظام إدارة مكتبة",
+              "en": "Library Management System"
+            },
+            "videos": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1754257750027-192529718-d9707987-6d92-41b6-93e3-58b597a2bd04.mp4?alt=media&token=ddb5ac69-431b-4dcf-aa94-2eaa7c5f574e"
+            ],
+            "fullDescription": {
+              "en": "Built a library-management system with Java, JavaFX and MySQL covering employees, members, publishers, books, lending and returns, invoicing and operational statistics in a desktop interface.",
+              "ar": "بنيت نظامًا لإدارة مكتبة باستخدام Java وJavaFX وMySQL يشمل الموظفين والأعضاء والناشرين والكتب وعمليات الإعارة والإرجاع والفواتير والإحصاءات التشغيلية، عبر واجهة لسطح المكتب."
+            }
+          },
+          {
+            "active": true,
+            "name": {
+              "en": "Ramallah A* Pathfinding",
+              "ar": "إيجاد المسار بخوارزمية A* — رام الله"
+            },
+            "images": [
+              "https://user-images.githubusercontent.com/19889053/192509242-7950d130-e817-4a70-93d6-558671673935.png"
+            ],
+            "order": 14,
+            "description": {
+              "en": "An A* pathfinding visualization using real-world Ramallah map data.",
+              "ar": "تطبيق يوضّح خوارزمية A* لإيجاد المسارات على خريطة حقيقية لرام الله."
+            },
+            "link": [
+              "https://github.com/Ahmad-Alqattu/Ramallah-Map-A-star-algorithm"
+            ],
+            "id": 9,
+            "videos": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1754257796892-192509781-6e2f4bb7-3109-4729-a927-b3f923287b66.mp4?alt=media&token=6e701f9e-c083-48b6-94a4-b761d39d3b4f"
+            ],
+            "fullDescription": {
+              "en": "Built a JavaFX map application demonstrating A* pathfinding on real-world geography. Users choose a source and destination, and the application computes the shortest route and shows the path distance, an estimated travel time and the memory used by the search.",
+              "ar": "بنيت تطبيق خرائط بـJavaFX يوضّح خوارزمية A* لإيجاد المسارات على بيانات جغرافية حقيقية. يختار المستخدم نقطة البداية والوجهة، فيحسب التطبيق أقصر طريق ويعرض المسافة وزمن الرحلة التقديري والذاكرة التي استهلكها البحث."
+            }
+          },
+          {
+            "order": 15,
+            "videos": [],
+            "fullDescription": {
+              "en": "Contributed to an eMunicipality API built with .NET Core and Entity Framework, including JWT authentication and integration with legacy SOAP services through WCF. Also contributed to the React and Material UI Progressive Web App and to deployment workflows for making municipal services accessible online.",
+              "ar": "ساهمت في تطوير API لمنصة البلدية الإلكترونية باستخدام .NET Core وEntity Framework، بما يشمل مصادقة JWT والتكامل مع خدمات SOAP قديمة عبر WCF. كما ساهمت في تطبيق الويب التقدمي PWA المبني بـReact وMaterial UI وفي عمليات النشر لإتاحة الخدمات البلدية إلكترونيًا."
+            },
+            "name": {
+              "en": "eMunicipality",
+              "ar": "البلدية الإلكترونية"
+            },
+            "active": false,
+            "id": 3,
+            "description": {
+              "ar": "حل ويب وPWA لتقديم الخدمات البلدية إلكترونيًا.",
+              "en": "A web and PWA solution for digital municipal services."
+            },
+            "link": [
+              "https://eservice.mtulkarm.com/"
+            ],
+            "images": [
+              "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753912553032-image.png?alt=media&token=3c0e32a4-6154-4c71-8c51-8511d826ab3e"
+            ]
+          }
+        ]
+      },
+      "content": {
+        "ar": "مجموعة مختارة من المشاريع تشمل المنصات المؤسسية، وأنظمة القطاع العام، وتطبيقات الهاتف، والأتمتة، والمشاريع الأكاديمية.",
+        "en": "Selected projects spanning enterprise platforms, public-sector systems, mobile applications, automation, and academic work."
+      },
+      "title": {
+        "ar": "المشاريع",
+        "en": "Projects"
+      },
+      "active": true,
+      "visible": true,
+      "projects": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787054965700-Picture1.png?alt=media&token=fa7a7127-ba8a-4e7a-aa44-1205c3d9d2f9"
+    }
+  ]
+}
