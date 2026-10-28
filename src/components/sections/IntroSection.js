@@ -109,7 +109,7 @@ function IntroSection({ id, name, title, content, data }) {
           {image && (
             <motion.div
               variants={itemVariants}
-              className="relative min-h-[300px] md:col-span-5 md:col-start-8 md:row-span-3 md:row-start-1 md:min-h-0"
+              className="relative mx-auto w-full max-w-[300px] md:col-span-4 md:col-start-9 md:row-span-3 md:row-start-1 md:max-w-[340px] md:self-center"
             >
               <div
                 aria-hidden
@@ -118,12 +118,12 @@ function IntroSection({ id, name, title, content, data }) {
                 <div className="photo-glow-spin-inner" />
               </div>
               <TiltPhoto>
-                <div className="relative min-h-[300px] overflow-hidden rounded-3xl shadow-[0_20px_44px_rgba(20,60,30,0.14)] md:min-h-[400px] dark:shadow-[0_20px_44px_rgba(0,0,0,0.45)]">
+                <div className="relative aspect-square overflow-hidden rounded-3xl shadow-[0_20px_44px_rgba(20,60,30,0.14)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.45)]">
                   <img
-                    {...imageProps(image, '(min-width: 768px) 40vw, 90vw')}
+                    {...imageProps(image, '(min-width: 768px) 340px, 300px')}
                     fetchPriority="high"
                     alt={localizedName || 'Profile picture'}
-                    className="size-full min-h-[300px] object-cover object-[center_22%] md:min-h-[400px]"
+                    className="size-full object-cover object-[center_22%]"
                   />
                   {showAvailable && (
                     <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-1 backdrop-blur-sm dark:bg-black/75">
