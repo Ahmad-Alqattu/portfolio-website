@@ -6,6 +6,17 @@ import SkillIcon from '../ui/SkillIcon';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
 
+// Category names are the keys of skillsList (plain English); these give them
+// an Arabic label. Unknown categories show as they are.
+const CATEGORY_LABELS = {
+  'Back-End': { en: 'Back-End', ar: 'الواجهة الخلفية' },
+  'Front-End': { en: 'Front-End', ar: 'الواجهة الأمامية' },
+  Mobile: { en: 'Mobile', ar: 'تطبيقات الهاتف' },
+  Databases: { en: 'Databases', ar: 'قواعد البيانات' },
+  'AI & Data': { en: 'AI & Data', ar: 'الذكاء الاصطناعي والبيانات' },
+  'Tools & Other': { en: 'Tools & DevOps', ar: 'الأدوات والنشر' },
+};
+
 function SkillsSection({ id, title, content }) {
   const { sections } = useData();
   const { language } = useLanguage();
@@ -42,7 +53,7 @@ function SkillsSection({ id, title, content }) {
         {categories.map((category) => (
           <div key={category}>
             <h3 className="mb-4 text-center text-[0.85rem] font-bold uppercase tracking-[1.5px] text-[#2e7d32] dark:text-brand">
-              {category}
+              {localize(CATEGORY_LABELS[category] || category, language)}
             </h3>
             <ul className="flex flex-wrap justify-center gap-2">
               {skillsList[category].map((skill, idx) => {

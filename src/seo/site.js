@@ -95,7 +95,7 @@ function person(sections, lang) {
     image: httpsOnly(intro.data?.image),
     cv: httpsOnly(intro.data?.cvLink) || httpsOnly(footer.data?.cvLink),
     email: footer.data?.contactInfo?.email || '',
-    location: footer.data?.contactInfo?.location || '',
+    location: L(footer.data?.contactInfo?.location, lang) || '',
     sameAs: [
       social.githubEnabled !== false && httpsOnly(social.github),
       social.linkedinEnabled !== false && httpsOnly(social.linkedin),

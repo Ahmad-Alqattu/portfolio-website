@@ -1,0 +1,515 @@
+{
+  "timestamp": "2026-10-28T22:48:45.706Z",
+  "sections": [
+    {
+      "id": "intro",
+      "userId": "default-user",
+      "order": 1,
+      "title": {
+        "ar": "المقدمة",
+        "en": "Introduction"
+      },
+      "content": {
+        "ar": "أنا مهندس برمجيات Full-Stack أركّز على تحويل المتطلبات المعقدة إلى برمجيات موثوقة وسهلة الصيانة. أعمل على منصات الويب وتطبيقات الهاتف والخدمات الخلفية والتكاملات والأنظمة المعتمدة على البيانات، مع اهتمام بالمعمارية النظيفة والحلول العملية والجاهزية للإنتاج.",
+        "en": "I'm a full-stack software engineer focused on turning complex requirements into reliable, maintainable software. I work across web platforms, mobile applications, backend services, integrations, and data-intensive systems, with an emphasis on clean architecture, practical solutions, and production-ready delivery."
+      },
+      "profile": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787004760574-1690593961859.jpeg?alt=media&token=a6c9280d-b95b-44d3-b2c8-96e1366d4ffd",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787004760574-1690593961859.jpeg?alt=media&token=a6c9280d-b95b-44d3-b2c8-96e1366d4ffd"
+      },
+      "name": {
+        "ar": "أحمد القطو",
+        "en": "Ahmad Al-Qattu"
+      },
+      "active": true,
+      "type": "intro",
+      "visible": true,
+      "data": {
+        "subtitle": {
+          "ar": "مهندس برمجيات Full-Stack",
+          "en": "Full-Stack Software Engineer"
+        },
+        "image": "profile/ahmad.webp",
+        "cvLink": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1790058275938-Ahmad_Al-Qattu_Resume_Final_Clickable.pdf?alt=media&token=11a91f15-ccdc-4b55-b4b2-f796d61780f9",
+        "highlight": {
+          "ar": "أحوّل الأفكار إلى برمجيات موثوقة وقابلة للتوسع",
+          "en": "Turning Ideas into Reliable, Scalable Software"
+        }
+      }
+    },
+    {
+      "id": "footerAndLinks",
+      "content": {
+        "ar": "معلومات التواصل وروابط حساباتي المهنية.",
+        "en": "Contact information and links to my professional profiles."
+      },
+      "order": 7,
+      "type": "footerAndLinks",
+      "visible": false,
+      "title": {
+        "en": "Footer & Links",
+        "ar": "التواصل والروابط"
+      },
+      "data": {
+        "contactInfo": {
+          "location": {
+            "en": "Ramallah, Palestine",
+            "ar": "رام الله، فلسطين"
+          },
+          "email": "ahmadl.qatu@gmail.com",
+          "phone": "+970 59 868 2679"
+        },
+        "socialLinks": {
+          "githubEnabled": true,
+          "facebookEnabled": false,
+          "linkedinEnabled": true,
+          "facebook": "we",
+          "linkedin": "https://www.linkedin.com/in/ahmad-al-qattu-987587201/",
+          "github": "https://github.com/Ahmad-Alqattu",
+          "email": "mailto:ahmadl.qatu@gmail.com"
+        },
+        "cvLink": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753192407296-AhmadQattu_resume%20(2).pdf?alt=media&token=b7c8ae29-de48-4a7b-9586-a55fae28ef0c",
+        "welcomeMessage": {
+          "title": {
+            "ar": "مرحبًا بك في موقعي الشخصي",
+            "en": "Welcome to My Portfolio"
+          },
+          "description": {
+            "ar": "شكرًا لزيارتك موقعي. يمكنك التواصل معي عبر البريد الإلكتروني أو من خلال حساباتي المهنية.",
+            "en": "Thanks for visiting my portfolio. Feel free to contact me by email or through my professional profiles."
+          }
+        },
+        "copyrightText": "Ahmad Al-Qattu"
+      },
+      "userId": "default-user"
+    },
+    {
+      "id": "experience",
+      "active": true,
+      "experience": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%2024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%202024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d"
+      },
+      "visible": true,
+      "title": {
+        "ar": "الخبرة",
+        "en": "Experience"
+      },
+      "order": 6,
+      "data": {
+        "experiences": [
+          {
+            "location": {
+              "ar": "رام الله",
+              "en": "Ramallah"
+            },
+            "logo": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753103179820-WhatsApp%20Image%202024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=0472625d-1f2d-43fb-accb-1dda0a13dfaa",
+            "order": 1,
+            "company": {
+              "en": "Al-Ameen Technologies",
+              "ar": "شركة الأمين للتقنيات"
+            },
+            "details": {
+              "en": "I build and maintain production software: enterprise web platforms, mobile apps, APIs and integrations, and the deployments behind them. Recent work includes a modular public-sector water-management platform (laboratories, water resources, distribution, wastewater, GIS, licensing, billing and notifications, all built on shared services, forms and workflows), Mowazze, a van-sales SaaS with an offline-first mobile app, and municipal e-services and their mobile apps. I take projects from client requirements through implementation, testing and release, and stay on for production support.",
+              "ar": "أطوّر برمجيات تعمل في بيئة الإنتاج وأصونها، وتشمل منصات ويب مؤسسية، وتطبيقات هاتف، وواجهات API، وتكاملات، وعمليات النشر الخاصة بها. ويشمل عملي الأخير منصة لإدارة المياه في القطاع العام مكوّنة من وحدات (المختبرات، وموارد المياه، والتوزيع، والصرف الصحي، ونظم المعلومات الجغرافية، والترخيص، والفوترة، والإشعارات)، مبنية على خدمات ونماذج ومسارات عمل مشتركة، ومنصة «موزّع» للبيع المتنقل مع تطبيق هاتف يعمل دون اتصال، والخدمات البلدية الإلكترونية وتطبيقاتها على الهاتف. وأتولّى المشروع من متطلبات العميل إلى التنفيذ والاختبار والإصدار، ثم دعم الإنتاج."
+            },
+            "responsibilities": [
+              {
+                "en": "Build Mowazze end to end: a .NET 10 modular monolith that isolates each organization with PostgreSQL row-level security, an offline-first React Native app and a React owner dashboard.",
+                "ar": "بناء منصة «موزّع» من البداية إلى النهاية: نظام Modular Monolith على ‎.NET 10 يعزل بيانات كل مؤسسة عبر أمان مستوى الصفوف (Row-Level Security) في PostgreSQL، مع تطبيق React Native يعمل دون اتصال، ولوحة تحكم للمالك مبنية بـReact."
+              },
+              {
+                "en": "Build full-stack enterprise modules with ASP.NET Core, Entity Framework Core, PostgreSQL, React and TypeScript.",
+                "ar": "تطوير وحدات مؤسسية متكاملة (Full-Stack) باستخدام ASP.NET Core وEntity Framework Core وPostgreSQL وReact وTypeScript."
+              },
+              {
+                "en": "Design and implement reusable platform building blocks: workflows, configurable services and forms, licensing, billing rules, document generation, permissions, audit logging and integrations.",
+                "ar": "تصميم وتنفيذ مكوّنات مشتركة قابلة لإعادة الاستخدام: مسارات العمل، والخدمات والنماذج القابلة للتهيئة، والترخيص، وقواعد الفوترة، وإنشاء المستندات، والصلاحيات، وسجلات التدقيق، والتكاملات."
+              },
+              {
+                "en": "Develop data-intensive, GIS-enabled modules for laboratories, water resources, distribution, wastewater and operational monitoring.",
+                "ar": "تطوير وحدات كثيفة البيانات تدعم نظم المعلومات الجغرافية للمختبرات وموارد المياه والتوزيع والصرف الصحي والمراقبة التشغيلية."
+              },
+              {
+                "en": "Build and release cross-platform municipal mobile apps with React Native and Expo, serving seven municipalities from one codebase.",
+                "ar": "تطوير وإصدار تطبيقات بلدية متعددة المنصات باستخدام React Native وExpo، تخدم سبع بلديات من قاعدة برمجية واحدة."
+              },
+              {
+                "en": "Train a compact OCR model (PyTorch CRNN) that reads the numbers on scanned land-archive folder covers for indexing.",
+                "ar": "تدريب نموذج صغير للتعرّف الضوئي (OCR) مبني على CRNN بـPyTorch، يقرأ الأرقام من أغلفة مجلدات أرشيف الأراضي الممسوح ضوئيًا لفهرستها."
+              },
+              {
+                "en": "Work directly with clients to refine requirements, diagnose production issues, deploy releases and support what ships.",
+                "ar": "العمل مباشرة مع العملاء لتحديد المتطلبات وتشخيص مشكلات الإنتاج ونشر الإصدارات ودعم ما يُطلق منها."
+              }
+            ],
+            "active": true,
+            "duration": "2023 – Present",
+            "id": 1,
+            "title": {
+              "en": "Software Developer",
+              "ar": "مطور برمجيات"
+            },
+            "period": "2023 – Present"
+          },
+          {
+            "responsibilities": [
+              {
+                "en": "Developed a full-featured Twitter clone using Javalin, HTMX, Pebble, PostgreSQL, and Docker.",
+                "ar": "طوّرت تطبيقًا متكاملًا يحاكي Twitter باستخدام Javalin وHTMX وPebble وPostgreSQL وDocker."
+              },
+              {
+                "en": "Implemented and tested authentication, posting, reposting, following, and responsive user flows.",
+                "ar": "نفّذت واختبرت المصادقة والنشر وإعادة النشر والمتابعة وتدفقات استخدام متجاوبة."
+              },
+              {
+                "en": "Used technical documentation and code reviews to adopt professional development practices.",
+                "ar": "اعتمدت على التوثيق التقني ومراجعة الكود لتطبيق ممارسات تطوير احترافية."
+              }
+            ],
+            "title": {
+              "en": "Full-Stack Intern",
+              "ar": "متدرب Full-Stack"
+            },
+            "period": "June – August 2023",
+            "location": {
+              "en": "Ramallah",
+              "ar": "رام الله"
+            },
+            "company": {
+              "en": "Equiptal",
+              "ar": "إكويبتال"
+            },
+            "details": {
+              "en": "Developed a Twitter clone using Javalin, HTMX, Pebble, PostgreSQL, and Docker while learning production-oriented development practices, testing, documentation, and collaboration with senior developers.",
+              "ar": "طوّرت خلال التدريب تطبيقًا يحاكي Twitter باستخدام Javalin وHTMX وPebble وPostgreSQL وDocker، مع التركيز على ممارسات التطوير الاحترافية والاختبارات وقراءة التوثيق والتعاون مع مطورين ذوي خبرة."
+            },
+            "logo": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140029701-106828266.png?alt=media&token=edab2a0f-6894-493c-b32e-b71a8d02ce06",
+            "duration": "June – August 2023",
+            "active": true,
+            "id": 2,
+            "order": 2
+          }
+        ]
+      },
+      "userId": "default-user",
+      "content": {
+        "ar": "خبرة عملية في بناء وإطلاق برمجيات إنتاجية تشمل المنصات المؤسسية، وأنظمة القطاع العام، وتطبيقات الهاتف، والتكاملات، والحلول المبنية على احتياجات العملاء.",
+        "en": "Professional experience building and shipping production software across enterprise platforms, public-sector systems, mobile applications, integrations, and client-facing solutions."
+      },
+      "type": "experience"
+    },
+    {
+      "id": "capabilities",
+      "userId": "default-user",
+      "type": "capabilities",
+      "order": 2,
+      "visible": true,
+      "title": {
+        "ar": "ما الذي أقدّمه؟",
+        "en": "What I Do"
+      },
+      "data": {
+        "capabilities": [
+          {
+            "active": true,
+            "id": 1,
+            "order": 1,
+            "description": {
+              "en": "I build maintainable web and enterprise applications with a focus on clear architecture, reliability, performance, and real operational needs.",
+              "ar": "أبني تطبيقات ويب وأنظمة مؤسسية قابلة للصيانة، مع التركيز على وضوح المعمارية والموثوقية والأداء واحتياجات التشغيل الفعلية."
+            },
+            "title": {
+              "en": "Build Production-Ready Systems",
+              "ar": "بناء أنظمة جاهزة للإنتاج"
+            }
+          },
+          {
+            "description": {
+              "en": "I design and integrate secure REST APIs and service-to-service workflows on ASP.NET Core, with authentication and authorization, legacy-system integrations and event-driven patterns.",
+              "ar": "أصمم وأربط واجهات REST API آمنة وتكاملات بين الأنظمة باستخدام ASP.NET Core، مع المصادقة والصلاحيات، والتكامل مع الأنظمة القديمة، والأنماط القائمة على الأحداث."
+            },
+            "icon": "",
+            "title": {
+              "en": "Design APIs & Integrations",
+              "ar": "تصميم واجهات API والتكاملات"
+            },
+            "id": 2,
+            "active": true,
+            "order": 2
+          },
+          {
+            "title": {
+              "en": "Develop Mobile Applications",
+              "ar": "تطوير تطبيقات الهاتف"
+            },
+            "description": {
+              "en": "I build cross-platform mobile applications with React Native, Expo and Flutter, including offline-first flows, bilingual interfaces and app-store release workflows.",
+              "ar": "أطوّر تطبيقات هاتف متعددة المنصات باستخدام React Native وExpo وFlutter، بما يشمل العمل دون اتصال، والواجهات ثنائية اللغة، وتجهيز الإصدارات للمتاجر."
+            },
+            "order": 3,
+            "id": 3,
+            "active": true
+          },
+          {
+            "title": {
+              "en": "Work with Data & Databases",
+              "ar": "العمل مع البيانات وقواعد البيانات"
+            },
+            "id": 4,
+            "order": 4,
+            "description": {
+              "en": "I design and work with relational and real-time data using PostgreSQL, Microsoft SQL Server, MySQL, Firebase, and Redis/Valkey, with attention to integrity and secure access.",
+              "ar": "أصمم وأتعامل مع البيانات العلائقية واللحظية باستخدام PostgreSQL وMicrosoft SQL Server وMySQL وFirebase وRedis/Valkey، مع التركيز على سلامة البيانات والوصول الآمن."
+            },
+            "active": true
+          },
+          {
+            "id": 5,
+            "title": {
+              "en": "Build Modern Front Ends",
+              "ar": "بناء واجهات حديثة"
+            },
+            "description": {
+              "en": "I build responsive, bilingual interfaces with React, TypeScript, Vite, Material UI and Tailwind CSS, with reusable components driven by data schemas.",
+              "ar": "أبني واجهات متجاوبة وثنائية اللغة باستخدام React وTypeScript وVite وMaterial UI وTailwind CSS، مع مكوّنات قابلة لإعادة الاستخدام مبنية على مخططات البيانات."
+            },
+            "order": 5,
+            "active": true
+          },
+          {
+            "id": 6,
+            "order": 6,
+            "description": {
+              "en": "I work with Git, Docker, Linux, CI/CD pipelines and IIS, handle production releases, and trace issues across the application and infrastructure to their root cause.",
+              "ar": "أعمل مع Git وDocker وLinux وخطوط CI/CD وIIS، وأتولّى النشر إلى بيئة الإنتاج، وأتتبّع المشكلات في التطبيق والبنية التحتية حتى أصل إلى سببها الفعلي."
+            },
+            "active": true,
+            "title": {
+              "en": "Ship & Operate Software",
+              "ar": "نشر وتشغيل البرمجيات"
+            }
+          },
+          {
+            "id": 7,
+            "order": 7,
+            "active": true,
+            "title": {
+              "en": "Apply AI Where It Pays Off",
+              "ar": "توظيف الذكاء الاصطناعي حيث يفيد فعلًا"
+            },
+            "description": {
+              "en": "I train small task-specific models such as OCR for scanned archives, add assistants that answer from a product’s own documentation, and build tooling around AI coding agents — choosing them by accuracy, speed and cost.",
+              "ar": "أدرّب نماذج صغيرة لمهام محددة مثل التعرّف الضوئي على الحروف في الأرشيف الممسوح، وأضيف مساعدات ذكية تجيب من توثيق المنتج نفسه، وأبني أدوات حول وكلاء البرمجة الذكية، وأختارها حسب الدقة والسرعة والتكلفة."
+            }
+          }
+        ]
+      },
+      "active": true,
+      "content": {
+        "ar": "أبني وأسلّم حلولًا برمجية متكاملة، من واجهات المستخدم وتطبيقات الهاتف إلى الخدمات الخلفية والبيانات والتكاملات والنشر.",
+        "en": "I build and deliver software across the full stack—from user-facing applications to backend services, data, integrations, and deployment."
+      }
+    },
+    {
+      "id": "skills",
+      "data": {
+        "skillsList": {
+          "Back-End": [
+            {
+              "en": "ASP.NET Core",
+              "ar": "ASP.NET Core"
+            },
+            {
+              "en": ".NET Aspire",
+              "ar": ".NET Aspire"
+            },
+            {
+              "en": "Entity Framework Core",
+              "ar": "Entity Framework Core"
+            },
+            {
+              "en": "REST APIs",
+              "ar": "REST APIs"
+            },
+            {
+              "en": "OpenIddict",
+              "ar": "OpenIddict"
+            },
+            {
+              "en": "YARP",
+              "ar": "YARP"
+            },
+            {
+              "en": "Java",
+              "ar": "Java"
+            },
+            {
+              "en": "Spring Boot",
+              "ar": "Spring Boot"
+            },
+            {
+              "en": "Javalin",
+              "ar": "Javalin"
+            },
+            {
+              "en": "Python",
+              "ar": "Python"
+            },
+            {
+              "en": "Django",
+              "ar": "Django"
+            },
+            {
+              "en": "PHP",
+              "ar": "PHP"
+            }
+          ],
+          "Front-End": [
+            {
+              "en": "React",
+              "ar": "React"
+            },
+            {
+              "en": "TypeScript",
+              "ar": "TypeScript"
+            },
+            {
+              "en": "JavaScript",
+              "ar": "JavaScript"
+            },
+            {
+              "en": "Vite",
+              "ar": "Vite"
+            },
+            {
+              "en": "Material UI",
+              "ar": "Material UI"
+            },
+            {
+              "en": "Tailwind CSS",
+              "ar": "Tailwind CSS"
+            },
+            {
+              "en": "MapLibre GL JS",
+              "ar": "MapLibre GL JS"
+            },
+            {
+              "en": "HTML",
+              "ar": "HTML"
+            },
+            {
+              "en": "CSS",
+              "ar": "CSS"
+            }
+          ],
+          "Mobile": [
+            {
+              "en": "React Native",
+              "ar": "React Native"
+            },
+            {
+              "en": "Expo",
+              "ar": "Expo"
+            },
+            {
+              "en": "Flutter",
+              "ar": "Flutter"
+            },
+            {
+              "en": "Kotlin (Jetpack Compose)",
+              "ar": "Kotlin (Jetpack Compose)"
+            },
+            {
+              "en": "Android (Java)",
+              "ar": "Android (Java)"
+            }
+          ],
+          "Databases": [
+            {
+              "en": "PostgreSQL",
+              "ar": "PostgreSQL"
+            },
+            {
+              "en": "PostGIS",
+              "ar": "PostGIS"
+            },
+            {
+              "en": "Microsoft SQL Server",
+              "ar": "Microsoft SQL Server"
+            },
+            {
+              "en": "MySQL",
+              "ar": "MySQL"
+            },
+            {
+              "en": "Firebase / Firestore",
+              "ar": "Firebase / Firestore"
+            },
+            {
+              "en": "Redis / Valkey",
+              "ar": "Redis / Valkey"
+            }
+          ],
+          "AI & Data": [
+            {
+              "en": "PyTorch",
+              "ar": "PyTorch"
+            },
+            {
+              "en": "OCR (CRNN)",
+              "ar": "OCR (CRNN)"
+            },
+            {
+              "en": "Power BI",
+              "ar": "Power BI"
+            }
+          ],
+          "Tools & Other": [
+            {
+              "en": "Git",
+              "ar": "Git"
+            },
+            {
+              "en": "Docker",
+              "ar": "Docker"
+            },
+            {
+              "en": "Linux",
+              "ar": "Linux"
+            },
+            {
+              "en": "GitHub Actions",
+              "ar": "GitHub Actions"
+            },
+            {
+              "en": "Playwright",
+              "ar": "Playwright"
+            },
+            {
+              "en": "IIS",
+              "ar": "IIS"
+            },
+            {
+              "en": "JavaFX (desktop)",
+              "ar": "JavaFX (desktop)"
+            }
+          ]
+        }
+      },
+      "userId": "default-user",
+      "type": "skills",
+      "title": {
+        "ar": "المهارات",
+        "en": "Skills"
+      },
+      "visible": true,
+      "order": 3,
+      "active": true,
+      "content": {
+        "ar": "مجموعة تقنيات اكتسبت خبرتها من العمل الفعلي على أنظمة الويب والخدمات الخلفية وتطبيقات الهاتف وقواعد البيانات والتكاملات والنشر.",
+        "en": "A practical stack built through production work across web, backend, mobile, databases, integrations, and deployment."
+      }
+    }
+  ]
+}

@@ -35,7 +35,7 @@ const Footer = ({ data = null }) => {
         description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
       },
       cvLink: '/assets/AhmadQattu_resume.pdf',
-      copyrightText: 'Ahmad AL-Qatu'
+      copyrightText: 'Ahmad Al-Qattu'
     };
   };
 
@@ -57,7 +57,7 @@ const Footer = ({ data = null }) => {
       description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
     }, 
     cvLink = '/assets/AhmadQattu_resume.pdf', 
-    copyrightText = 'Ahmad AL-Qatu'
+    copyrightText = 'Ahmad Al-Qattu'
   } = footerData || {};
 
   const handleBackToTop = () => {
@@ -193,7 +193,9 @@ const Footer = ({ data = null }) => {
             {t('footer.contactInfo')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {contactInfo.phone}<br />
+            <Link href={`tel:${(contactInfo.phone || '').replace(/[^+\d]/g, '')}`} color="inherit" underline="hover" dir="ltr">
+              {contactInfo.phone}
+            </Link><br />
             <Link href={`mailto:${contactInfo.email}`} color="primary.main" underline="hover">
               {contactInfo.email}
             </Link><br />
