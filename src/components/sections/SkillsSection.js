@@ -41,7 +41,7 @@ function SkillsSection({ id, title, content }) {
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
         {categories.map((category) => (
           <div key={category}>
-            <h3 className="mb-4 text-center text-[0.85rem] font-bold uppercase tracking-[1.5px] text-brand">
+            <h3 className="mb-4 text-center text-[0.85rem] font-bold uppercase tracking-[1.5px] text-[#2e7d32] dark:text-brand">
               {category}
             </h3>
             <ul className="flex flex-wrap justify-center gap-2">

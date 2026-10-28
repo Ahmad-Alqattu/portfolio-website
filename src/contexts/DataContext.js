@@ -1,7 +1,6 @@
 // Portfolio Data Context with Firestore integration and caching
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getAllSections, subscribeToSections } from '../firebase/firestore';
-import { auth } from '../firebase/config';
 import { PageSkeleton } from '../components/ui/SkeletonLoader';
 
 // Cache configuration
@@ -67,48 +66,26 @@ export const DataProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    let unsubscribeAuth;
+    // Portfolio content is public and always reads as 'default-user' regardless
+    // of who's signed in, so there's nothing to gain by waiting for Firebase
+    // Auth to resolve first — that wait was adding Auth SDK init latency onto
+    // the critical path before any content could even start loading.
+    const userId = 'default-user';
     let cleanupListeners;
-    let hasLoaded = false;
 
-    const initializeData = () => {
-      // Wait for auth state to be determined
-      unsubscribeAuth = auth.onAuthStateChanged(async (user) => {
-        // Prevent multiple loads
-        if (hasLoaded) return;
-        
-        // Always use default-user for consistency with migration
-        const userId = 'default-user';
-        
-        if (user) {
-        } else {
-        }
-        
-        hasLoaded = true;
-        
-        // Load data for default-user
-        await loadPortfolioData(userId);
-        
-        // Set up real-time listeners
-        cleanupListeners = setupRealtimeListeners(userId);
-        setCleanupRef(cleanupListeners);
-      });
-    };
+    loadPortfolioData(userId).then(() => {
+      cleanupListeners = setupRealtimeListeners(userId);
+      setCleanupRef(cleanupListeners);
+    });
 
-    initializeData();
-
-    // Cleanup function
     return () => {
-      if (unsubscribeAuth) {
-        unsubscribeAuth();
-      }
       if (cleanupListeners) {
         cleanupListeners();
       }
     };
   }, []);
 
-  const loadPortfolioData = async (userId = 'default-user', forceRefresh = false) => {
+  async function loadPortfolioData(userId = 'default-user', forceRefresh = false) {
     setLoading(true);
     setError(null);
 
@@ -175,9 +152,9 @@ export const DataProvider = ({ children }) => {
     }
 
     setLoading(false);
-  };
+  }
 
-  const setupRealtimeListeners = (userId = 'default-user') => {
+  function setupRealtimeListeners(userId = 'default-user') {
     // Subscribe to all sections
     const unsubscribe = subscribeToSections((updatedSections) => {
       if (updatedSections.length > 0) {
@@ -196,7 +173,7 @@ export const DataProvider = ({ children }) => {
     return () => {
       unsubscribe();
     };
-  };
+  }
 
   const refreshData = async () => {
     await loadPortfolioData('default-user', true); // Force refresh

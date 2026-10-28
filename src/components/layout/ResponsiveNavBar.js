@@ -15,7 +15,6 @@ import { useTheme } from '@mui/material/styles';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import TranslateIcon from '@mui/icons-material/Translate';
 import { useActiveSection } from '../../contexts/ActiveSectionContext';
 import { useData } from '../../contexts/DataContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -32,7 +31,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { activeSection } = useActiveSection();
   const { sections } = useData();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   const navSections = (sections || [])
     .filter((s) => s.type !== 'footerAndLinks')
@@ -157,7 +156,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                 fontWeight: 700,
                 cursor: 'pointer',
                 color: showSectionTitle ? 'text.primary' : 'primary.main',
-                fontSize: { xs: '0.9rem', md: '0.95rem' },
+                fontSize: { xs: '1.05rem', md: '1.2rem' },
                 transition: 'color 0.3s ease',
                 '&:hover': { opacity: 0.8 },
               }}
@@ -182,9 +181,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                           py: 0.5,
                           borderRadius: '999px',
                           whiteSpace: 'nowrap',
-                          // The active section reads a step larger, so the
-                          // current position is legible at a glance
-                          fontSize: isActive ? '0.98rem' : '0.82rem',
+                          fontSize: '0.86rem',
                           fontWeight: isActive ? 700 : 500,
                           color: isActive ? 'primary.main' : 'text.secondary',
                           bgcolor: isActive
@@ -192,8 +189,11 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                               ? 'rgba(129,199,132,0.16)'
                               : 'rgba(76,175,80,0.12)'
                             : 'transparent',
-                          transition:
-                            'color 0.25s ease, background-color 0.25s ease, font-size 0.25s ease',
+                          // color/background-color only — animating font-size
+                          // forces a layout reflow of the whole nav bar on
+                          // every frame, which is what made this feel janky
+                          // on desktop (mobile never renders this list at all).
+                          transition: 'color 0.25s ease, background-color 0.25s ease',
                           '@media (prefers-reduced-motion: reduce)': {
                             transition: 'none',
                           },
@@ -223,21 +223,62 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title={t('nav.switchLanguage')}>
-                <IconButton
-                  onClick={toggleLanguage}
-                  aria-label={t('nav.switchLanguage')}
-                  size="small"
-                  sx={iconButtonSx}
-                >
-                  <Stack direction="row" spacing={0.3} alignItems="center">
-                    <TranslateIcon fontSize="small" />
-                    <Typography sx={{ fontSize: '0.7rem', fontWeight: 700 }}>
-                      {language === 'en' ? 'AR' : 'EN'}
-                    </Typography>
-                  </Stack>
-                </IconButton>
-              </Tooltip>
+              {/* Language switch: bare EN / AR labels, no icon. Both codes stay
+                  visible so the choice is obvious instead of guessing what the
+                  single label means */}
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={0.25}
+                role="group"
+                aria-label={t('nav.switchLanguage')}
+                sx={{
+                  mx: 0.5,
+                  px: 0.4,
+                  py: 0.2,
+                  borderRadius: '999px',
+                  border: '1px solid',
+                  borderColor: isDark ? 'rgba(255,255,255,0.14)' : 'rgba(20,40,30,0.12)',
+                }}
+              >
+                {['en', 'ar'].map((code) => {
+                  const isActive = language === code;
+                  return (
+                    <Box
+                      key={code}
+                      component="button"
+                      type="button"
+                      onClick={() => setLanguage(code)}
+                      aria-pressed={isActive}
+                      lang={code}
+                      sx={{
+                        border: 0,
+                        background: 'none',
+                        cursor: 'pointer',
+                        px: 0.75,
+                        py: 0.25,
+                        borderRadius: '999px',
+                        fontFamily: 'inherit',
+                        fontSize: '0.75rem',
+                        fontWeight: isActive ? 700 : 500,
+                        letterSpacing: '0.04em',
+                        lineHeight: 1.4,
+                        color: isActive ? 'primary.main' : 'text.secondary',
+                        bgcolor: isActive
+                          ? isDark
+                            ? 'rgba(129,199,132,0.16)'
+                            : 'rgba(76,175,80,0.12)'
+                          : 'transparent',
+                        transition: 'color 0.25s ease, background-color 0.25s ease',
+                        '&:hover': { color: 'primary.main' },
+                        '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                      }}
+                    >
+                      {code.toUpperCase()}
+                    </Box>
+                  );
+                })}
+              </Stack>
 
               <Tooltip title={darkMode ? t('nav.switchToLight') : t('nav.switchToDark')}>
                 <IconButton

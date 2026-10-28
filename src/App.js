@@ -77,11 +77,6 @@ const ConditionalLayout = ({ darkMode, setDarkMode, children }) => {
 function AppContent() {
   const [darkMode, setDarkMode] = useState(false);
   const { isRTL } = useLanguage();
-  useEffect(() => {
-    document.title = "Ahmad's Portfolio";
-
-
-  }, []);
 
   // Mirror the MUI mode onto <html> so Tailwind's `dark:` variant (defined in
   // index.css against the .dark class) tracks the same state.

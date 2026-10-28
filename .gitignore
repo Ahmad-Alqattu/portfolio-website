@@ -28,3 +28,6 @@ yarn-error.log*
 /functions/firebase-debug.log
 /functions/.env
 /functions/.env.local
+
+# Firebase deploy cache
+.firebase/

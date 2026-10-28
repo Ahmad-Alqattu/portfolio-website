@@ -34,8 +34,12 @@ export default defineConfig({
           // Keep React ecosystem together
           'react-vendor': ['react', 'react-dom'],
           
-          // Firebase libraries
-          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+          // Firebase libraries needed by every visitor (auth is used app-wide
+          // just to show the admin "Edit" link when signed in). firebase/storage
+          // is deliberately left out — it's only used by admin upload screens,
+          // which are already lazy-loaded, so letting Rollup place it
+          // automatically keeps it out of what anonymous visitors download.
+          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
           
           // MUI libraries
           'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],

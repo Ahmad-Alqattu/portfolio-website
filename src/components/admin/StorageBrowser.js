@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { storage } from '../../firebase/config';
+import { storage } from '../../firebase/storageConfig';
 import { ref, listAll, getDownloadURL, getMetadata } from 'firebase/storage';
 import { X, Image, FileText, Film, File, Search, Folder, Check } from 'lucide-react';
 

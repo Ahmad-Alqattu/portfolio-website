@@ -6,7 +6,7 @@ import {
   getDownloadURL, 
   deleteObject 
 } from 'firebase/storage';
-import { storage } from './config';
+import { storage } from './storageConfig';
 import { v4 as uuidv4 } from 'uuid';
 
 // Upload file to Firebase Storage

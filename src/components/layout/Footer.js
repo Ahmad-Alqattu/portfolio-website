@@ -11,7 +11,7 @@ import { localize } from '../../utils/localize';
 
 const Footer = ({ data = null }) => {
   const { sections } = useData();
-  const { language, t } = useLanguage();
+  const { language, t, isRTL } = useLanguage();
 
   // Get footer data from props or from Firebase sections
   const getFooterData = () => {
@@ -119,7 +119,7 @@ const Footer = ({ data = null }) => {
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <Grid container spacing={0}>
           <Grid size={{ md: 4 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0 }}>
               {t('footer.contactInfo')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -132,7 +132,7 @@ const Footer = ({ data = null }) => {
           </Grid>
 
           <Grid size={{ md: 4 }} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
               {localize(welcomeMessage.title, language)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -140,36 +140,36 @@ const Footer = ({ data = null }) => {
             </Typography>
           </Grid>
 
-          <Grid size={{ md: 4 }} sx={{ textAlign: 'right' }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mr: 4.5 }}>
+          <Grid size={{ md: 4 }} sx={{ textAlign: isRTL ? 'left' : 'right' }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mr: isRTL ? 0 : 4.5, ml: isRTL ? 4.5 : 0 }}>
               {t('footer.socialLinks')}
             </Typography>
             {socialLinks?.enabled !== false && (
-              <Box sx={{ mb: 0 ,mr: 4.5}}>
+              <Box sx={{ mb: 0, mr: isRTL ? 0 : 4.5, ml: isRTL ? 4.5 : 0 }}>
                 {socialLinks?.githubEnabled !== false && socialLinks.github && (
-                  <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'text.primary' }}>
+                  <IconButton href={socialLinks.github} target="_blank" aria-label="GitHub" sx={{ color: 'text.primary' }}>
                     <GitHubIcon />
                   </IconButton>
                 )}
                 {socialLinks?.linkedinEnabled !== false && socialLinks.linkedin && (
-                  <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'text.primary' }}>
+                  <IconButton href={socialLinks.linkedin} target="_blank" aria-label="LinkedIn" sx={{ color: 'text.primary' }}>
                     <LinkedInIcon />
                   </IconButton>
                 )}
                 {socialLinks?.facebookEnabled !== false && socialLinks.facebook && (
-                  <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'text.primary' }}>
+                  <IconButton href={socialLinks.facebook} target="_blank" aria-label="Facebook" sx={{ color: 'text.primary' }}>
                     <FacebookIcon />
                   </IconButton>
                 )}
                 {socialLinks?.emailEnabled !== false && socialLinks.email && (
-                  <IconButton href={socialLinks.email} sx={{ color: 'text.primary' }}>
+                  <IconButton href={socialLinks.email} aria-label="Email" sx={{ color: 'text.primary' }}>
                     <EmailIcon />
                   </IconButton>
                 )}
               </Box>
             )}
             {cvLink && (
-              <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 5.5 }} href={cvLink} color="primary.main" >
+              <Link sx={{ fontWeight: 'bold', color: 'text.secondary', mr: isRTL ? 0 : 5.5, ml: isRTL ? 5.5 : 0 }} href={cvLink} color="primary.main" >
                 {t('footer.downloadCV')}
               </Link>
             )}
@@ -180,7 +180,7 @@ const Footer = ({ data = null }) => {
       {/* Mobile Layout */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 4, alignItems: 'center' }}>
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
             {localize(welcomeMessage.title, language)}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -189,7 +189,7 @@ const Footer = ({ data = null }) => {
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
             {t('footer.contactInfo')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -202,28 +202,28 @@ const Footer = ({ data = null }) => {
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
+          <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
             {t('footer.socialLinks')}
           </Typography>
           {socialLinks?.enabled !== false && (
             <Box sx={{ mb: 1 }}>
               {socialLinks?.githubEnabled !== false && socialLinks.github && (
-                <IconButton href={socialLinks.github} target="_blank" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.github} target="_blank" aria-label="GitHub" sx={{ color: 'primary.main' }}>
                   <GitHubIcon />
                 </IconButton>
               )}
               {socialLinks?.linkedinEnabled !== false && socialLinks.linkedin && (
-                <IconButton href={socialLinks.linkedin} target="_blank" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.linkedin} target="_blank" aria-label="LinkedIn" sx={{ color: 'primary.main' }}>
                   <LinkedInIcon />
                 </IconButton>
               )}
               {socialLinks?.facebookEnabled !== false && socialLinks.facebook && (
-                <IconButton href={socialLinks.facebook} target="_blank" sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.facebook} target="_blank" aria-label="Facebook" sx={{ color: 'primary.main' }}>
                   <FacebookIcon />
                 </IconButton>
               )}
               {socialLinks?.emailEnabled !== false && socialLinks.email && (
-                <IconButton href={socialLinks.email} sx={{ color: 'primary.main' }}>
+                <IconButton href={socialLinks.email} aria-label="Email" sx={{ color: 'primary.main' }}>
                   <EmailIcon />
                 </IconButton>
               )}

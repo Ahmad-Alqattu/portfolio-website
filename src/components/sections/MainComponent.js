@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
@@ -28,6 +28,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useActiveSection } from '../../contexts/ActiveSectionContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { localize } from '../../utils/localize';
+import { updateDocumentMeta, SITE_NAME } from '../../utils/documentMeta';
 import LazyLoad from 'react-lazyload';
 import { motion } from 'framer-motion';
 const IntroSection = React.lazy(() => import('./IntroSection'));
@@ -38,7 +39,7 @@ const EducationSection = React.lazy(() => import('./EducationSection'));
 const ExperienceSection = React.lazy(() => import('./ExperienceSection'));
 const CertificatesSection = React.lazy(() => import('./CertificatesSection'));
 import { EnhancedPageSkeleton } from '../ui/EnhancedPageSkeleton';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 // Custom Scrollbar Styles
 const CustomScrollbarStyles = () => {
@@ -379,6 +380,14 @@ function MainComponent() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const { sectionId } = useParams();
+  const location = useLocation();
+  // Set right before a navigate() call that's just us syncing the URL to
+  // where the user has scrolled — tells the scroll-into-view effect below
+  // "this sectionId change didn't come from a nav click, don't act on it."
+  // Without this, syncing the URL on scroll would fight the user's own
+  // scrolling: URL updates -> scroll-into-view effect fires -> animates back
+  // to a position they're already at.
+  const isUrlSyncFromScroll = useRef(false);
 
   const routeAliasToSectionId = (alias) => {
     const a = (alias || '').toLowerCase();
@@ -392,6 +401,15 @@ function MainComponent() {
   const displayPathForSection = (section) => {
     if ((section.type || '').toLowerCase() === 'intro') return '/about';
     return `/${section.id}`;
+  };
+
+  // Path shown in the address bar while idly at a section — unlike
+  // displayPathForSection (used for shareable links, where "/about" is the
+  // real indexable URL for the intro), resting at the intro should just
+  // read as "/", the way a homepage is expected to.
+  const scrollSyncPathForSection = (section) => {
+    if ((section.type || '').toLowerCase() === 'intro') return '/';
+    return displayPathForSection(section);
   };
 
   // Initial section detection on mount
@@ -416,14 +434,61 @@ function MainComponent() {
     }
   };
 
-  // When routed to /:sectionId, scroll into view once sections render
+  // When routed to /:sectionId, scroll into view once sections render.
+  // Skipped when the URL changed because of our own scroll-sync below —
+  // the user is already there.
   useEffect(() => {
     if (!sectionId) return;
+    if (isUrlSyncFromScroll.current) {
+      isUrlSyncFromScroll.current = false;
+      return;
+    }
     const targetId = routeAliasToSectionId(sectionId);
     const exists = sections.some((s) => s.id === targetId);
     if (!exists) return;
     scrollToSectionWhenReady(targetId);
   }, [sectionId, sections]);
+
+  // Every route serves the same static HTML (no server-side rendering), so
+  // without this every page shares one <title>/canonical/description —
+  // pointing straight at "/". That tells search engines the other routes
+  // are duplicates and is why they show up crawled-but-not-indexed in
+  // Search Console. Updating these after mount at least gives each route
+  // its own identity for whatever crawls the rendered DOM. Also keeps the
+  // address bar itself in sync as the user scrolls between sections, not
+  // just on an explicit nav click — via history replace (no new entries,
+  // no scroll reset) so it never fights the user's own scrolling.
+  useEffect(() => {
+    if (!sections.length || !activeSection) return;
+
+    const section = sections.find((s) => s.id === activeSection);
+    if (!section) return;
+
+    const syncPath = scrollSyncPathForSection(section);
+    if (location.pathname !== syncPath) {
+      isUrlSyncFromScroll.current = true;
+      navigate(syncPath, { replace: true, preventScrollReset: true });
+    }
+
+    if (syncPath === '/') {
+      updateDocumentMeta({ path: '/' });
+      return;
+    }
+
+    const sectionTitle = localize(section.title, language);
+    const sectionContent = localize(section.content, language);
+    const description = sectionContent
+      ? sectionContent.length > 155
+        ? `${sectionContent.slice(0, 155).trim()}…`
+        : sectionContent
+      : `${sectionTitle} — part of ${SITE_NAME}'s software engineer portfolio.`;
+
+    updateDocumentMeta({
+      path: displayPathForSection(section),
+      title: `${sectionTitle} - ${SITE_NAME} | Software Engineer Portfolio`,
+      description,
+    });
+  }, [activeSection, sections, language, location.pathname, navigate]);
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     
@@ -682,7 +747,7 @@ function MainComponent() {
       )}
 
      
-      <MainContent>
+      <MainContent component="main">
         <React.Suspense fallback={<EnhancedPageSkeleton />}>
           {sortedSections.map((section) => {
             switch (section.type) {

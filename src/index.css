@@ -80,6 +80,37 @@
     radial-gradient(ellipse 480px 480px at 8% 88%, color-mix(in srgb, var(--color-brand-dark) 13%, transparent), transparent 65%);
 }
 
+/* Slowly rotating glow behind the hero photo. The outer box is a static,
+   clipped rounded-rect (matches the card, doesn't move) so the visible
+   silhouette never changes; an oversized inner layer spins via `transform`
+   underneath it. Animating a gradient's own angle (e.g. through a custom
+   property) forces a repaint every frame — this animates only `transform`,
+   which the compositor handles without repainting, so it can't cause the
+   jank a paint-driven animation would. */
+@keyframes spin-transform {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility photo-glow-spin {
+  overflow: hidden;
+}
+
+@utility photo-glow-spin-inner {
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(135deg, var(--color-brand-light), var(--color-brand-dark));
+  animation: spin-transform 20s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-glow-spin-inner {
+    animation: none;
+  }
+}
+
 /* Sweeping highlight across the name in the hero */
 @keyframes shimmer {
   to {

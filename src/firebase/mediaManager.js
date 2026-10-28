@@ -1,6 +1,62 @@
 // Firebase Storage Media Manager - Simple and Reliable
 import { ref, uploadBytes, getDownloadURL, deleteObject, listAll } from 'firebase/storage';
-import { storage, auth } from './config';
+import { storage } from './storageConfig';
+
+// Every image uploaded through the admin panel — profile photo, project
+// screenshots, company/institution logos — comes through this one function,
+// so this is where oversized uploads get caught before they ever reach
+// production. Downscales to a generous max dimension and re-encodes as WebP;
+// skips anything already small (nothing to gain) and falls back to the
+// original file on any failure rather than blocking the upload.
+const RESIZE_MAX_DIMENSION = 1200;
+const RESIZE_QUALITY = 0.85;
+
+function resizeImageFile(file, maxDimension = RESIZE_MAX_DIMENSION, quality = RESIZE_QUALITY) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+      resolve(file);
+      return;
+    }
+
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const { naturalWidth: width, naturalHeight: height } = img;
+
+      if (Math.max(width, height) <= maxDimension) {
+        resolve(file);
+        return;
+      }
+
+      const scale = maxDimension / Math.max(width, height);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const newName = file.name.replace(/\.[^./]+$/, '') + '.webp';
+          resolve(new File([blob], newName, { type: blob.type, lastModified: Date.now() }));
+        },
+        'image/webp',
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(file);
+    };
+    img.src = objectUrl;
+  });
+}
 
 class MediaManager {
   constructor(userId = 'default-user') {
@@ -31,15 +87,14 @@ class MediaManager {
         return { success: false, error: validation.error };
       }
 
+      const resizedFile = await resizeImageFile(file);
+
       const timestamp = Date.now();
-      const fileName = `${timestamp}-${file.name}`;
+      const fileName = `${timestamp}-${resizedFile.name}`;
       const fileRef = ref(storage, `${uploadPath}/${fileName}`);
 
-  
-      await uploadBytes(fileRef, file);
+      await uploadBytes(fileRef, resizedFile);
       const downloadURL = await getDownloadURL(fileRef);
-      
-  
 
       return {
         success: true,
@@ -49,8 +104,8 @@ class MediaManager {
           url: downloadURL,
           path: fileRef.fullPath,
           category: category,
-          size: file.size,
-          type: file.type
+          size: resizedFile.size,
+          type: resizedFile.type
         }
       };
     } catch (error) {

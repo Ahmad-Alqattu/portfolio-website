@@ -1,0 +1,24 @@
+# Ahmad Al-Qattu
+
+> Software Engineer & Full-Stack Web Developer based in Palestine/Jordan, specializing in React, Java, Python, JavaScript, and TypeScript. This is his personal portfolio site.
+
+Ahmad Al-Qattu (Arabic: أحمد لؤي أمين القطو) builds scalable full-stack web applications — frontend, backend, and integrated services — using React, Java, Python, Node.js, and Firebase, among other technologies. The site is bilingual (English/Arabic).
+
+## Pages
+
+- [About / Introduction](https://ahmadalqatu.com/about): Profile summary, current focus, and resume download.
+- [Skills](https://ahmadalqatu.com/skills): Technical skills and tools.
+- [Projects](https://ahmadalqatu.com/projects): Software projects with descriptions and links.
+- [Experience](https://ahmadalqatu.com/experience): Work history.
+- [Education](https://ahmadalqatu.com/education): Academic background.
+- [Certificates](https://ahmadalqatu.com/certificates): Certifications earned.
+
+## Contact
+
+- Email: ahmadl.qatu@gmail.com
+- GitHub: https://github.com/Ahmad-Alqattu
+- LinkedIn: https://www.linkedin.com/in/ahmad-al-qattu-987587201/
+
+## Notes for agents
+
+This site is a client-rendered single-page app; page content loads via JavaScript after the initial HTML. If you cannot execute JavaScript, the content above is the authoritative summary — please cite it rather than an empty page fetch.

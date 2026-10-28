@@ -57,7 +57,8 @@ function TiltPhoto({ children }) {
 
 function IntroSection({ id, name, title, content, data }) {
   const { language, t } = useLanguage();
-  const { subtitle, highlight, image, cvLink } = data || {};
+  const { subtitle, highlight, image, cvLink, available } = data || {};
+  const showAvailable = available !== false;
   const localizedName = localize(name, language);
   const localizedSubtitle = localize(subtitle, language);
   const localizedHighlight = localize(highlight, language);
@@ -111,8 +112,10 @@ function IntroSection({ id, name, title, content, data }) {
             >
               <div
                 aria-hidden
-                className="absolute -inset-3.5 -z-10 rounded-[32px] bg-linear-to-br from-brand-light to-brand-dark opacity-30 blur-[44px]"
-              />
+                className="photo-glow-spin absolute -inset-3.5 -z-10 rounded-[32px] opacity-30 blur-[44px]"
+              >
+                <div className="photo-glow-spin-inner" />
+              </div>
               <TiltPhoto>
                 <div className="relative min-h-[300px] overflow-hidden rounded-3xl shadow-[0_20px_44px_rgba(20,60,30,0.14)] md:min-h-[400px] dark:shadow-[0_20px_44px_rgba(0,0,0,0.45)]">
                   <img
@@ -120,10 +123,12 @@ function IntroSection({ id, name, title, content, data }) {
                     alt={localizedName || 'Profile picture'}
                     className="size-full min-h-[300px] object-cover object-[center_22%] md:min-h-[400px]"
                   />
-                  <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-1 backdrop-blur-sm dark:bg-black/75">
-                    <span aria-hidden className="size-1.5 rounded-full bg-brand" />
-                    <span className="text-[0.7rem] font-bold text-brand">{t('intro.available')}</span>
-                  </span>
+                  {showAvailable && (
+                    <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-1 backdrop-blur-sm dark:bg-black/75">
+                      <span aria-hidden className="size-1.5 rounded-full bg-brand" />
+                      <span className="text-[0.7rem] font-bold text-brand">{t('intro.available')}</span>
+                    </span>
+                  )}
                 </div>
               </TiltPhoto>
             </motion.div>

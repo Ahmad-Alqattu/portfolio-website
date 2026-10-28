@@ -2,5 +2,24 @@
 User-agent: *
 Disallow:
 
+# AI agents/crawlers — explicitly welcome, same as everyone else.
+User-agent: GPTBot
+Disallow:
+
+User-agent: ChatGPT-User
+Disallow:
+
+User-agent: ClaudeBot
+Disallow:
+
+User-agent: anthropic-ai
+Disallow:
+
+User-agent: PerplexityBot
+Disallow:
+
+User-agent: Google-Extended
+Disallow:
+
 # Sitemap
-Sitemap: https://ahmad-alqattu.com/sitemap.xml
+Sitemap: https://ahmadalqatu.com/sitemap.xml

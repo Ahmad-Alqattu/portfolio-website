@@ -18,7 +18,11 @@ exports.sitemap = onRequest({ cors: true, invoker: "public" }, async (req, res) 
     snapshot.forEach((doc) => {
       const data = doc.data() || {};
       // include only active sections (default to active if field missing)
-      if (data.active !== false) {
+      // footerAndLinks (and anything similarly non-navigable) isn't a routed
+      // page — it renders globally in the layout, not as a scrollable
+      // section — so including it here just puts a meaningless URL in the
+      // sitemap for Google to trip over.
+      if (data.active !== false && data.type !== 'footerAndLinks') {
         sections.push({ id: doc.id, type: data.type, order: data.order ?? 999 });
       }
     });

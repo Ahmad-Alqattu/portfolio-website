@@ -2,7 +2,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v9-compat and later, measurementId is optional
@@ -19,9 +18,12 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
+// Initialize Firebase services. Storage isn't initialized here on purpose —
+// it's only used by admin file-upload screens (already behind a lazy route),
+// so its SDK lives in ./storageConfig instead. Initializing it here would
+// pull firebase/storage into the bundle every visitor downloads, for a
+// feature only the site owner ever uses.
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
 
 export default app;
