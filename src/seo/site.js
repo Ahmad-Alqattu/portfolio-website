@@ -80,7 +80,13 @@ const firstLink = (item) => {
   return links.find((l) => typeof l === 'string' && /^https?:\/\//.test(l)) || '';
 };
 
-const httpsOnly = (u) => (typeof u === 'string' && /^https?:\/\//.test(u) ? u : '');
+// Absolute URL for a content link: http(s) URLs as they are, paths under
+// public/ (e.g. "profile/ahmad.webp") on the site's own origin.
+const publicUrl = (u) => {
+  if (typeof u !== 'string' || !u || /^(data|blob):/.test(u)) return '';
+  if (/^https?:\/\//.test(u)) return u;
+  return `${BASE_URL}/${u.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+};
 
 function person(sections, lang) {
   const intro = getSection(sections, 'intro') || {};
@@ -92,14 +98,14 @@ function person(sections, lang) {
     role: L(intro.data?.subtitle, lang) || ROLE[lang],
     summary: L(intro.content, lang),
     highlight: L(intro.data?.highlight, lang),
-    image: httpsOnly(intro.data?.image),
-    cv: httpsOnly(intro.data?.cvLink) || httpsOnly(footer.data?.cvLink),
+    image: publicUrl(intro.data?.image),
+    cv: publicUrl(intro.data?.cvLink) || publicUrl(footer.data?.cvLink),
     email: footer.data?.contactInfo?.email || '',
     location: L(footer.data?.contactInfo?.location, lang) || '',
     sameAs: [
-      social.githubEnabled !== false && httpsOnly(social.github),
-      social.linkedinEnabled !== false && httpsOnly(social.linkedin),
-      social.facebookEnabled && httpsOnly(social.facebook),
+      social.githubEnabled !== false && publicUrl(social.github),
+      social.linkedinEnabled !== false && publicUrl(social.linkedin),
+      social.facebookEnabled && publicUrl(social.facebook),
     ].filter(Boolean),
   };
 }
@@ -264,7 +270,7 @@ function jsonLd(sections, lang, section, path) {
             name: L(proj.name, lang),
             description: truncate(L(proj.description, lang) || L(proj.fullDescription, lang), 300) || undefined,
             url: firstLink(proj) || undefined,
-            image: httpsOnly((proj.images || [])[0]) || undefined,
+            image: publicUrl((proj.images || [])[0]) || undefined,
             creator: { '@id': personId },
           },
         })),
@@ -367,7 +373,7 @@ function sectionMarkdown(section, lang) {
         out.push(`### ${L(proj.name, lang)}`, '');
         const desc = L(proj.fullDescription, lang) || L(proj.description, lang);
         if (desc) out.push(desc, '');
-        const links = (Array.isArray(proj.link) ? proj.link : [proj.link]).filter((l) => httpsOnly(l));
+        const links = (Array.isArray(proj.link) ? proj.link : [proj.link]).filter((l) => publicUrl(l));
         if (links.length) out.push(`${LABELS[lang].links}: ${links.map((l) => `<${l}>`).join(' · ')}`, '');
       }
       break;
@@ -391,7 +397,7 @@ function sectionMarkdown(section, lang) {
     case 'certificates':
       for (const c of active(d.certificates)) {
         const name = L(c.name, lang);
-        const link = httpsOnly(c.link);
+        const link = publicUrl(c.link);
         out.push(`- ${link ? `[${name}](${link})` : name}${L(c.issuer, lang) ? ` — ${L(c.issuer, lang)}` : ''}${c.issueDate ? ` (${c.issueDate})` : ''}`);
       }
       break;

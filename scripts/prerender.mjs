@@ -184,7 +184,9 @@ for (const lang of ['en', 'ar']) {
   const name = localize(intro.name, lang) || 'Ahmad Al-Qattu';
   const role = localize(intro.data?.subtitle, lang) || '';
   const highlight = localize(intro.data?.highlight, lang) || '';
-  const photo = intro.data?.image || '';
+  // setContent pages are about:blank, so a public/ path needs the local origin.
+  const image = intro.data?.image || '';
+  const photo = !image || /^https?:\/\//.test(image) ? image : `${origin}/${image.replace(/^\/+/, '')}`;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
   await page.setContent(`<!doctype html><html dir="${lang === 'ar' ? 'rtl' : 'ltr'}"><body style="margin:0">
     <div style="width:1200px;height:630px;box-sizing:border-box;padding:72px 80px;display:flex;align-items:center;gap:64px;
