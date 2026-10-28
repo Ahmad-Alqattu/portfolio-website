@@ -153,15 +153,43 @@ src/
 
 ### Build for Production
 ```bash
-npm run build
+npm run build                 # vite build + prerender (needs Chrome/Chromium)
+node scripts/check-site.mjs   # fails on missing SEO tags, empty pages, JS over budget
 ```
 
-### Deploy to Firebase Hosting
+`npm run build` reads the live Firestore content (public read, web API key
+from `.env`) and writes, into `build/`:
+
+- a real HTML page for every section in English (`/projects`) and Arabic
+  (`/ar/projects`), each with its own title, description, canonical,
+  hreflang, Open Graph and JSON-LD (`src/seo/site.js`)
+- `sitemap.xml`, `llms.txt`, `llms-full.txt`, a markdown twin of every page
+  (`/projects.md`, `/index.md`) and OG share images in `og/`
+- WebP copies of content images in `img/` (`scripts/optimize-images.mjs`)
+- `404.html` and `app.html` (the empty shell behind `/admin` and `/login`)
+
+`npm run build:spa` skips the prerender step.
+
+### Publishing content changes
+Saved edits show to visitors immediately (the page refreshes from Firestore
+after it loads). The prerendered HTML that search engines and AI agents read
+is refreshed by **Publish site** in the admin panel, which calls the
+`publishSite` Cloud Function → GitHub Actions (`.github/workflows/deploy.yml`)
+→ build, check, deploy to Firebase Hosting. Pushes to `master` deploy the
+same way.
+
+One-time setup:
+1. GitHub → Settings → Secrets and variables → Actions:
+   - variables: the `VITE_FIREBASE_*` values from `.env`
+   - secret `FIREBASE_SERVICE_ACCOUNT`: JSON key of a service account with
+     the *Firebase Hosting Admin* role
+2. A fine-grained GitHub token for this repository with *Contents: read and
+   write*, stored for the function: `firebase functions:secrets:set GITHUB_DISPATCH_TOKEN`
+3. `firebase deploy --only functions`
+
+### Manual deploy
 ```bash
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-firebase deploy
+npm run build && firebase deploy --only hosting
 ```
 
 ## 📄 License
