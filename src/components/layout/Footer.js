@@ -40,7 +40,7 @@ const Footer = ({ data = null }) => {
         title: 'Welcome to My Portfolio',
         description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
       },
-      cvLink: '/assets/AhmadQattu_resume.pdf',
+      cvLink: '',
       copyrightText: 'Ahmad Al-Qattu'
     };
   };
@@ -62,7 +62,7 @@ const Footer = ({ data = null }) => {
       title: 'Welcome to My Portfolio',
       description: 'Thank you for visiting my personal portfolio website.\nConnect with me on email or drop me a message!'
     }, 
-    cvLink = '/assets/AhmadQattu_resume.pdf', 
+    cvLink = '', 
     copyrightText = 'Ahmad Al-Qattu'
   } = footerData || {};
 

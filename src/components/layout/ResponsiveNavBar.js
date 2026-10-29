@@ -47,7 +47,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
   const showSectionTitle = isMobile && condensed && Boolean(currentSectionTitle);
 
   const pathForSection = (section) =>
-    localizedPath((section.type || '').toLowerCase() === 'intro' ? '/about' : `/${section.id}`);
+    localizedPath((section.type || '').toLowerCase() === 'intro' ? '/' : `/${section.id}`);
 
   useEffect(() => {
     let frame = null;

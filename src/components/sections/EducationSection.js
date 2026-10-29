@@ -52,7 +52,7 @@ function EducationSection({ id, title, content, educationList = [] }) {
                   </h3>
                   <p className="mt-0.5 text-[0.95rem] font-semibold text-brand">
                     {localize(education.degree, language)}
-                    {education.major && ` in ${localize(education.major, language)}`}
+                    {education.major && `${language === 'ar' ? ' في ' : ' in '}${localize(education.major, language)}`}
                   </p>
                   <p className="mt-1 text-sm text-ink-muted">
                     {localize(education.duration, language) || localize(education.years, language)}

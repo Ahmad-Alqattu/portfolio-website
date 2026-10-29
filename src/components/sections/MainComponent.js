@@ -380,14 +380,12 @@ function MainComponent() {
   };
 
   const displayPathForSection = (section) => {
-    if ((section.type || '').toLowerCase() === 'intro') return '/about';
+    if ((section.type || '').toLowerCase() === 'intro') return '/';
     return `/${section.id}`;
   };
 
-  // Path shown in the address bar while idly at a section — unlike
-  // displayPathForSection (used for shareable links, where "/about" is the
-  // real indexable URL for the intro), resting at the intro should just
-  // read as "/", the way a homepage is expected to.
+  // Path shown in the address bar while idly at a section. The intro is the
+  // homepage, so it reads as "/" (/about is only a redirect to it).
   const scrollSyncPathForSection = (section) => {
     if ((section.type || '').toLowerCase() === 'intro') return '/';
     return displayPathForSection(section);
@@ -426,7 +424,12 @@ function MainComponent() {
     if (!sectionId) {
       // A scroll-sync to "/" consumes the flag too; left set, it would make
       // the next nav click look like a scroll-sync and be ignored.
+      const fromScroll = isUrlSyncFromScroll.current;
       isUrlSyncFromScroll.current = false;
+      // The intro's nav link is "/": coming from a section, scroll back up.
+      if (!fromScroll && scrolledForSection.current !== null) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       scrolledForSection.current = null;
       return;
     }

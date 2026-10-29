@@ -1,0 +1,323 @@
+{
+  "timestamp": "2026-10-29T00:25:17.885Z",
+  "sections": [
+    {
+      "id": "footerAndLinks",
+      "content": {
+        "ar": "معلومات التواصل وروابط حساباتي المهنية.",
+        "en": "Contact information and links to my professional profiles."
+      },
+      "userId": "default-user",
+      "title": {
+        "en": "Footer & Links",
+        "ar": "التواصل والروابط"
+      },
+      "data": {
+        "cvLink": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1790058275938-Ahmad_Al-Qattu_Resume_Final_Clickable.pdf?alt=media&token=11a91f15-ccdc-4b55-b4b2-f796d61780f9",
+        "contactInfo": {
+          "location": {
+            "en": "Ramallah, Palestine",
+            "ar": "رام الله، فلسطين"
+          },
+          "phone": "+970 59 868 2679",
+          "email": "ahmadl.qatu@gmail.com"
+        },
+        "welcomeMessage": {
+          "title": {
+            "ar": "مرحبًا بك في موقعي الشخصي",
+            "en": "Welcome to My Portfolio"
+          },
+          "description": {
+            "ar": "شكرًا لزيارتك موقعي. يمكنك التواصل معي عبر البريد الإلكتروني أو من خلال حساباتي المهنية.",
+            "en": "Thanks for visiting my portfolio. Feel free to contact me by email or through my professional profiles."
+          }
+        },
+        "copyrightText": "Ahmad Al-Qattu",
+        "socialLinks": {
+          "facebookEnabled": false,
+          "linkedinEnabled": true,
+          "email": "mailto:ahmadl.qatu@gmail.com",
+          "facebook": "we",
+          "githubEnabled": true,
+          "linkedin": "https://www.linkedin.com/in/ahmad-al-qattu-987587201/",
+          "github": "https://github.com/Ahmad-Alqattu"
+        }
+      },
+      "order": 7,
+      "visible": false,
+      "type": "footerAndLinks"
+    },
+    {
+      "id": "experience",
+      "type": "experience",
+      "active": true,
+      "content": {
+        "ar": "خبرة عملية في بناء وإطلاق برمجيات إنتاجية تشمل المنصات المؤسسية، وأنظمة القطاع العام، وتطبيقات الهاتف، والتكاملات، والحلول المبنية على احتياجات العملاء.",
+        "en": "Professional experience building and shipping production software across enterprise platforms, public-sector systems, mobile applications, integrations, and client-facing solutions."
+      },
+      "order": 6,
+      "title": {
+        "ar": "الخبرة",
+        "en": "Experience"
+      },
+      "data": {
+        "experiences": [
+          {
+            "location": {
+              "ar": "رام الله",
+              "en": "Ramallah"
+            },
+            "logo": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753103179820-WhatsApp%20Image%202024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=0472625d-1f2d-43fb-accb-1dda0a13dfaa",
+            "order": 1,
+            "company": {
+              "en": "Al-Ameen Technologies",
+              "ar": "شركة الأمين للتقنيات"
+            },
+            "details": {
+              "en": "I build and maintain production software: enterprise web platforms, mobile apps, APIs and integrations, and the deployments behind them. Recent work includes a modular public-sector water-management platform (laboratories, water resources, distribution, wastewater, GIS, licensing, billing and notifications, all built on shared services, forms and workflows), Mowazze, a van-sales SaaS with an offline-first mobile app, and municipal e-services and their mobile apps. I take projects from client requirements through implementation, testing and release, and stay on for production support.",
+              "ar": "أطوّر برمجيات تعمل في بيئة الإنتاج وأصونها، وتشمل منصات ويب مؤسسية، وتطبيقات هاتف، وواجهات API، وتكاملات، وعمليات النشر الخاصة بها. ويشمل عملي الأخير منصة لإدارة المياه في القطاع العام مكوّنة من وحدات (المختبرات، وموارد المياه، والتوزيع، والصرف الصحي، ونظم المعلومات الجغرافية، والترخيص، والفوترة، والإشعارات)، مبنية على خدمات ونماذج ومسارات عمل مشتركة، ومنصة «موزّع» للبيع المتنقل مع تطبيق هاتف يعمل دون اتصال، والخدمات البلدية الإلكترونية وتطبيقاتها على الهاتف. وأتولّى المشروع من متطلبات العميل إلى التنفيذ والاختبار والإصدار، ثم دعم الإنتاج."
+            },
+            "responsibilities": [
+              {
+                "en": "Build Mowazze end to end: a .NET 10 modular monolith that isolates each organization with PostgreSQL row-level security, an offline-first React Native app and a React owner dashboard.",
+                "ar": "بناء منصة «موزّع» من البداية إلى النهاية: نظام Modular Monolith على ‎.NET 10 يعزل بيانات كل مؤسسة عبر أمان مستوى الصفوف (Row-Level Security) في PostgreSQL، مع تطبيق React Native يعمل دون اتصال، ولوحة تحكم للمالك مبنية بـReact."
+              },
+              {
+                "en": "Build full-stack enterprise modules with ASP.NET Core, Entity Framework Core, PostgreSQL, React and TypeScript.",
+                "ar": "تطوير وحدات مؤسسية متكاملة (Full-Stack) باستخدام ASP.NET Core وEntity Framework Core وPostgreSQL وReact وTypeScript."
+              },
+              {
+                "en": "Design and implement reusable platform building blocks: workflows, configurable services and forms, licensing, billing rules, document generation, permissions, audit logging and integrations.",
+                "ar": "تصميم وتنفيذ مكوّنات مشتركة قابلة لإعادة الاستخدام: مسارات العمل، والخدمات والنماذج القابلة للتهيئة، والترخيص، وقواعد الفوترة، وإنشاء المستندات، والصلاحيات، وسجلات التدقيق، والتكاملات."
+              },
+              {
+                "en": "Develop data-intensive, GIS-enabled modules for laboratories, water resources, distribution, wastewater and operational monitoring.",
+                "ar": "تطوير وحدات كثيفة البيانات تدعم نظم المعلومات الجغرافية للمختبرات وموارد المياه والتوزيع والصرف الصحي والمراقبة التشغيلية."
+              },
+              {
+                "en": "Build and release cross-platform municipal mobile apps with React Native and Expo, serving seven municipalities from one codebase.",
+                "ar": "تطوير وإصدار تطبيقات بلدية متعددة المنصات باستخدام React Native وExpo، تخدم سبع بلديات من قاعدة برمجية واحدة."
+              },
+              {
+                "en": "Train a compact OCR model (PyTorch CRNN) that reads the numbers on scanned land-archive folder covers for indexing.",
+                "ar": "تدريب نموذج صغير للتعرّف الضوئي (OCR) مبني على CRNN بـPyTorch، يقرأ الأرقام من أغلفة مجلدات أرشيف الأراضي الممسوح ضوئيًا لفهرستها."
+              },
+              {
+                "en": "Work directly with clients to refine requirements, diagnose production issues, deploy releases and support what ships.",
+                "ar": "العمل مباشرة مع العملاء لتحديد المتطلبات وتشخيص مشكلات الإنتاج ونشر الإصدارات ودعم ما يُطلق منها."
+              }
+            ],
+            "active": true,
+            "duration": {
+              "en": "2023 – Present",
+              "ar": "2023 – حتى الآن"
+            },
+            "id": 1,
+            "title": {
+              "en": "Software Developer",
+              "ar": "مطور برمجيات"
+            },
+            "period": {
+              "en": "2023 – Present",
+              "ar": "2023 – حتى الآن"
+            }
+          },
+          {
+            "responsibilities": [
+              {
+                "en": "Developed a full-featured Twitter clone using Javalin, HTMX, Pebble, PostgreSQL, and Docker.",
+                "ar": "طوّرت تطبيقًا متكاملًا يحاكي Twitter باستخدام Javalin وHTMX وPebble وPostgreSQL وDocker."
+              },
+              {
+                "en": "Implemented and tested authentication, posting, reposting, following, and responsive user flows.",
+                "ar": "نفّذت واختبرت المصادقة والنشر وإعادة النشر والمتابعة وتدفقات استخدام متجاوبة."
+              },
+              {
+                "en": "Used technical documentation and code reviews to adopt professional development practices.",
+                "ar": "اعتمدت على التوثيق التقني ومراجعة الكود لتطبيق ممارسات تطوير احترافية."
+              }
+            ],
+            "title": {
+              "en": "Full-Stack Intern",
+              "ar": "متدرب Full-Stack"
+            },
+            "period": {
+              "en": "June – August 2024",
+              "ar": "حزيران – آب 2024"
+            },
+            "location": {
+              "en": "Ramallah",
+              "ar": "رام الله"
+            },
+            "company": {
+              "en": "Equiptal",
+              "ar": "إكويبتال"
+            },
+            "details": {
+              "en": "Developed a Twitter clone using Javalin, HTMX, Pebble, PostgreSQL, and Docker while learning production-oriented development practices, testing, documentation, and collaboration with senior developers.",
+              "ar": "طوّرت خلال التدريب تطبيقًا يحاكي Twitter باستخدام Javalin وHTMX وPebble وPostgreSQL وDocker، مع التركيز على ممارسات التطوير الاحترافية والاختبارات وقراءة التوثيق والتعاون مع مطورين ذوي خبرة."
+            },
+            "logo": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140029701-106828266.png?alt=media&token=edab2a0f-6894-493c-b32e-b71a8d02ce06",
+            "duration": {
+              "en": "June – August 2024",
+              "ar": "حزيران – آب 2024"
+            },
+            "active": true,
+            "id": 2,
+            "order": 2
+          }
+        ]
+      },
+      "experience": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%2024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%202024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d"
+      },
+      "visible": true,
+      "userId": "default-user"
+    },
+    {
+      "id": "education",
+      "userId": "default-user",
+      "order": 5,
+      "education": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F53139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d"
+      },
+      "title": {
+        "ar": "التعليم",
+        "en": "Education"
+      },
+      "visible": true,
+      "type": "education",
+      "active": true,
+      "data": {
+        "educations": [
+          {
+            "id": 2,
+            "logo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEVHcEwTXh0TXh0TXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhwSXhxEb/v+AAAAE3RSTlMACpBoHcP/9S/hcqGwgdJD6llJTAv5AQAAAOtJREFUeAHV0UWiQjEQRNE8O/EQ2P9ev7vAmDts76pwjyzrdi29H4h7yvsfrSVty4ZYG+l3QcW2EkX00pbv+XJApVVg/CjYBjDEIvdoOzmFr5sWW8zE2MSZI2zD/nE+Nc3ptQKz0FlfF/WaGKtvRLA+51ECtC/Jcuby0p9W5Do5wgDT2MARRwgFqNkcjqOOAzLGwVzCuTTa84rX69acxwDG5e2Jnp43AbawclnBbEd4JaUMGvWsTxBxfisYxEUbO6hPy9b92LP63Y49hAN52UMP/7AihSvUGwUd2vV+WE//FJReTpet9l7CffEIUOALmNNtN44AAAAASUVORK5CYII=",
+            "title": {
+              "en": "Birzeit University",
+              "ar": "جامعة بيرزيت"
+            },
+            "details": {
+              "en": "B.Sc. in Computer Science. Electives included Data Science, Web Services, Android Development, Human-Computer Interaction, and Games and Gamification.",
+              "ar": "بكالوريوس في علوم الحاسوب. شملت المواد الاختيارية: علوم البيانات، وخدمات الويب، وتطوير Android، وتفاعل الإنسان والحاسوب، والألعاب والتلعيب."
+            },
+            "degree": {
+              "en": "B.Sc. in Computer Science",
+              "ar": "بكالوريوس في علوم الحاسوب"
+            },
+            "active": true,
+            "order": 2,
+            "period": "2019 - 2024"
+          },
+          {
+            "title": {
+              "ar": "ثانوية عين مصباح",
+              "en": "High School of Ain Misbah"
+            },
+            "degree": {
+              "en": "High School Diploma — Scientific Stream",
+              "ar": "الثانوية العامة — الفرع العلمي"
+            },
+            "details": {
+              "en": "Completed secondary education in the scientific stream.",
+              "ar": "أكملت المرحلة الثانوية في الفرع العلمي."
+            },
+            "logo": "",
+            "id": 1,
+            "order": 1,
+            "active": true,
+            "period": "2016 - 2019"
+          }
+        ],
+        "educationList": [
+          {
+            "years": "2019 - 2024",
+            "order": 1,
+            "institution": {
+              "en": "Birzeit University",
+              "ar": "جامعة بيرزيت"
+            },
+            "description": "",
+            "major": {
+              "en": "Computer Science",
+              "ar": "علوم الحاسوب"
+            },
+            "duration": {
+              "en": "2019 - 2024",
+              "ar": "2019 - 2024"
+            },
+            "details": {
+              "en": "B.Sc. in Computer Science with coursework and projects in full-stack development, web services, mobile applications, data science, and human-computer interaction.",
+              "ar": "بكالوريوس في علوم الحاسوب، مع مساقات ومشاريع في تطوير الأنظمة المتكاملة، وخدمات الويب، وتطبيقات الهاتف، وعلوم البيانات، وتفاعل الإنسان والحاسوب."
+            },
+            "logo": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d",
+            "level": {
+              "en": "University",
+              "ar": "جامعة"
+            },
+            "degree": {
+              "en": "B.Sc.",
+              "ar": "بكالوريوس"
+            },
+            "electives": [
+              {
+                "en": "Data Science",
+                "ar": "علوم البيانات"
+              },
+              {
+                "en": "Web Services",
+                "ar": "خدمات الويب"
+              },
+              {
+                "ar": "تطوير أندرويد",
+                "en": "Android Development"
+              },
+              {
+                "en": "Human-Computer Interaction",
+                "ar": "تفاعل الإنسان والحاسوب"
+              },
+              {
+                "en": "Games and Gamification",
+                "ar": "الألعاب والتلعيب"
+              }
+            ],
+            "location": {
+              "en": "Birzeit",
+              "ar": "بيرزيت"
+            }
+          },
+          {
+            "logo": "",
+            "level": {
+              "en": "School",
+              "ar": "مدرسة"
+            },
+            "location": {
+              "ar": "رام الله",
+              "en": "Ramallah"
+            },
+            "institution": {
+              "en": "Ain Misbah High School",
+              "ar": "ثانوية عين مصباح"
+            },
+            "major": {
+              "en": "Scientific Stream",
+              "ar": "الفرع العلمي"
+            },
+            "details": "",
+            "years": "2016 - 2019",
+            "degree": {
+              "en": "High School Diploma",
+              "ar": "شهادة الثانوية العامة"
+            },
+            "duration": "2016 - 2019",
+            "order": 2
+          }
+        ]
+      },
+      "content": ""
+    }
+  ]
+}
