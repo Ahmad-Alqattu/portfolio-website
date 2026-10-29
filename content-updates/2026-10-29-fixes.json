@@ -1,27 +1,58 @@
 {
-  "timestamp": "2026-10-29T00:25:17.885Z",
+  "timestamp": "2026-10-29T00:35:22.851Z",
   "sections": [
     {
-      "id": "footerAndLinks",
-      "content": {
-        "ar": "معلومات التواصل وروابط حساباتي المهنية.",
-        "en": "Contact information and links to my professional profiles."
+      "id": "intro",
+      "name": {
+        "ar": "أحمد القطو",
+        "en": "Ahmad Al-Qattu"
       },
+      "type": "intro",
       "userId": "default-user",
+      "data": {
+        "highlight": {
+          "ar": "أحوّل الأفكار إلى برمجيات موثوقة وقابلة للتوسع",
+          "en": "Turning Ideas into Reliable, Scalable Software"
+        },
+        "cvLink": "/Ahmad_Al-Qattu_Resume.pdf",
+        "subtitle": {
+          "ar": "مهندس برمجيات Full-Stack",
+          "en": "Full-Stack Software Engineer"
+        },
+        "image": "profile/ahmad.webp"
+      },
+      "visible": true,
+      "profile": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787004760574-1690593961859.jpeg?alt=media&token=a6c9280d-b95b-44d3-b2c8-96e1366d4ffd",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1787004760574-1690593961859.jpeg?alt=media&token=a6c9280d-b95b-44d3-b2c8-96e1366d4ffd"
+      },
+      "order": 1,
+      "content": {
+        "ar": "أنا مهندس برمجيات Full-Stack أركّز على تحويل المتطلبات المعقدة إلى برمجيات موثوقة وسهلة الصيانة. أعمل على منصات الويب وتطبيقات الهاتف والخدمات الخلفية والتكاملات والأنظمة المعتمدة على البيانات، مع اهتمام بالمعمارية النظيفة والحلول العملية والجاهزية للإنتاج.",
+        "en": "I'm a full-stack software engineer focused on turning complex requirements into reliable, maintainable software. I work across web platforms, mobile applications, backend services, integrations, and data-intensive systems, with an emphasis on clean architecture, practical solutions, and production-ready delivery."
+      },
+      "title": {
+        "ar": "المقدمة",
+        "en": "Introduction"
+      },
+      "active": true
+    },
+    {
+      "id": "footerAndLinks",
+      "userId": "default-user",
+      "visible": false,
+      "order": 7,
       "title": {
         "en": "Footer & Links",
         "ar": "التواصل والروابط"
       },
+      "type": "footerAndLinks",
+      "content": {
+        "ar": "معلومات التواصل وروابط حساباتي المهنية.",
+        "en": "Contact information and links to my professional profiles."
+      },
       "data": {
-        "cvLink": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1790058275938-Ahmad_Al-Qattu_Resume_Final_Clickable.pdf?alt=media&token=11a91f15-ccdc-4b55-b4b2-f796d61780f9",
-        "contactInfo": {
-          "location": {
-            "en": "Ramallah, Palestine",
-            "ar": "رام الله، فلسطين"
-          },
-          "phone": "+970 59 868 2679",
-          "email": "ahmadl.qatu@gmail.com"
-        },
+        "copyrightText": "Ahmad Al-Qattu",
         "welcomeMessage": {
           "title": {
             "ar": "مرحبًا بك في موقعي الشخصي",
@@ -32,34 +63,43 @@
             "en": "Thanks for visiting my portfolio. Feel free to contact me by email or through my professional profiles."
           }
         },
-        "copyrightText": "Ahmad Al-Qattu",
         "socialLinks": {
-          "facebookEnabled": false,
-          "linkedinEnabled": true,
-          "email": "mailto:ahmadl.qatu@gmail.com",
-          "facebook": "we",
           "githubEnabled": true,
+          "facebook": "we",
+          "github": "https://github.com/Ahmad-Alqattu",
           "linkedin": "https://www.linkedin.com/in/ahmad-al-qattu-987587201/",
-          "github": "https://github.com/Ahmad-Alqattu"
+          "facebookEnabled": false,
+          "email": "mailto:ahmadl.qatu@gmail.com",
+          "linkedinEnabled": true
+        },
+        "cvLink": "/Ahmad_Al-Qattu_Resume.pdf",
+        "contactInfo": {
+          "location": {
+            "en": "Ramallah, Palestine",
+            "ar": "رام الله، فلسطين"
+          },
+          "email": "ahmadl.qatu@gmail.com",
+          "phone": "+970 59 868 2679"
         }
-      },
-      "order": 7,
-      "visible": false,
-      "type": "footerAndLinks"
+      }
     },
     {
       "id": "experience",
-      "type": "experience",
-      "active": true,
       "content": {
         "ar": "خبرة عملية في بناء وإطلاق برمجيات إنتاجية تشمل المنصات المؤسسية، وأنظمة القطاع العام، وتطبيقات الهاتف، والتكاملات، والحلول المبنية على احتياجات العملاء.",
         "en": "Professional experience building and shipping production software across enterprise platforms, public-sector systems, mobile applications, integrations, and client-facing solutions."
       },
-      "order": 6,
+      "active": true,
+      "experience": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%2024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%202024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d"
+      },
       "title": {
         "ar": "الخبرة",
         "en": "Experience"
       },
+      "visible": true,
+      "order": 6,
       "data": {
         "experiences": [
           {
@@ -168,28 +208,15 @@
           }
         ]
       },
-      "experience": {
-        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%2024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d",
-        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753140106335-WhatsApp%20Image%202024-11-06%20at%2015.22.52_f4eead85.jpg?alt=media&token=eb4b31c5-446c-4153-8384-dc6c6ad33c1d"
-      },
-      "visible": true,
-      "userId": "default-user"
+      "userId": "default-user",
+      "type": "experience"
     },
     {
       "id": "education",
       "userId": "default-user",
-      "order": 5,
-      "education": {
-        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F53139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d",
-        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d"
-      },
-      "title": {
-        "ar": "التعليم",
-        "en": "Education"
-      },
-      "visible": true,
       "type": "education",
-      "active": true,
+      "visible": true,
+      "order": 5,
       "data": {
         "educations": [
           {
@@ -317,6 +344,15 @@
           }
         ]
       },
+      "title": {
+        "ar": "التعليم",
+        "en": "Education"
+      },
+      "education": {
+        "ar": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F53139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d",
+        "en": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1753139986811-h.png?alt=media&token=5449f405-7ff8-423a-897a-f3a9808d7a8d"
+      },
+      "active": true,
       "content": ""
     }
   ]

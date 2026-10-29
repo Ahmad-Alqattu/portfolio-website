@@ -1,5 +1,6 @@
 // One-off content fixes (2026-10-29), from the site review:
-//   - footer CV link -> the current resume (same file as the intro button)
+//   - CV links (intro button and footer) -> /Ahmad_Al-Qattu_Resume.pdf, served
+//     from public/ (company name corrected to "Al-Ameen Technologies")
 //   - experience dates localized ("حتى الآن", "حزيران – آب"); Equiptal was 2024
 //   - one Arabic term for "computer" (الحاسوب)
 //
@@ -17,9 +18,11 @@ const section = (type) => {
   return copy;
 };
 
-const intro = sections.find((s) => s.type === 'intro');
+const CV = '/Ahmad_Al-Qattu_Resume.pdf';
+const intro = section('intro');
+intro.data.cvLink = CV;
 const footer = section('footerAndLinks');
-footer.data.cvLink = intro.data.cvLink;
+footer.data.cvLink = CV;
 
 const experience = section('experience');
 const byCompany = (re) => {
@@ -45,5 +48,5 @@ for (const list of [education.data.educationList, education.data.educations]) {
 
 const out = resolve(root, 'content-updates/2026-10-29-fixes.json');
 mkdirSync(dirname(out), { recursive: true });
-writeFileSync(out, JSON.stringify({ timestamp: new Date().toISOString(), sections: [footer, experience, education] }, null, 2));
+writeFileSync(out, JSON.stringify({ timestamp: new Date().toISOString(), sections: [intro, footer, experience, education] }, null, 2));
 console.log(`wrote ${out}`);

@@ -136,7 +136,7 @@
       },
       {
         "source": "/assets/AhmadQattu_resume.pdf",
-        "destination": "https://firebasestorage.googleapis.com/v0/b/portfolio-8b0ca.firebasestorage.app/o/public%2Fmedia%2Fimages%2F1790058275938-Ahmad_Al-Qattu_Resume_Final_Clickable.pdf?alt=media&token=11a91f15-ccdc-4b55-b4b2-f796d61780f9",
+        "destination": "/Ahmad_Al-Qattu_Resume.pdf",
         "type": 301
       }
     ],
