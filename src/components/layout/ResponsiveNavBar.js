@@ -81,7 +81,10 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
     window.open('https://github.com/Ahmad-Alqattu', '_blank');
   };
 
+  // 40px tap targets (the small IconButton is 30px); the icons keep their size.
   const iconButtonSx = {
+    width: 40,
+    height: 40,
     color: theme.palette.text.primary,
     transition: 'color 0.3s ease, background-color 0.3s ease',
     '&:hover': {
@@ -267,6 +270,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
                         cursor: 'pointer',
                         px: 0.75,
                         py: 0.25,
+                        minHeight: 30,
                         borderRadius: '999px',
                         fontFamily: 'inherit',
                         fontSize: '0.75rem',
@@ -293,7 +297,7 @@ function ResponsiveNavBar({ darkMode, setDarkMode }) {
               <Tooltip title={darkMode ? t('nav.switchToLight') : t('nav.switchToDark')}>
                 <IconButton
                   onClick={toggleDarkMode}
-                  aria-label={t('nav.switchToDark')}
+                  aria-label={darkMode ? t('nav.switchToLight') : t('nav.switchToDark')}
                   size="small"
                   sx={{
                     ...iconButtonSx,
